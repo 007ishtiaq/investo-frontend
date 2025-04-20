@@ -1,11 +1,25 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { WalletIcon, MenuIcon } from "../../utils/icons";
 import { useIsMobile } from "../../hooks/use-mobile";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../../actions/auth";
 import "./Header.css";
 
 const Header = () => {
   const isMobile = useIsMobile();
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const { user } = useSelector((state) => ({ ...state }));
+
+  const handleLogout = () => {
+    dispatch(logout());
+    if (window !== undefined) {
+      localStorage.removeItem("user");
+    }
+    history.push("/login");
+  };
+
   return (
     <header className="header">
       <div className="header-content container">
@@ -22,55 +36,54 @@ const Header = () => {
         {/* Navigation */}
         {!isMobile && (
           <nav className="main-nav">
-            <Link to="/explore" className="nav-link">
+            <Link to="/dashboard" className="nav-link">
               Dashboard
             </Link>
             <Link to="/tasks" className="nav-link">
               Tasks
             </Link>
-            <Link to="/dashboard" className="nav-link">
+            <Link to="/team" className="nav-link">
               My Team
             </Link>
-            <Link to="/collections" className="nav-link">
+            <Link to="/vip" className="nav-link">
               VIP
             </Link>
-            <Link to="/creators" className="nav-link">
+            <Link to="/profile" className="nav-link">
               Me
             </Link>
           </nav>
         )}
 
-        {/* <nav className="mobile-nav">
-          <div className="mobile-nav-list">
-            <Link to="/explore" className="mobile-nav-item">
-              <span className="mobile-nav-text">Explore</span>
-            </Link>
-            <Link to="/invest" className="mobile-nav-item">
-              <span className="mobile-nav-text">Invest</span>
-            </Link>
-            <Link to="/dashboard" className="mobile-nav-item">
-              <span className="mobile-nav-text">Dashboard</span>
-            </Link>
-            <Link to="/collections" className="mobile-nav-item">
-              <span className="mobile-nav-text">Collections</span>
-            </Link>
-            <Link to="/creators" className="mobile-nav-item">
-              <span className="mobile-nav-text">Creators</span>
-            </Link>
-          </div>
-        </nav> */}
-
         {/* Action Buttons */}
         <div className="action-buttons">
-          {!isMobile && (
-            <Link to="/create" className="create-button">
-              Sign Up
-            </Link>
+          {!user ? (
+            <>
+              {!isMobile && (
+                <Link to="/register" className="create-button">
+                  Sign Up
+                </Link>
+              )}
+              <Link
+                to="/login"
+                className="connect-wallet-button gradient-bg wallet-button"
+              >
+                <WalletIcon size={16} />
+                <span>Login</span>
+              </Link>
+            </>
+          ) : (
+            <div className="user-auth-section">
+              <div className="user-balance">
+                <WalletIcon size={16} />
+                <span>
+                  {user.balance ? user.balance.toFixed(4) : "0.0000"} ETH
+                </span>
+              </div>
+              <button onClick={handleLogout} className="logout-button">
+                Logout
+              </button>
+            </div>
           )}
-          <button className="connect-wallet-button gradient-bg wallet-button">
-            <WalletIcon size={16} />
-            <span>Login</span>
-          </button>
 
           {isMobile && (
             <button className="menu-button">

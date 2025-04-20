@@ -5,22 +5,31 @@ import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import { BrowserRouter } from "react-router-dom";
 
-// import { createStore } from "redux";
-// import { Provider } from "react-redux";
-// import { composeWithDevTools } from "redux-devtools-extension";
-// import rootReducer from "./reducers";
-
-// store
-// const store = createStore(rootReducer, composeWithDevTools());
-
+import { createStore } from "redux";
+import { Provider } from "react-redux";
+import { composeWithDevTools } from "redux-devtools-extension";
+import rootReducer from "./reducers";
+// Load user from localStorage
+let userState;
+if (typeof window !== "undefined") {
+  if (localStorage.getItem("user")) {
+    userState = JSON.parse(localStorage.getItem("user"));
+  } else {
+    userState = null;
+  }
+}
+// Initial state
+const initialState = {
+  user: userState,
+};
+// Create store with initial state
+const store = createStore(rootReducer, initialState, composeWithDevTools());
 ReactDOM.render(
-  // <React.StrictMode>
-  // <Provider store={store}>
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>,
-  // </Provider>
-  // </React.StrictMode>,
+  <Provider store={store}>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </Provider>,
   document.getElementById("root")
 );
 

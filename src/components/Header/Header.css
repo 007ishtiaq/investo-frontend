@@ -335,6 +335,52 @@
   font-size: 0.875rem;
   font-weight: 500;
 }
+
+/* Add these styles to your Header.css file */
+.user-auth-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-balance {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--color-card-bg);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border);
+  font-weight: 500;
+}
+
+.user-balance svg {
+  color: var(--color-primary);
+}
+
+.logout-button {
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.logout-button:hover {
+  background-color: rgba(var(--color-danger-rgb), 0.1);
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+.connect-wallet-button {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
 @media (max-width: 768px) {
   .mobile-nav {
     display: flex;
