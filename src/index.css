@@ -1,13 +1,324 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap");
+
+:root {
+  /* Light theme color variables */
+  --color-primary: #6c5dd3;
+  --color-primary-dark: #5346c2;
+  --color-secondary: #3f8cff;
+  --color-accent: #45b36b;
+  --color-background: #f8f9fa;
+  --color-background-hover: #f1f3f5;
+  --color-card-bg: #ffffff;
+  --color-text-primary: #222222;
+  --color-text-secondary: #6e7191;
+  --color-border: #e5e7eb;
+  --color-success: #45b36b;
+  --color-warning: #ffa41b;
+  --color-error: #ff4d4f;
+  --color-header-bg: rgba(255, 255, 255, 0.8);
+  --color-header-bg-scrolled: rgba(255, 255, 255, 0.95);
+
+  --color-dark: #333333;
+  --color-neutral: #94a3b8;
+  --color-positive: #22c55e;
+  --border-radius-lg: 1rem;
+  --border-radius-full: 9999px;
+  --border-radius-xl: 1.5rem;
+
+  /* Gradients */
+  --gradient-text: linear-gradient(
+    90deg,
+    var(--color-primary) 0%,
+    var(--color-secondary) 100%
+  );
+  --gradient-button: linear-gradient(
+    90deg,
+    var(--color-primary) 0%,
+    var(--color-secondary) 70%,
+    var(--color-secondary) 100%
+  );
+  --gradient-button-alt: linear-gradient(
+    90deg,
+    var(--color-secondary) 0%,
+    var(--color-primary) 100%
+  );
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-header: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-dropdown: 0 10px 25px rgba(0, 0, 0, 0.1);
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+
+  /* Fonts */
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-poppins: "Poppins", var(--font-sans);
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-poppins);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+p {
+  margin-bottom: 1rem;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding: 0 2rem;
+  }
+}
+
+/* Gradient text utility */
+.gradient-text {
+  background: var(--gradient-text);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Gradient background utility */
+.gradient-bg {
+  background: var(--gradient-button);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-dark);
+}
+
+/* ----globle css from 2nd project -  some good components */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+:root {
+  /* --color-primary: #4cd6b0; */
+  /* --color-secondary: #fff8e7; */
+  /* --color-accent: #f6d9c8; */
+  /* --color-dark: #333333; */
+  /* --color-positive: #22c55e; */
+  /* --color-neutral: #94a3b8; */
+  /* --color-white: #ffffff; */
+  /* --border-radius-sm: 0.25rem;
+  --border-radius-md: 0.5rem;
+  --border-radius-lg: 1rem;
+  --border-radius-xl: 1.5rem;
+  --border-radius-2xl: 2rem; */
+  --border-radius-full: 9999px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* body {
+  font-family: "Inter", sans-serif;
+  background-color: var(--color-secondary);
+  color: var(--color-dark);
+  line-height: 1.5;
+} */
+
+/* a {
+  text-decoration: none;
+  color: inherit;
+} */
+
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+/* img {
+  max-width: 100%;
+  height: auto;
+} */
+
+/* some styling here for from green theme  */
+
+.nft-marketplace {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.marketplace-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.marketplace-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+@media (min-width: 1024px) {
+  .marketplace-sections {
+    flex-direction: row;
+  }
+}
+
+.loading-container,
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  font-size: 1.2rem;
+  color: var(--color-dark);
+  background-color: var(--color-white);
+  border-radius: var(--border-radius-lg);
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.error-container {
+  color: #e53e3e;
+  border: 1px solid #e53e3e;
+}
+
+.empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  font-size: 1rem;
+  color: var(--color-neutral);
+  background-color: var(--color-white);
+  border-radius: var(--border-radius-lg);
+  padding: 1.5rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Product Section Styles */
+.product-section {
+  margin-top: 3rem;
+  padding: 2rem;
+  background-color: var(--color-dark);
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-white);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .product-section {
+    padding: 1.5rem 1rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
 }

@@ -1,0 +1,148 @@
+.promo-banner {
+  margin: 3rem 0;
+  padding: 2rem 0;
+  background: linear-gradient(to right, #1a1a2e, #16213e, #0f3460);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+}
+
+.promo-banner-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+}
+
+@media (min-width: 992px) {
+  .promo-banner-container {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 3rem;
+  }
+}
+
+.promo-banner-images {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  height: 300px;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 992px) {
+  .promo-banner-images {
+    margin-bottom: 0;
+  }
+}
+
+.promo-image-main {
+  position: absolute;
+  width: 65%;
+  height: auto;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.main-image {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.promo-image-small {
+  position: absolute;
+  width: 30%;
+  z-index: 1;
+}
+
+.top-left {
+  top: 10%;
+  left: 5%;
+}
+
+.bottom-right {
+  bottom: 10%;
+  right: 5%;
+}
+
+.small-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.promo-banner-content {
+  flex: 1;
+  color: var(--color-card-bg);
+  text-align: center;
+}
+
+@media (min-width: 992px) {
+  .promo-banner-content {
+    text-align: left;
+  }
+}
+
+.promo-title {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.promo-description {
+  font-size: 1.1rem;
+  color: #e0e0e0;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.promo-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+@media (min-width: 992px) {
+  .promo-buttons {
+    justify-content: flex-start;
+  }
+}
+
+.btn-get-started,
+.btn-auction {
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius-full);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  outline: none;
+}
+
+.btn-get-started {
+  background: linear-gradient(to right, #5edfff, #4cd6b0);
+  color: #000;
+}
+
+.btn-auction {
+  background: linear-gradient(to right, #4cd6b0, #92effd);
+  color: #000;
+}
+
+.btn-get-started:hover,
+.btn-auction:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
