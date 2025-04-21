@@ -1,0 +1,272 @@
+/* client/src/pages/admin/TaskVerification.css */
+.task-verification-page {
+  padding: 40px 0;
+  background-color: #f7f9fc;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+h1 {
+  font-size: 2rem;
+  color: #1a202c;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: #4a5568;
+  margin-bottom: 30px;
+}
+
+.loading-indicator {
+  text-align: center;
+  padding: 30px;
+  color: #4a5568;
+  font-size: 1.1rem;
+}
+
+.no-tasks-message {
+  background-color: white;
+  border-radius: 10px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.no-tasks-message p {
+  color: #4a5568;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.pending-tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.task-submission-card {
+  background-color: white;
+  border-radius: 10px;
+  padding: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.submission-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.submission-header h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0;
+}
+
+.task-type {
+  background-color: rgba(79, 70, 229, 0.1);
+  color: var(--color-primary);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.submission-details {
+  margin-bottom: 20px;
+}
+
+.detail-row {
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.label {
+  font-weight: 600;
+  color: #4a5568;
+  min-width: 120px;
+}
+
+.value {
+  color: #2d3748;
+}
+
+.value.reward {
+  font-weight: 600;
+  color: #38a169;
+}
+
+.verification-data {
+  background-color: #f8fafc;
+  border-radius: 8px;
+  padding: 15px;
+  margin-top: 15px;
+}
+
+.verification-data h4 {
+  font-size: 1rem;
+  color: #4a5568;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.verification-item {
+  display: flex;
+  margin-bottom: 5px;
+}
+
+.verification-item .label {
+  min-width: 100px;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.verification-item .value {
+  color: #2d3748;
+  word-break: break-word;
+}
+
+.submission-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.approve-button,
+.reject-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.approve-button {
+  background-color: #48bb78;
+  color: white;
+}
+
+.approve-button:hover {
+  background-color: #38a169;
+}
+
+.reject-button {
+  background-color: #f56565;
+  color: white;
+}
+
+.reject-button:hover {
+  background-color: #e53e3e;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.rejection-modal {
+  background-color: white;
+  border-radius: 10px;
+  padding: 25px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.rejection-modal h3 {
+  font-size: 1.2rem;
+  color: #e53e3e;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.rejection-modal p {
+  color: #4a5568;
+  margin-bottom: 15px;
+}
+
+.rejection-modal textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 1rem;
+  margin-bottom: 20px;
+  resize: vertical;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.cancel-button,
+.confirm-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.cancel-button {
+  background-color: #e2e8f0;
+  color: #4a5568;
+}
+
+.cancel-button:hover {
+  background-color: #cbd5e0;
+}
+
+.confirm-button {
+  background-color: #f56565;
+  color: white;
+}
+
+.confirm-button:hover {
+  background-color: #e53e3e;
+}
+
+@media (max-width: 768px) {
+  .submission-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .detail-row {
+    flex-direction: column;
+    margin-bottom: 15px;
+  }
+
+  .label {
+    margin-bottom: 4px;
+  }
+
+  .submission-actions {
+    flex-direction: column;
+  }
+
+  .approve-button,
+  .reject-button {
+    width: 100%;
+  }
+}

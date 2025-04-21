@@ -1,22 +1,86 @@
+// client/src/pages/Tasks.jsx
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux"; // Assuming you use Redux for auth
+import { useSelector } from "react-redux";
+import { toast, Toaster } from "react-hot-toast";
 import {
   EthereumIcon,
   CheckIcon,
   ClockIcon,
   ExternalLinkIcon,
+  EmptyBoxIcon,
+  InfoIcon,
 } from "../utils/icons";
 import {
   getUserTasks,
   getAllTasks,
   verifyTaskCompletion,
   getTasksEarnings,
+  startTask,
 } from "../functions/tasks";
-import "./Tasks.css"; // Make sure to import your CSS
+import "./Tasks.css";
 
 /**
- * Tasks page component for displaying available tasks to earn rewards
+ * EmptyState component for displaying when no tasks match criteria
+ */
+const EmptyState = ({ message, filterOption, onReset }) => (
+  <div className="empty-state">
+    <EmptyBoxIcon size={64} />
+    <h3>{message}</h3>
+    {filterOption !== "all" && (
+      <button className="reset-filter-button" onClick={onReset}>
+        View All Tasks
+      </button>
+    )}
+  </div>
+);
+
+/**
+ * TaskVerificationProgress component for task verification steps
+ */
+const TaskVerificationProgress = ({ status, error }) => {
+  return (
+    <div className="verification-progress">
+      <div className="progress-indicators">
+        <div className={`progress-step ${status !== "idle" ? "active" : ""}`}>
+          <div className="step-dot"></div>
+          <div className="step-label">Submitting</div>
+        </div>
+        <div
+          className={`progress-line ${status !== "idle" ? "active" : ""}`}
+        ></div>
+        <div
+          className={`progress-step ${
+            status === "verifying" || status === "complete" ? "active" : ""
+          }`}
+        >
+          <div className="step-dot"></div>
+          <div className="step-label">Verifying</div>
+        </div>
+        <div
+          className={`progress-line ${
+            status === "verifying" || status === "complete" ? "active" : ""
+          }`}
+        ></div>
+        <div
+          className={`progress-step ${status === "complete" ? "active" : ""}`}
+        >
+          <div className="step-dot"></div>
+          <div className="step-label">Complete</div>
+        </div>
+      </div>
+      <div className="verification-message">
+        {status === "idle" && "Ready to verify completion"}
+        {status === "verifying" && "Verifying your task completion..."}
+        {status === "complete" && "Task successfully verified!"}
+        {status === "error" && error}
+      </div>
+    </div>
+  );
+};
+
+/**
+ * Main Tasks component
  */
 const Tasks = () => {
   // Get user from Redux store
@@ -24,13 +88,14 @@ const Tasks = () => {
 
   // Component state
   const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [activeTask, setActiveTask] = useState(null);
   const [verificationInput, setVerificationInput] = useState("");
   const [filterOption, setFilterOption] = useState("all");
-  const [verificationStatus, setVerificationStatus] = useState("idle"); // idle, verifying, complete, error
+  const [verificationStatus, setVerificationStatus] = useState("idle");
   const [earnings, setEarnings] = useState(0);
   const [error, setError] = useState("");
+  const [isStartingTask, setIsStartingTask] = useState(false);
 
   // Task difficulty colors
   const difficultyColors = {
@@ -42,8 +107,10 @@ const Tasks = () => {
   // Load tasks on component mount
   useEffect(() => {
     loadTasks();
-    loadEarnings();
-  }, []);
+    if (user) {
+      loadEarnings();
+    }
+  }, [user]);
 
   // Load all tasks from API
   const loadTasks = async () => {
@@ -55,28 +122,33 @@ const Tasks = () => {
       setTasks(res.data);
 
       // If user is logged in, update task completion status
-      if (user) {
-        const userTasksRes = await getUserTasks(user.token);
+      if (user && user.token) {
+        try {
+          const userTasksRes = await getUserTasks(user.token);
 
-        // Map through tasks and update completion status
-        const updatedTasks = res.data.map((task) => {
-          const userTask = userTasksRes.data.find(
-            (ut) => ut.taskId === task._id
-          );
+          // Map through tasks and update completion status
+          const updatedTasks = res.data.map((task) => {
+            const userTask = userTasksRes.data.find(
+              (ut) => ut.taskId === task._id
+            );
 
-          if (userTask) {
-            return {
-              ...task,
-              completed: userTask.completed,
-              verified: userTask.verified,
-              startedAt: userTask.startedAt,
-            };
-          }
+            if (userTask) {
+              return {
+                ...task,
+                completed: userTask.completed,
+                verified: userTask.verified,
+                startedAt: userTask.startedAt,
+              };
+            }
 
-          return task;
-        });
+            return task;
+          });
 
-        setTasks(updatedTasks);
+          setTasks(updatedTasks);
+        } catch (err) {
+          console.error("Error loading user tasks:", err);
+          // Continue with the tasks we have
+        }
       }
 
       setLoading(false);
@@ -84,12 +156,13 @@ const Tasks = () => {
       setLoading(false);
       setError("Error loading tasks. Please try again.");
       console.error("Error loading tasks:", err);
+      toast.error("Failed to load tasks. Please refresh the page.");
     }
   };
 
   // Load user's earned rewards
   const loadEarnings = async () => {
-    if (!user) return;
+    if (!user || !user.token) return;
 
     try {
       const res = await getTasksEarnings(user.token);
@@ -110,10 +183,30 @@ const Tasks = () => {
   // Calculate total rewards for all tasks
   const totalRewards = tasks.reduce((sum, task) => sum + task.reward, 0);
 
+  // Handle task start
+  const handleStartTask = async (taskId) => {
+    if (!user || !user.token) {
+      toast.error("Please login to start this task.");
+      return;
+    }
+
+    setIsStartingTask(true);
+    try {
+      await startTask(taskId, user.token);
+      toast.success("Task started successfully!");
+      loadTasks(); // Reload tasks to update status
+    } catch (err) {
+      console.error("Error starting task:", err);
+      toast.error("Failed to start task. Please try again.");
+    } finally {
+      setIsStartingTask(false);
+    }
+  };
+
   // Handle task verification
   const verifyTask = async (taskId) => {
-    if (!user) {
-      alert("Please login to verify task completion.");
+    if (!user || !user.token) {
+      toast.error("Please login to verify task completion.");
       return;
     }
 
@@ -122,10 +215,20 @@ const Tasks = () => {
 
     try {
       // Prepare verification data based on task type
-      const verificationData =
-        activeTask.type === "twitter_share"
-          ? { tweetUrl: verificationInput }
-          : {};
+      const verificationData = {};
+
+      if (
+        activeTask.type === "twitter_share" ||
+        activeTask.type === "twitter_follow"
+      ) {
+        verificationData.tweetUrl = verificationInput;
+      } else if (activeTask.type === "youtube_subscribe") {
+        verificationData.channelUrl = verificationInput;
+      } else if (activeTask.type === "youtube_watch") {
+        verificationData.videoUrl = verificationInput;
+      } else if (activeTask.type === "telegram_join") {
+        verificationData.username = verificationInput;
+      }
 
       // Send verification request to API
       const res = await verifyTaskCompletion(
@@ -144,6 +247,9 @@ const Tasks = () => {
 
         setTasks(updatedTasks);
         setVerificationStatus("complete");
+        toast.success(
+          `Task completed! +${activeTask.reward.toFixed(3)} ETH earned`
+        );
 
         // Update earnings
         loadEarnings();
@@ -153,16 +259,21 @@ const Tasks = () => {
           setVerificationInput("");
           setActiveTask(null);
           setVerificationStatus("idle");
-        }, 2000);
+        }, 3000);
       } else {
         setVerificationStatus("error");
         setError(res.data.message || "Verification failed. Please try again.");
+        toast.error(
+          res.data.message || "Verification failed. Please try again."
+        );
       }
     } catch (err) {
       setVerificationStatus("error");
-      setError(
-        err.response?.data?.message || "Error verifying task. Please try again."
-      );
+      const errorMessage =
+        err.response?.data?.message ||
+        "Error verifying task. Please try again.";
+      setError(errorMessage);
+      toast.error(errorMessage);
       console.error("Error verifying task:", err);
     }
   };
@@ -172,6 +283,7 @@ const Tasks = () => {
     setActiveTask(task);
     setVerificationStatus("idle");
     setError("");
+    setVerificationInput("");
   };
 
   // Close task details
@@ -183,70 +295,19 @@ const Tasks = () => {
     setError("");
   };
 
-  // Task verification progress component
-  const TaskVerificationProgress = () => {
-    return (
-      <div className="verification-progress">
-        <div className="progress-indicators">
-          <div
-            className={`progress-step ${
-              verificationStatus !== "idle" ? "active" : ""
-            }`}
-          >
-            <div className="step-dot"></div>
-            <div className="step-label">Submitting</div>
-          </div>
-          <div
-            className={`progress-line ${
-              verificationStatus !== "idle" ? "active" : ""
-            }`}
-          ></div>
-          <div
-            className={`progress-step ${
-              verificationStatus === "verifying" ||
-              verificationStatus === "complete"
-                ? "active"
-                : ""
-            }`}
-          >
-            <div className="step-dot"></div>
-            <div className="step-label">Verifying</div>
-          </div>
-          <div
-            className={`progress-line ${
-              verificationStatus === "verifying" ||
-              verificationStatus === "complete"
-                ? "active"
-                : ""
-            }`}
-          ></div>
-          <div
-            className={`progress-step ${
-              verificationStatus === "complete" ? "active" : ""
-            }`}
-          >
-            <div className="step-dot"></div>
-            <div className="step-label">Complete</div>
-          </div>
-        </div>
-        <div className="verification-message">
-          {verificationStatus === "idle" && "Ready to verify completion"}
-          {verificationStatus === "verifying" &&
-            "Verifying your task completion..."}
-          {verificationStatus === "complete" && "Task successfully verified!"}
-          {verificationStatus === "error" && error}
-        </div>
-      </div>
-    );
-  };
+  // Reset filter to show all tasks
+  const resetFilter = () => setFilterOption("all");
 
+  // If not logged in, show login prompt
   if (!user) {
     return (
       <div className="tasks-page">
         <div className="container">
           <div className="connect-wallet-message">
             <h2>Please Login to View Tasks</h2>
-            <p>You need to login to access task rewards.</p>
+            <p>
+              You need to login to access task rewards and track your progress.
+            </p>
             <Link to="/login" className="login-button">
               Login Now
             </Link>
@@ -256,6 +317,7 @@ const Tasks = () => {
     );
   }
 
+  // Show loading state
   if (loading) {
     return (
       <div className="tasks-page">
@@ -271,6 +333,31 @@ const Tasks = () => {
 
   return (
     <div className="tasks-page">
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: "#363636",
+            color: "#fff",
+          },
+          success: {
+            duration: 3000,
+            style: {
+              background: "green",
+              color: "white",
+            },
+          },
+          error: {
+            duration: 4000,
+            style: {
+              background: "red",
+              color: "white",
+            },
+          },
+        }}
+      />
+
       <div className="container">
         <div className="tasks-header">
           <h1 className="page-title">Complete Tasks, Earn Rewards</h1>
@@ -362,15 +449,22 @@ const Tasks = () => {
 
         <div className="tasks-list">
           {filteredTasks.length === 0 ? (
-            <div className="no-tasks-message">
-              <p>No tasks found matching the selected filter.</p>
-            </div>
+            <EmptyState
+              message={
+                filterOption === "completed"
+                  ? "You haven't completed any tasks yet."
+                  : filterOption === "pending"
+                  ? "No pending tasks found."
+                  : "No tasks available at the moment."
+              }
+              filterOption={filterOption}
+              onReset={resetFilter}
+            />
           ) : (
             filteredTasks.map((task) => (
               <div
                 key={task._id}
                 className={`task-card ${task.completed ? "completed" : ""}`}
-                onClick={() => openTaskDetails(task)}
               >
                 <div className="task-status">
                   {task.completed ? (
@@ -404,7 +498,10 @@ const Tasks = () => {
                   </div>
                 </div>
 
-                <button className="view-task-button">
+                <button
+                  className="view-task-button"
+                  onClick={() => openTaskDetails(task)}
+                >
                   {task.completed ? "View Details" : "Complete Task"}
                 </button>
               </div>
@@ -445,52 +542,109 @@ const Tasks = () => {
                   </ol>
                 </div>
 
-                <a
-                  href={activeTask.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="task-link-button"
-                >
-                  <span>Go to Task</span>
-                  <ExternalLinkIcon size={16} />
-                </a>
+                {activeTask.link && (
+                  <a
+                    href={activeTask.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="task-link-button"
+                  >
+                    <span>Go to Task</span>
+                    <ExternalLinkIcon size={16} />
+                  </a>
+                )}
 
-                {!activeTask.completed && verificationStatus === "idle" && (
-                  <div className="verification-section">
-                    <h3>Verify Completion</h3>
-                    {activeTask.type === "twitter_share" && (
-                      <div className="verification-input-group">
-                        <label>Tweet URL:</label>
-                        <input
-                          type="text"
-                          placeholder="https://twitter.com/username/status/123456789"
-                          value={verificationInput}
-                          onChange={(e) => setVerificationInput(e.target.value)}
-                        />
-                      </div>
-                    )}
+                {!activeTask.completed && !activeTask.startedAt && (
+                  <div className="start-task-section">
                     <button
-                      className="verify-button"
-                      onClick={() => verifyTask(activeTask._id)}
-                      disabled={
-                        activeTask.type === "twitter_share" &&
-                        !verificationInput
-                      }
+                      className="start-task-button"
+                      onClick={() => handleStartTask(activeTask._id)}
+                      disabled={isStartingTask}
                     >
-                      Verify Completion
+                      {isStartingTask ? "Starting..." : "Start Task"}
                     </button>
-                    <p className="verification-note">
-                      Note: Verification may take a few moments. Please remain
-                      on this page.
-                    </p>
+                    <div className="task-info-note">
+                      <InfoIcon size={16} />
+                      <span>
+                        You need to start the task before verification
+                      </span>
+                    </div>
                   </div>
                 )}
 
-                {!activeTask.completed && verificationStatus !== "idle" && (
-                  <div className="verification-progress-container">
-                    <TaskVerificationProgress />
-                  </div>
-                )}
+                {!activeTask.completed &&
+                  activeTask.startedAt &&
+                  verificationStatus === "idle" && (
+                    <div className="verification-section">
+                      <h3>Verify Completion</h3>
+
+                      {(activeTask.type === "twitter_share" ||
+                        activeTask.type === "twitter_follow" ||
+                        activeTask.type === "youtube_subscribe" ||
+                        activeTask.type === "youtube_watch" ||
+                        activeTask.type === "telegram_join") && (
+                        <div className="verification-input-group">
+                          <label>
+                            {activeTask.type === "twitter_share"
+                              ? "Tweet URL:"
+                              : activeTask.type === "twitter_follow"
+                              ? "Your Twitter Profile URL:"
+                              : activeTask.type === "youtube_subscribe"
+                              ? "Channel URL or Screenshot:"
+                              : activeTask.type === "youtube_watch"
+                              ? "Video URL:"
+                              : "Your Telegram Username:"}
+                          </label>
+                          <input
+                            type="text"
+                            placeholder={
+                              activeTask.type === "twitter_share"
+                                ? "https://twitter.com/username/status/123456789"
+                                : activeTask.type === "twitter_follow"
+                                ? "https://twitter.com/yourusername"
+                                : activeTask.type === "youtube_subscribe"
+                                ? "https://youtube.com/channel/..."
+                                : activeTask.type === "youtube_watch"
+                                ? "https://youtube.com/watch?v=..."
+                                : "@yourusername"
+                            }
+                            value={verificationInput}
+                            onChange={(e) =>
+                              setVerificationInput(e.target.value)
+                            }
+                          />
+                        </div>
+                      )}
+
+                      <button
+                        className="verify-button"
+                        onClick={() => verifyTask(activeTask._id)}
+                        disabled={
+                          activeTask.type !== "login" &&
+                          activeTask.type !== "profile" &&
+                          !verificationInput
+                        }
+                      >
+                        Verify Completion
+                      </button>
+
+                      <p className="verification-note">
+                        Note: Verification may take a few moments. Please remain
+                        on this page.
+                      </p>
+                    </div>
+                  )}
+
+                {!activeTask.completed &&
+                  activeTask.startedAt &&
+                  verificationStatus !== "idle" && (
+                    <div className="verification-progress-container">
+                      <TaskVerificationProgress
+                        status={verificationStatus}
+                        error={error}
+                      />
+                    </div>
+                  )}
 
                 {activeTask.completed && (
                   <div className="completion-message">

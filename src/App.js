@@ -11,6 +11,9 @@ import Login from "./pages/Login/Login";
 import Registration from "./pages/Registration/Registration";
 import OTPVerification from "./pages/OtpVerification/OtpVerification";
 import RegisterComplete from "./pages/RegisterComplete/RegisterComplete";
+import AdminDashboard from "./pages/Admin/AdminDashboard";
+import AdminTasks from "./pages/Admin/AdminTasks";
+import TaskVerification from "./pages/Admin/TaskVerification";
 
 function App() {
   return (
@@ -25,6 +28,11 @@ function App() {
           <Route exact path="/register" component={Registration} />
           <Route exact path="/otpVerification" component={OTPVerification} />
           <Route exact path="/register/complete" component={RegisterComplete} />
+
+          {/* Admin routes */}
+          <Route path="/admin" exact component={AdminDashboard} />
+          <Route path="/admin/tasks" component={AdminTasks} />
+          <Route path="/admin/tasksvarification" component={TaskVerification} />
 
           {/* <Route exact path="*" component={NotFound} /> */}
           <Route path="*" component={NotFound} />

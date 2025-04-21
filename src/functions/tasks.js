@@ -1,115 +1,113 @@
 import axios from "axios";
 
-// Get all tasks for current user
-export const getUserTasks = async (authtoken) =>
-  await axios.get(`${process.env.REACT_APP_API}/tasks/user`, {
-    headers: {
-      authtoken,
-    },
-  });
-
-// Get a specific task details
-export const getTask = async (taskId, authtoken) =>
-  await axios.get(`${process.env.REACT_APP_API}/tasks/${taskId}`, {
-    headers: {
-      authtoken,
-    },
-  });
+// Get base URL from environment variable
+const API_URL = process.env.REACT_APP_API || "";
 
 // Get all available tasks
-export const getAllTasks = async (authtoken) =>
-  await axios.get(`${process.env.REACT_APP_API}/tasks`, {
+export const getAllTasks = async (token) => {
+  return await axios.get(`${API_URL}/tasks`, {
     headers: {
-      authtoken,
+      authtoken: token ? token : "",
     },
   });
+};
 
-// Mark a task as started by user
-export const startTask = async (taskId, authtoken) =>
-  await axios.post(
-    `${process.env.REACT_APP_API}/tasks/start`,
-    { taskId },
-    {
-      headers: {
-        authtoken,
-      },
-    }
-  );
-
-// Submit verification for task completion
-export const verifyTaskCompletion = async (
-  taskId,
-  verificationData,
-  authtoken
-) =>
-  await axios.post(
-    `${process.env.REACT_APP_API}/tasks/verify`,
-    { taskId, verificationData },
-    {
-      headers: {
-        authtoken,
-      },
-    }
-  );
-
-// Check status of task verification
-export const checkVerificationStatus = async (taskId, authtoken) =>
-  await axios.get(
-    `${process.env.REACT_APP_API}/tasks/verify-status/${taskId}`,
-    {
-      headers: {
-        authtoken,
-      },
-    }
-  );
-
-// Get user's completed tasks
-export const getCompletedTasks = async (authtoken) =>
-  await axios.get(`${process.env.REACT_APP_API}/tasks/completed`, {
+// Get a specific task details
+export const getTask = async (taskId, token) => {
+  return await axios.get(`${API_URL}/tasks/${taskId}`, {
     headers: {
-      authtoken,
+      authtoken: token,
     },
   });
+};
 
-// Get user's total earned rewards
-export const getTasksEarnings = async (authtoken) =>
-  await axios.get(`${process.env.REACT_APP_API}/tasks/earnings`, {
+// Get user's tasks with completion status
+export const getUserTasks = async (token) => {
+  return await axios.get(`${API_URL}/user/tasks`, {
     headers: {
-      authtoken,
+      authtoken: token,
     },
   });
+};
 
-// For admin only: Create a new task
-export const createTask = async (taskData, authtoken) =>
-  await axios.post(
-    `${process.env.REACT_APP_API}/tasks/admin/create`,
-    taskData,
+// Start a task
+export const startTask = async (taskId, token) => {
+  return await axios.post(
+    `${API_URL}/tasks/${taskId}/start`,
+    {},
     {
       headers: {
-        authtoken,
+        authtoken: token,
       },
     }
   );
+};
 
-// For admin only: Update task
-export const updateTask = async (taskId, taskData, authtoken) =>
-  await axios.put(
-    `${process.env.REACT_APP_API}/tasks/admin/update/${taskId}`,
-    taskData,
+// Verify task completion
+export const verifyTaskCompletion = async (taskId, verificationData, token) => {
+  return await axios.post(
+    `${API_URL}/tasks/${taskId}/verify`,
+    verificationData,
     {
       headers: {
-        authtoken,
+        authtoken: token,
       },
     }
   );
+};
 
-// For admin only: Delete task
-export const deleteTask = async (taskId, authtoken) =>
-  await axios.delete(
-    `${process.env.REACT_APP_API}/tasks/admin/delete/${taskId}`,
-    {
-      headers: {
-        authtoken,
-      },
-    }
-  );
+// Get user's total earned rewards from tasks
+export const getTasksEarnings = async (token) => {
+  return await axios.get(`${API_URL}/user/tasks/earnings`, {
+    headers: {
+      authtoken: token,
+    },
+  });
+};
+
+// ADMIN FUNCTIONS
+
+// Get all tasks (admin only)
+export const getAllTasksAdmin = async (token) => {
+  return await axios.get(`${API_URL}/api/admin/tasks`, {
+    headers: {
+      authtoken: token,
+    },
+  });
+};
+
+// Create a new task (admin only)
+export const createTask = async (taskData, token) => {
+  return await axios.post(`${API_URL}/admin/tasks`, taskData, {
+    headers: {
+      authtoken: token,
+    },
+  });
+};
+
+// Update a task (admin only)
+export const updateTask = async (taskId, taskData, token) => {
+  return await axios.put(`${API_URL}/admin/tasks/${taskId}`, taskData, {
+    headers: {
+      authtoken: token,
+    },
+  });
+};
+
+// Delete a task (admin only)
+export const deleteTask = async (taskId, token) => {
+  return await axios.delete(`${API_URL}/admin/tasks/${taskId}`, {
+    headers: {
+      authtoken: token,
+    },
+  });
+};
+
+// Get task completions (admin only)
+export const getTaskCompletions = async (token) => {
+  return await axios.get(`${API_URL}/admin/tasks/completions`, {
+    headers: {
+      authtoken: token,
+    },
+  });
+};

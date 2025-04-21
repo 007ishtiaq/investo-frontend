@@ -1,0 +1,404 @@
+/* client/src/pages/admin/AdminTasks.css */
+.admin-tasks-page {
+  padding: 40px 0;
+  background-color: #f7f9fc;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.admin-tasks-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.admin-tasks-header h1 {
+  color: #1a202c;
+  margin: 0;
+  font-size: 2rem;
+}
+
+.toggle-form-button {
+  padding: 10px 20px;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.toggle-form-button:hover {
+  background-color: #4338ca;
+}
+
+.task-form-container {
+  background-color: white;
+  border-radius: 10px;
+  padding: 25px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.task-form-container h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #2d3748;
+  font-size: 1.5rem;
+}
+
+.task-form {
+  display: grid;
+  gap: 20px;
+}
+
+.form-group {
+  margin-bottom: 0;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="url"],
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: 0;
+}
+
+.checkbox-group input[type="checkbox"] {
+  margin-right: 10px;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-primary);
+}
+
+.step-input-group {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.step-input-group input {
+  flex: 1;
+}
+
+.remove-step-button {
+  width: 40px;
+  margin-left: 8px;
+  background-color: #f56565;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.remove-step-button:disabled {
+  background-color: #e2e8f0;
+  cursor: not-allowed;
+}
+
+.add-step-button {
+  padding: 8px 16px;
+  background-color: #e2e8f0;
+  color: #4a5568;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 5px;
+  transition: background-color 0.2s;
+}
+
+.add-step-button:hover {
+  background-color: #cbd5e0;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.cancel-button {
+  padding: 10px 20px;
+  background-color: #e2e8f0;
+  color: #4a5568;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.cancel-button:hover {
+  background-color: #cbd5e0;
+}
+
+.submit-button {
+  padding: 10px 20px;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.submit-button:hover {
+  background-color: #4338ca;
+}
+
+.submit-button:disabled {
+  background-color: #a0aec0;
+  cursor: not-allowed;
+}
+
+.tasks-list-section h2 {
+  margin-bottom: 20px;
+  color: #2d3748;
+  font-size: 1.5rem;
+}
+
+.admin-tasks-list {
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.tasks-table-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
+  background-color: #f8fafc;
+  padding: 15px;
+  font-weight: 600;
+  color: #4a5568;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.tasks-table-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
+  padding: 15px;
+  border-bottom: 1px solid #e2e8f0;
+  transition: background-color 0.2s;
+}
+
+.tasks-table-row:last-child {
+  border-bottom: none;
+}
+
+.tasks-table-row:hover {
+  background-color: #f8fafc;
+}
+
+.inactive-task {
+  background-color: #f7fafc;
+  color: #a0aec0;
+}
+
+.task-cell {
+  display: flex;
+  align-items: center;
+}
+
+.task-title-cell {
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.inactive-task .task-title-cell {
+  color: #a0aec0;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.status-badge.active {
+  background-color: rgba(72, 187, 120, 0.1);
+  color: #38a169;
+}
+
+.status-badge.inactive {
+  background-color: rgba(160, 174, 192, 0.1);
+  color: #a0aec0;
+}
+
+.actions-cell {
+  display: flex;
+  gap: 10px;
+}
+
+.edit-button,
+.delete-button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.edit-button {
+  background-color: #ebf8ff;
+  color: #3182ce;
+}
+
+.edit-button:hover {
+  background-color: #bee3f8;
+}
+
+.delete-button {
+  background-color: #fff5f5;
+  color: #e53e3e;
+}
+
+.delete-button:hover {
+  background-color: #fed7d7;
+}
+
+.loading-indicator {
+  text-align: center;
+  padding: 30px;
+  color: #4a5568;
+  font-size: 1.1rem;
+}
+
+.no-tasks-message {
+  background-color: white;
+  border-radius: 10px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.no-tasks-message p {
+  color: #4a5568;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+@media (max-width: 992px) {
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-tasks-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .tasks-table-header,
+  .tasks-table-row {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+
+  .tasks-table-header .task-cell:nth-child(n + 4),
+  .tasks-table-row .task-cell:nth-child(n + 4) {
+    display: none;
+  }
+
+  .tasks-table-row {
+    position: relative;
+    padding-bottom: 50px;
+  }
+
+  .actions-cell {
+    position: absolute;
+    bottom: 10px;
+    right: 15px;
+  }
+}
+
+@media (max-width: 576px) {
+  .tasks-table-header,
+  .tasks-table-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .tasks-table-header {
+    display: none;
+  }
+
+  .task-cell {
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 8px;
+  }
+
+  .task-cell:last-child {
+    border-bottom: none;
+  }
+
+  .task-title-cell {
+    font-size: 1.1rem;
+  }
+
+  .tasks-table-row {
+    padding: 15px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .actions-cell {
+    position: static;
+    margin-top: 10px;
+    justify-content: flex-start;
+  }
+}

@@ -1,84 +1,261 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
-import axios from "axios";
-import { loggedInUser } from "../../actions/auth";
+import { toast, Toaster } from "react-hot-toast";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { auth } from "../../firebase";
+import { createOrUpdateUser } from "../../functions/auth";
 import { EthereumIcon } from "../../utils/icons";
 import "./Login.css";
 
-const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+// Spinner component for loading state
+const Spinner = () => (
+  <div className="spinner">
+    <div className="bounce1"></div>
+    <div className="bounce2"></div>
+    <div className="bounce3"></div>
+  </div>
+);
 
+// No internet connection modal
+const NoNetModal = ({ classDisplay, setNoNetModal, handleRetry }) => (
+  <div className={`no-net-modal ${classDisplay}`}>
+    <div className="modal-content">
+      <h3>No Internet Connection</h3>
+      <p>Please check your internet connection and try again.</p>
+      <div className="modal-buttons">
+        <button onClick={() => setNoNetModal(false)}>Close</button>
+        <button onClick={handleRetry}>Retry</button>
+      </div>
+    </div>
+  </div>
+);
+
+// Login schema
+const loginSchema = Yup.object({
+  email: Yup.string()
+    .email("Invalid email format")
+    .required("Email is required"),
+  password: Yup.string()
+    .required("Password is required")
+    .min(6, "Password must be at least 6 characters"),
+});
+
+const Login = () => {
+  const [loading, setLoading] = useState(false);
+  const [noNetModal, setNoNetModal] = useState(false);
+
+  const { user } = useSelector((state) => ({ ...state }));
   const dispatch = useDispatch();
   const history = useHistory();
 
-  // Check if user is already logged in
-  const { user } = useSelector((state) => ({ ...state }));
+  useEffect(() => {
+    const handleOnlineStatus = () => {
+      if (navigator.onLine) {
+        setNoNetModal(false);
+      }
+    };
+
+    window.addEventListener("online", handleOnlineStatus);
+    return () => {
+      window.removeEventListener("online", handleOnlineStatus);
+    };
+  }, []);
 
   useEffect(() => {
-    if (user && user.token) {
-      history.push("/dashboard");
+    let intended = history.location.state;
+    if (intended) {
+      return;
+    } else {
+      if (user && user.token) history.push("/");
     }
   }, [user, history]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+  // Formik setup
+  const initialValues = {
+    email: "",
+    password: "",
+  };
 
-    try {
-      const res = await axios.post(`${process.env.REACT_APP_API}/auth/login`, {
-        email,
-        password,
-      });
-
-      // Save user and token to Redux store
-      dispatch(
-        loggedInUser({
-          name: res.data.name,
-          email: res.data.email,
-          token: res.data.token,
-          role: res.data.role,
-          _id: res.data._id,
-          balance: res.data.balance || 0,
-        })
-      );
-
-      // Save to local storage
-      if (window !== undefined) {
-        localStorage.setItem("user", JSON.stringify(res.data));
+  const roleBasedRedirect = (res) => {
+    // check if intended
+    let intended = history.location.state;
+    if (intended) {
+      history.push(intended.from);
+    } else {
+      if (res.data.role === "admin") {
+        history.push("/admin");
+      } else {
+        history.push("/");
       }
-
-      setLoading(false);
-      history.push("/dashboard");
-    } catch (err) {
-      setLoading(false);
-      setError(
-        err.response && err.response.data.error
-          ? err.response.data.error
-          : "Login failed. Please try again."
-      );
-      console.error(err);
     }
   };
 
+  const {
+    values,
+    errors,
+    touched,
+    isSubmitting,
+    handleBlur,
+    handleChange,
+    handleSubmit,
+  } = useFormik({
+    initialValues: initialValues,
+    validationSchema: loginSchema,
+    onSubmit: async (values, action) => {
+      if (navigator.onLine) {
+        setLoading(true);
+        try {
+          const result = await auth.signInWithEmailAndPassword(
+            values.email,
+            values.password
+          );
+          const { user } = result;
+          const idTokenResult = await user.getIdTokenResult();
+
+          createOrUpdateUser(idTokenResult.token)
+            .then((res) => {
+              dispatch({
+                type: "LOGGED_IN_USER",
+                payload: {
+                  name: res.data.name,
+                  email: res.data.email,
+                  token: idTokenResult.token,
+                  role: res.data.role,
+                  _id: res.data._id,
+                  balance: res.data.balance || 0,
+                },
+              });
+
+              // Save to local storage
+              if (window !== undefined) {
+                localStorage.setItem(
+                  "user",
+                  JSON.stringify({
+                    name: res.data.name,
+                    email: res.data.email,
+                    token: idTokenResult.token,
+                    role: res.data.role,
+                    _id: res.data._id,
+                    balance: res.data.balance || 0,
+                  })
+                );
+              }
+
+              toast.success("Login successful!");
+              action.resetForm();
+              setLoading(false);
+              roleBasedRedirect(res);
+            })
+            .catch((err) => {
+              setLoading(false);
+              console.error("Error updating user:", err);
+              toast.error("Error updating user information");
+            });
+        } catch (error) {
+          setLoading(false);
+          console.error("Login error:", error);
+
+          if (
+            error.message ===
+            "A network error (such as timeout, interrupted connection or unreachable host) has occurred."
+          ) {
+            setNoNetModal(true);
+          } else if (
+            error.message ===
+            "The password is invalid or the user does not have a password."
+          ) {
+            toast.error("Invalid credentials. Please try again.");
+          } else if (
+            error.message ===
+            "There is no user record corresponding to this identifier. The user may have been deleted."
+          ) {
+            toast.error("Account not found. Please register first.");
+          } else {
+            toast.error(error.message || "Login failed. Please try again.");
+          }
+        }
+      } else {
+        setLoading(false);
+        setNoNetModal(true);
+      }
+    },
+  });
+
   return (
     <div className="login-page">
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: "#363636",
+            color: "#fff",
+          },
+          success: {
+            duration: 3000,
+            style: {
+              background: "green",
+              color: "white",
+            },
+          },
+          error: {
+            duration: 4000,
+            style: {
+              background: "red",
+              color: "white",
+            },
+          },
+        }}
+      />
+
       <div className="container">
         <div className="login-container">
           <div className="login-form-section">
             <div className="login-header">
+              <div className="logo-container">
+                {loading ? (
+                  <Spinner />
+                ) : (
+                  <div className="app-logo">
+                    <svg
+                      width="40"
+                      height="40"
+                      viewBox="0 0 40 40"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <rect
+                        width="40"
+                        height="40"
+                        rx="8"
+                        fill="url(#paint0_linear)"
+                      />
+                      <path d="M20 10L28.6603 25H11.3397L20 10Z" fill="white" />
+                      <defs>
+                        <linearGradient
+                          id="paint0_linear"
+                          x1="0"
+                          y1="0"
+                          x2="40"
+                          y2="40"
+                          gradientUnits="userSpaceOnUse"
+                        >
+                          <stop stopColor="#4F46E5" />
+                          <stop offset="1" stopColor="#7A70FF" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                  </div>
+                )}
+              </div>
               <h1 className="login-title">Log In to Your Account</h1>
               <p className="login-subtitle">
                 Welcome back! Please enter your credentials to access your
                 account.
               </p>
             </div>
-
-            {error && <div className="error-message">{error}</div>}
 
             <form className="login-form" onSubmit={handleSubmit}>
               <div className="form-group">
@@ -87,11 +264,17 @@ const Login = () => {
                   type="email"
                   className="form-control"
                   id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  name="email"
+                  value={values.email}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
                   placeholder="Enter your email"
-                  required
+                  autoFocus
+                  autoComplete="off"
                 />
+                {errors.email && touched.email ? (
+                  <p className="error-message">{errors.email}</p>
+                ) : null}
               </div>
 
               <div className="form-group">
@@ -100,20 +283,27 @@ const Login = () => {
                   type="password"
                   className="form-control"
                   id="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  name="password"
+                  value={values.password}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
                   placeholder="Enter your password"
-                  required
+                  autoComplete="off"
                 />
+                {errors.password && touched.password ? (
+                  <p className="error-message">{errors.password}</p>
+                ) : null}
               </div>
 
               <div className="form-actions">
                 <button
                   type="submit"
                   className="login-button"
-                  disabled={loading || !email || !password}
+                  disabled={
+                    loading || isSubmitting || !values.email || !values.password
+                  }
                 >
-                  {loading ? "Logging in..." : "Log In"}
+                  {loading ? <Spinner /> : "Log In"}
                 </button>
               </div>
 
@@ -123,7 +313,7 @@ const Login = () => {
                   <Link to="/register">Register now</Link>
                 </p>
                 <p className="forgot-password-link">
-                  <Link to="/forgot-password">Forgot your password?</Link>
+                  <Link to="/forgot/password">Forgot your password?</Link>
                 </p>
               </div>
             </form>
@@ -214,6 +404,12 @@ const Login = () => {
           </div>
         </div>
       </div>
+
+      <NoNetModal
+        classDisplay={noNetModal ? "open-popup" : ""}
+        setNoNetModal={setNoNetModal}
+        handleRetry={handleSubmit}
+      />
     </div>
   );
 };
