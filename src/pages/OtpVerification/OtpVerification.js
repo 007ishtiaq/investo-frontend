@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { toast, Toaster } from "react-hot-toast";
 import { useFormik } from "formik";
-import { registerSchema } from "../../schemas";
-import { SendOTP } from "../../functions/auth";
+import * as Yup from "yup";
+import { createOrUpdateUser } from "../../functions/auth";
+import { auth } from "../../firebase";
 import { EthereumIcon } from "../../utils/icons";
 import "../Login/Login.css";
 
@@ -31,11 +32,29 @@ const NoNetModal = ({ classDisplay, setNoNetModal, handleRetry }) => (
   </div>
 );
 
-const Register = () => {
+// OTP schema
+const otpSchema = Yup.object({
+  otp: Yup.string()
+    .required("Please enter the OTP")
+    .matches(/^[0-9]+$/, "OTP must be numbers only")
+    .min(6, "OTP must be 6 digits")
+    .max(6, "OTP must be 6 digits"),
+  password: Yup.string()
+    .required("Please enter a password")
+    .min(6, "Password must be at least 6 characters"),
+  confirmPassword: Yup.string()
+    .required("Please confirm your password")
+    .oneOf([Yup.ref("password"), null], "Passwords must match"),
+  name: Yup.string()
+    .required("Please enter your name")
+    .min(2, "Name must be at least 2 characters"),
+});
+
+const OTPVerification = () => {
   const [loading, setLoading] = useState(false);
   const [noNetModal, setNoNetModal] = useState(false);
+  const [email, setEmail] = useState("");
 
-  const { user } = useSelector((state) => ({ ...state }));
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -53,8 +72,15 @@ const Register = () => {
   }, []);
 
   useEffect(() => {
-    if (user && user.token) history.push("/");
-  }, [user, history]);
+    // Get email from localStorage
+    const email = window.localStorage.getItem("emailForRegistration");
+    if (email) {
+      setEmail(email);
+    } else {
+      // Redirect to register if no email found
+      history.push("/register");
+    }
+  }, [history]);
 
   const roleBasedRedirect = (res) => {
     // check if intended
@@ -72,7 +98,10 @@ const Register = () => {
 
   // Formik setup
   const initialValues = {
-    email: "",
+    otp: "",
+    password: "",
+    confirmPassword: "",
+    name: "",
   };
 
   const {
@@ -85,26 +114,72 @@ const Register = () => {
     handleSubmit,
   } = useFormik({
     initialValues: initialValues,
-    validationSchema: registerSchema,
+    validationSchema: otpSchema,
     onSubmit: async (values, action) => {
       if (navigator.onLine) {
         setLoading(true);
         try {
-          const response = await SendOTP(values.email);
-          if (response.status === 200) {
-            toast.success(`OTP sent to your email. Please check your inbox.`);
-            window.localStorage.setItem("emailForRegistration", values.email);
-            action.resetForm();
-            setLoading(false);
-            history.push("/otpVerification");
-          } else {
-            toast.error(response.data.error || "Error sending OTP");
-            setLoading(false);
-          }
+          // Register with Firebase
+          const result = await auth.createUserWithEmailAndPassword(
+            email,
+            values.password
+          );
+
+          // Update profile with name
+          await result.user.updateProfile({
+            displayName: values.name,
+          });
+
+          // Get token
+          const idTokenResult = await result.user.getIdTokenResult();
+
+          // Create or update user in your backend
+          createOrUpdateUser(idTokenResult.token)
+            .then((res) => {
+              dispatch({
+                type: "LOGGED_IN_USER",
+                payload: {
+                  name: res.data.name,
+                  email: res.data.email,
+                  token: idTokenResult.token,
+                  role: res.data.role,
+                  _id: res.data._id,
+                },
+              });
+
+              // Clear email from localStorage
+              window.localStorage.removeItem("emailForRegistration");
+
+              // Show success message
+              toast.success(
+                `Registration successful. Welcome, ${values.name}!`
+              );
+
+              setLoading(false);
+              roleBasedRedirect(res);
+            })
+            .catch((err) => {
+              setLoading(false);
+              toast.error(err.response?.data?.error || "Error updating user");
+              console.error("Error updating user:", err);
+            });
         } catch (error) {
           setLoading(false);
-          toast.error(error.response?.data?.error || "Error sending OTP");
-          console.error("Error sending OTP:", error);
+
+          // Handle Firebase auth errors
+          if (error.code === "auth/email-already-in-use") {
+            toast.error(
+              "Email is already in use. Please use another email or login."
+            );
+          } else if (error.code === "auth/invalid-email") {
+            toast.error("Invalid email format.");
+          } else if (error.code === "auth/weak-password") {
+            toast.error("Password is too weak. Use at least 6 characters.");
+          } else {
+            toast.error(error.message);
+          }
+
+          console.error("Registration error:", error);
         }
       } else {
         setLoading(false);
@@ -144,28 +219,80 @@ const Register = () => {
         <div className="login-container">
           <div className="login-form-section">
             <div className="login-header">
-              <h1 className="login-title">Create an Account</h1>
+              <h1 className="login-title">Verify Your Email</h1>
               <p className="login-subtitle">
-                Join our platform and start earning rewards today.
+                Enter the OTP sent to {email} and create your account.
               </p>
             </div>
 
             <form className="login-form" onSubmit={handleSubmit}>
               <div className="form-group">
-                <label htmlFor="email">Email Address</label>
+                <label htmlFor="name">Full Name</label>
                 <input
-                  type="email"
+                  type="text"
                   className="form-control"
-                  id="email"
-                  name="email"
-                  value={values.email}
+                  id="name"
+                  name="name"
+                  value={values.name}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  placeholder="Enter your email"
+                  placeholder="Enter your full name"
                   autoComplete="off"
                 />
-                {errors.email && touched.email ? (
-                  <p className="error-message">{errors.email}</p>
+                {errors.name && touched.name ? (
+                  <p className="error-message">{errors.name}</p>
+                ) : null}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="otp">OTP Code</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="otp"
+                  name="otp"
+                  value={values.otp}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  placeholder="Enter 6-digit OTP"
+                  autoComplete="off"
+                />
+                {errors.otp && touched.otp ? (
+                  <p className="error-message">{errors.otp}</p>
+                ) : null}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="password">Password</label>
+                <input
+                  type="password"
+                  className="form-control"
+                  id="password"
+                  name="password"
+                  value={values.password}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  placeholder="Create a password"
+                />
+                {errors.password && touched.password ? (
+                  <p className="error-message">{errors.password}</p>
+                ) : null}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="confirmPassword">Confirm Password</label>
+                <input
+                  type="password"
+                  className="form-control"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  value={values.confirmPassword}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  placeholder="Confirm your password"
+                />
+                {errors.confirmPassword && touched.confirmPassword ? (
+                  <p className="error-message">{errors.confirmPassword}</p>
                 ) : null}
               </div>
 
@@ -173,20 +300,15 @@ const Register = () => {
                 <button
                   type="submit"
                   className="login-button"
-                  disabled={
-                    loading ||
-                    isSubmitting ||
-                    !values.email ||
-                    (errors.email && touched.email)
-                  }
+                  disabled={loading || isSubmitting}
                 >
-                  {loading ? <Spinner /> : "Send OTP"}
+                  {loading ? <Spinner /> : "Create Account"}
                 </button>
               </div>
 
               <div className="form-footer">
                 <p className="register-link">
-                  Already have an account? <Link to="/login">Log in</Link>
+                  Didn't receive OTP? <Link to="/register">Request again</Link>
                 </p>
               </div>
             </form>
@@ -286,4 +408,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default OTPVerification;

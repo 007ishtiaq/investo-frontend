@@ -14,6 +14,134 @@
   margin: 0 auto;
 }
 
+/* Add these styles to your CSS file */
+
+/* Spinner */
+.spinner {
+  margin: 0 auto;
+  width: 70px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}
+
+.spinner > div {
+  width: 10px;
+  height: 10px;
+  margin: 0 3px;
+  background-color: #fff;
+  border-radius: 100%;
+  display: inline-block;
+  animation: bouncedelay 1.4s infinite ease-in-out both;
+}
+
+.spinner .bounce1 {
+  animation-delay: -0.32s;
+}
+
+.spinner .bounce2 {
+  animation-delay: -0.16s;
+}
+
+@keyframes bouncedelay {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+/* No Network Modal */
+.no-net-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+}
+
+.no-net-modal.open-popup {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  color: #ff3333;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.modal-buttons button {
+  padding: 0.5rem 1.5rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.modal-buttons button:first-child {
+  background-color: #f2f2f2;
+  color: #333;
+}
+
+.modal-buttons button:last-child {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.modal-buttons button:hover {
+  opacity: 0.9;
+}
+
+/* Error message for form validation */
+.error-message {
+  color: #ff3333;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+.forgot-password-button {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.forgot-password-button:hover {
+  text-decoration: underline;
+}
+
 @media (min-width: 992px) {
   .login-container {
     grid-template-columns: 1fr 1fr;

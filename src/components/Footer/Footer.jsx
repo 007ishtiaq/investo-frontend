@@ -19,7 +19,7 @@ const Footer = () => {
         <div className="footer-content">
           <div className="footer-main">
             <div className="footer-branding">
-              <Link href="/" className="footer-logo">
+              <Link to="/" className="footer-logo">
                 TreasureNFT
               </Link>
               <p className="footer-description">
@@ -67,16 +67,16 @@ const Footer = () => {
                 <h4 className="footer-column-title">Marketplace</h4>
                 <ul className="footer-links">
                   <li>
-                    <Link href="/explore">Explore</Link>
+                    <Link to="/explore">Explore</Link>
                   </li>
                   <li>
-                    <Link href="/collections">Collections</Link>
+                    <Link to="/collections">Collections</Link>
                   </li>
                   <li>
-                    <Link href="/creators">Creators</Link>
+                    <Link to="/creators">Creators</Link>
                   </li>
                   <li>
-                    <Link href="/activity">Activity</Link>
+                    <Link to="/activity">Activity</Link>
                   </li>
                 </ul>
               </div>
@@ -85,16 +85,16 @@ const Footer = () => {
                 <h4 className="footer-column-title">My Account</h4>
                 <ul className="footer-links">
                   <li>
-                    <Link href="/profile">Profile</Link>
+                    <Link to="/profile">Profile</Link>
                   </li>
                   <li>
-                    <Link href="/favorites">Favorites</Link>
+                    <Link to="/favorites">Favorites</Link>
                   </li>
                   <li>
-                    <Link href="/watchlist">Watchlist</Link>
+                    <Link to="/watchlist">Watchlist</Link>
                   </li>
                   <li>
-                    <Link href="/settings">Settings</Link>
+                    <Link to="/settings">Settings</Link>
                   </li>
                 </ul>
               </div>
@@ -103,16 +103,16 @@ const Footer = () => {
                 <h4 className="footer-column-title">Resources</h4>
                 <ul className="footer-links">
                   <li>
-                    <Link href="/help-center">Help Center</Link>
+                    <Link to="/help-center">Help Center</Link>
                   </li>
                   <li>
-                    <Link href="/platform-status">Platform Status</Link>
+                    <Link to="/platform-status">Platform Status</Link>
                   </li>
                   <li>
-                    <Link href="/partners">Partners</Link>
+                    <Link to="/partners">Partners</Link>
                   </li>
                   <li>
-                    <Link href="/blog">Blog</Link>
+                    <Link to="/blog">Blog</Link>
                   </li>
                 </ul>
               </div>
@@ -121,16 +121,16 @@ const Footer = () => {
                 <h4 className="footer-column-title">Company</h4>
                 <ul className="footer-links">
                   <li>
-                    <Link href="/about">About</Link>
+                    <Link to="/about">About</Link>
                   </li>
                   <li>
-                    <Link href="/careers">Careers</Link>
+                    <Link to="/careers">Careers</Link>
                   </li>
                   <li>
-                    <Link href="/contact">Contact</Link>
+                    <Link to="/contact">Contact</Link>
                   </li>
                   <li>
-                    <Link href="/press">Press</Link>
+                    <Link to="/press">Press</Link>
                   </li>
                 </ul>
               </div>
@@ -142,9 +142,9 @@ const Footer = () => {
               &copy; {currentYear} TreasureNFT. All rights reserved.
             </p>
             <div className="legal-links">
-              <Link href="/terms">Terms</Link>
-              <Link href="/privacy">Privacy</Link>
-              <Link href="/cookies">Cookies</Link>
+              <Link to="/terms">Terms</Link>
+              <Link to="/privacy">Privacy</Link>
+              <Link to="/cookies">Cookies</Link>
             </div>
           </div>
         </div>
