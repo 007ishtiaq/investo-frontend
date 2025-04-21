@@ -299,7 +299,7 @@ const OtpVerification = () => {
             </div>
 
             <form className="login-form" onSubmit={handleSubmit}>
-              <div className="form-group">
+              <div className="form-group otpcont">
                 <OtpInput setValues={setValues} />
               </div>
 

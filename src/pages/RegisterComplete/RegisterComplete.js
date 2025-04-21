@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { toast, Toaster } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
@@ -66,10 +66,6 @@ const RegisterComplete = () => {
       window.removeEventListener("online", handleOnlineStatus);
     };
   }, []);
-
-  useEffect(() => {
-    if (user && user.token) history.push("/");
-  }, [user, history]);
 
   // Formik setup
   const initialValues = {
@@ -174,17 +170,27 @@ const RegisterComplete = () => {
   });
 
   useEffect(() => {
+    if (user && user.token) history.push("/");
+  }, [user, history]);
+
+  useEffect(() => {
     if (!window.localStorage.getItem("emailForRegistration")) {
       history.push("/register");
       return;
     }
-
     // Retrieve email from local storage
     const storedEmail = window.localStorage.getItem("emailForRegistration");
 
-    // Set the email value using setValues
-    setValues((prevValues) => ({ ...prevValues, email: storedEmail }));
-  }, []);
+    // Extract name from email (text before @)
+    const defaultName = storedEmail.split("@")[0];
+
+    // Set the email value using setValues, and populate name field
+    setValues((prevValues) => ({
+      ...prevValues,
+      email: storedEmail,
+      name: defaultName,
+    }));
+  }, [history, setValues]);
 
   return (
     <div className="login-page">
@@ -386,8 +392,8 @@ const RegisterComplete = () => {
                     </svg>
                   </div>
                   <div className="feature-text">
-                    <h3>Fixed Deposit Plans</h3>
-                    <p>Multiple investment plans with guaranteed returns</p>
+                    <h3>Secure Platform</h3>
+                    <p>Your investments are protected with advanced security</p>
                   </div>
                 </div>
               </div>

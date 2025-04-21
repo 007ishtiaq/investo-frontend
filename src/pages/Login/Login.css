@@ -175,6 +175,10 @@
 .form-group {
   margin-bottom: 1.5rem;
 }
+.form-group.otpcont {
+  display: flex;
+  justify-content: center;
+}
 
 .form-group label {
   display: block;
@@ -313,7 +317,6 @@
 .otp-input-container {
   display: flex;
   justify-content: space-between;
-  margin: 1.5rem 0;
   max-width: 360px;
   width: 100%;
 }
@@ -381,3 +384,44 @@
   align-items: center;
   justify-content: center;
 }
+
+/* RegisterComplete.css */
+/* .error-message {
+  color: #ff3333;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: var(--color-card-bg);
+  color: var(--color-text-primary);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
+
+.form-control:disabled {
+  background-color: rgba(0, 0, 0, 0.05);
+  cursor: not-allowed;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+} */

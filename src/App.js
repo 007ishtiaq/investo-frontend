@@ -20,11 +20,11 @@ function App() {
         <Switch>
           {/* common unprotected Routes */}
           <Route exact path="/" component={Home} />
-          <Route path="/tasks" component={Tasks} />
-          <Route path="/login" component={Login} />
-          <Route path="/register" component={Registration} />
-          <Route path="/otpVerification" component={OTPVerification} />
-          <Route path="/register/complete" component={RegisterComplete} />
+          <Route exact path="/tasks" component={Tasks} />
+          <Route exact path="/login" component={Login} />
+          <Route exact path="/register" component={Registration} />
+          <Route exact path="/otpVerification" component={OTPVerification} />
+          <Route exact path="/register/complete" component={RegisterComplete} />
 
           {/* <Route exact path="*" component={NotFound} /> */}
           <Route path="*" component={NotFound} />
