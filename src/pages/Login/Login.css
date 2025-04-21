@@ -308,3 +308,76 @@
   font-size: 0.875rem;
   opacity: 0.8;
 }
+
+/* OTPVerification.css */
+.otp-input-container {
+  display: flex;
+  justify-content: space-between;
+  margin: 1.5rem 0;
+  max-width: 360px;
+  width: 100%;
+}
+
+.otp-input-box {
+  width: 48px;
+  height: 54px;
+  position: relative;
+}
+
+.otp-input {
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 500;
+  background-color: var(--color-card-bg);
+  color: var(--color-text-primary);
+  outline: none;
+}
+
+.otp-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.2);
+}
+
+.resend-otp {
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+.resend-button {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  cursor: pointer;
+  font-weight: 500;
+  padding: 0;
+  font-size: 0.875rem;
+}
+
+.resend-button:hover {
+  text-decoration: underline;
+}
+
+.resend-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.app-logo {
+  height: 60px;
+  width: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

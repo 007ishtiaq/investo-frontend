@@ -10,6 +10,7 @@ import Tasks from "./pages/Tasks";
 import Login from "./pages/Login/Login";
 import Registration from "./pages/Registration/Registration";
 import OTPVerification from "./pages/OtpVerification/OtpVerification";
+import RegisterComplete from "./pages/RegisterComplete/RegisterComplete";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/login" component={Login} />
           <Route path="/register" component={Registration} />
           <Route path="/otpVerification" component={OTPVerification} />
+          <Route path="/register/complete" component={RegisterComplete} />
 
           {/* <Route exact path="*" component={NotFound} /> */}
           <Route path="*" component={NotFound} />

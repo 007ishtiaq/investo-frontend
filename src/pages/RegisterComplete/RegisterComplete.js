@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { toast, Toaster } from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { verifyOTP, SendOTP } from "../../functions/auth";
+import { auth } from "../../firebase";
+import { createOrUpdateUser, infoOTP } from "../../functions/auth";
 import { EthereumIcon } from "../../utils/icons";
 import "../Login/Login.css";
-import { useDispatch, useSelector } from "react-redux";
 
 // Spinner component for loading state
 const Spinner = () => (
@@ -16,84 +17,6 @@ const Spinner = () => (
     <div className="bounce3"></div>
   </div>
 );
-
-// OTP Input Component
-const OtpInput = ({ setValues }) => {
-  const [otp, setOtp] = useState(new Array(6).fill(""));
-
-  const handleChange = (element, index) => {
-    if (isNaN(element.value)) return false;
-
-    // Create a new array with the updated value
-    const newOtp = [...otp];
-    newOtp[index] = element.value;
-    setOtp(newOtp);
-
-    // Focus next input
-    if (element.value !== "" && index < 5) {
-      const nextInput =
-        element.parentElement.nextSibling.querySelector("input");
-      if (nextInput) {
-        nextInput.focus();
-      }
-    }
-
-    // Update form values - JUST THIS ONE TIME
-    setValues((prevValues) => ({
-      ...prevValues,
-      otp: newOtp.join(""), // Use newOtp, not otp (state hasn't updated yet)
-    }));
-  };
-
-  const handleKeyDown = (e, index) => {
-    // Handle backspace
-    if (e.key === "Backspace" && index > 0 && otp[index] === "") {
-      const prevInput =
-        e.target.parentElement.previousSibling.querySelector("input");
-      if (prevInput) {
-        prevInput.focus();
-      }
-    }
-  };
-
-  const handlePaste = (e) => {
-    e.preventDefault();
-    const pastedData = e.clipboardData
-      .getData("text")
-      .trim()
-      .slice(0, 6)
-      .split("");
-
-    if (pastedData.length === 6 && pastedData.every((x) => !isNaN(x))) {
-      setOtp(pastedData);
-      setValues((prevValues) => ({
-        ...prevValues,
-        otp: pastedData.join(""),
-      }));
-    }
-  };
-
-  return (
-    <div className="otp-input-container">
-      {otp.map((data, index) => {
-        return (
-          <div className="otp-input-box" key={index}>
-            <input
-              type="text"
-              maxLength="1"
-              value={data}
-              onChange={(e) => handleChange(e.target, index)}
-              onKeyDown={(e) => handleKeyDown(e, index)}
-              onPaste={handlePaste}
-              onFocus={(e) => e.target.select()}
-              className="otp-input"
-            />
-          </div>
-        );
-      })}
-    </div>
-  );
-};
 
 // No internet connection modal
 const NoNetModal = ({ classDisplay, setNoNetModal, handleRetry }) => (
@@ -109,20 +32,23 @@ const NoNetModal = ({ classDisplay, setNoNetModal, handleRetry }) => (
   </div>
 );
 
-// OTP schema
-const otpSchema = Yup.object({
+// Registration complete schema
+const registerCompleteSchema = Yup.object({
+  name: Yup.string()
+    .required("Name is required")
+    .min(2, "Name must be at least 2 characters"),
   email: Yup.string().email().required("Email is required"),
-  otp: Yup.string()
-    .required("Please enter the OTP")
-    .matches(/^[0-9]+$/, "OTP must be numbers only")
-    .min(6, "OTP must be 6 digits")
-    .max(6, "OTP must be 6 digits"),
+  password: Yup.string()
+    .required("Password is required")
+    .min(6, "Password must be at least 6 characters"),
+  confim_password: Yup.string()
+    .required("Please confirm your password")
+    .oneOf([Yup.ref("password"), null], "Passwords must match"),
 });
 
-const OtpVerification = () => {
+const RegisterComplete = () => {
   const [loading, setLoading] = useState(false);
   const [noNetModal, setNoNetModal] = useState(false);
-  const [userEmail, setUserEmail] = useState("");
 
   const { user } = useSelector((state) => ({ ...state }));
   const dispatch = useDispatch();
@@ -147,8 +73,10 @@ const OtpVerification = () => {
 
   // Formik setup
   const initialValues = {
+    name: "",
     email: "",
-    otp: "",
+    password: "",
+    confim_password: "",
   };
 
   const {
@@ -162,25 +90,82 @@ const OtpVerification = () => {
     setValues,
   } = useFormik({
     initialValues: initialValues,
-    validationSchema: otpSchema,
+    validationSchema: registerCompleteSchema,
     onSubmit: async (values, action) => {
       if (navigator.onLine) {
         setLoading(true);
+        try {
+          const { name, email, password } = values;
 
-        verifyOTP(values)
-          .then((response) => {
-            if (response.status === 200) {
-              toast.success("OTP verified successfully!");
-              action.resetForm();
-              setLoading(false);
-              history.push("/register/complete");
+          // Get OTP information before proceeding
+          const otpResponse = await infoOTP(email);
+
+          // Check if OTP is verified
+          if (otpResponse.data.otpRecord.isVerified) {
+            // Proceed with user registration if OTP is verified
+            const result = await auth.createUserWithEmailAndPassword(
+              email,
+              password
+            );
+
+            if (result) {
+              // Remove user email from local storage
+              window.localStorage.removeItem("emailForRegistration");
+
+              // Get user ID token
+              let user = auth.currentUser;
+
+              // Update profile with name
+              await user.updateProfile({
+                displayName: name,
+              });
+
+              const idTokenResult = await user.getIdTokenResult();
+
+              createOrUpdateUser(idTokenResult.token)
+                .then((res) => {
+                  dispatch({
+                    type: "LOGGED_IN_USER",
+                    payload: {
+                      name: name,
+                      email: res.data.email,
+                      token: idTokenResult.token,
+                      role: res.data.role,
+                      _id: res.data._id,
+                    },
+                  });
+
+                  // Show success message
+                  toast.success(`Registration successful. Welcome, ${name}!`);
+
+                  // Reset form and redirect
+                  action.resetForm();
+                  history.push("/");
+                  setLoading(false);
+                })
+                .catch((error) => {
+                  setLoading(false);
+                  console.error("Error updating user:", error);
+                  toast.error("Error updating user information");
+                });
             }
-          })
-          .catch((error) => {
+          } else {
+            // OTP verification failed
             setLoading(false);
-            toast.error(error.response?.data?.err || "Invalid OTP");
-            console.error("Error during OTP verification:", error);
-          });
+            toast.error("OTP verification failed. Please try again.");
+          }
+        } catch (error) {
+          setLoading(false);
+          console.error("Error completing registration:", error);
+          if (
+            error.message ===
+            "The email address is already in use by another account."
+          ) {
+            toast.error("User already registered. Please login instead.");
+          } else {
+            toast.error(error.message || "Error completing registration.");
+          }
+        }
       } else {
         setLoading(false);
         setNoNetModal(true);
@@ -196,34 +181,10 @@ const OtpVerification = () => {
 
     // Retrieve email from local storage
     const storedEmail = window.localStorage.getItem("emailForRegistration");
-    setUserEmail(storedEmail);
 
     // Set the email value using setValues
     setValues((prevValues) => ({ ...prevValues, email: storedEmail }));
   }, []);
-
-  const resendOtp = async () => {
-    if (navigator.onLine) {
-      setLoading(true);
-      try {
-        const response = await SendOTP(values.email);
-        if (response.status === 200) {
-          toast.success(`OTP successfully resent to your email`);
-          setLoading(false);
-        } else {
-          setLoading(false);
-          toast.error(response.data?.error || "Error sending OTP");
-        }
-      } catch (error) {
-        setLoading(false);
-        toast.error(error.response?.data?.error || "Error sending OTP");
-        console.error("Error resending OTP:", error);
-      }
-    } else {
-      setLoading(false);
-      setNoNetModal(true);
-    }
-  };
 
   return (
     <div className="login-page">
@@ -292,53 +253,100 @@ const OtpVerification = () => {
                   </div>
                 )}
               </div>
-              <h1 className="login-title">Verify Your Email</h1>
-              <p className="login-subtitle">
-                Enter the OTP sent to {userEmail}
-              </p>
+              <h1 className="login-title">Complete Registration</h1>
+              <p className="login-subtitle">Create your account password</p>
             </div>
 
             <form className="login-form" onSubmit={handleSubmit}>
               <div className="form-group">
-                <OtpInput setValues={setValues} />
+                <label htmlFor="name">Full Name</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="name"
+                  name="name"
+                  value={values.name}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  placeholder="Enter your full name"
+                  autoComplete="off"
+                />
+                {errors.name && touched.name ? (
+                  <p className="error-message">{errors.name}</p>
+                ) : null}
               </div>
 
-              <div className="resend-otp">
-                Don't get the code?{" "}
-                <button
-                  type="button"
-                  className="resend-button"
-                  onClick={resendOtp}
-                  disabled={loading}
-                >
-                  Resend
-                </button>
+              <div className="form-group">
+                <label htmlFor="email">Email Address</label>
+                <input
+                  type="email"
+                  className="form-control"
+                  id="email"
+                  name="email"
+                  value={values.email}
+                  disabled
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="password">Password</label>
+                <input
+                  type="password"
+                  className="form-control"
+                  id="password"
+                  name="password"
+                  value={values.password}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  placeholder="Create a password"
+                  autoFocus
+                />
+                {errors.password && touched.password ? (
+                  <p className="error-message">{errors.password}</p>
+                ) : null}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="confim_password">Confirm Password</label>
+                <input
+                  type="password"
+                  className="form-control"
+                  id="confim_password"
+                  name="confim_password"
+                  value={values.confim_password}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  placeholder="Confirm your password"
+                />
+                {errors.confim_password && touched.confim_password ? (
+                  <p className="error-message">{errors.confim_password}</p>
+                ) : null}
               </div>
 
               <div className="form-actions">
                 <button
                   type="submit"
                   className="login-button"
-                  disabled={values.otp.length !== 6 || loading || isSubmitting}
+                  disabled={
+                    loading ||
+                    isSubmitting ||
+                    !values.name ||
+                    !values.email ||
+                    !values.password ||
+                    !values.confim_password
+                  }
                 >
-                  {loading ? <Spinner /> : "Verify OTP"}
+                  {loading ? <Spinner /> : "Complete Registration"}
                 </button>
-              </div>
-
-              <div className="form-footer">
-                <p className="register-link">
-                  Already have an account? <Link to="/login">Log in</Link>
-                </p>
               </div>
             </form>
           </div>
 
           <div className="login-info-section">
             <div className="login-info-content">
-              <h2>Email Verification</h2>
+              <h2>Almost There!</h2>
               <p className="info-description">
-                We've sent a verification code to your email to ensure account
-                security.
+                Just one more step to start investing and earning daily rewards.
               </p>
 
               <div className="platform-features">
@@ -347,8 +355,8 @@ const OtpVerification = () => {
                     <EthereumIcon size={24} />
                   </div>
                   <div className="feature-text">
-                    <h3>Secure Account</h3>
-                    <p>Your account security is our top priority</p>
+                    <h3>Daily Returns</h3>
+                    <p>Earn competitive daily interest on your investments</p>
                   </div>
                 </div>
 
@@ -378,10 +386,8 @@ const OtpVerification = () => {
                     </svg>
                   </div>
                   <div className="feature-text">
-                    <h3>Quick Verification</h3>
-                    <p>
-                      Complete verification in seconds to access your account
-                    </p>
+                    <h3>Fixed Deposit Plans</h3>
+                    <p>Multiple investment plans with guaranteed returns</p>
                   </div>
                 </div>
               </div>
@@ -399,4 +405,4 @@ const OtpVerification = () => {
   );
 };
 
-export default OtpVerification;
+export default RegisterComplete;
