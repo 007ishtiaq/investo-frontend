@@ -9,7 +9,7 @@ import Headerbottom from "./components/Header/Headerbottom";
 import Tasks from "./pages/Tasks";
 import Login from "./pages/Login/Login";
 import Registration from "./pages/Registration/Registration";
-// import OTPVerification from "./pages/OtpVerification/OtpVerification";
+import OTPVerification from "./pages/OtpVerification/OtpVerification";
 
 function App() {
   return (
@@ -22,7 +22,7 @@ function App() {
           <Route path="/tasks" component={Tasks} />
           <Route path="/login" component={Login} />
           <Route path="/register" component={Registration} />
-          {/* <Route path="/otpVerification" component={OTPVerification} /> */}
+          <Route path="/otpVerification" component={OTPVerification} />
 
           {/* <Route exact path="*" component={NotFound} /> */}
           <Route path="*" component={NotFound} />
