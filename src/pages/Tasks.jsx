@@ -160,15 +160,17 @@ const Tasks = () => {
     }
   };
 
-  // Load user's earned rewards
+  // In your frontend code
   const loadEarnings = async () => {
     if (!user || !user.token) return;
-
     try {
       const res = await getTasksEarnings(user.token);
-      setEarnings(res.data.totalEarnings);
+      console.log("Received earnings data:", res.data);
+      setEarnings(res.data.totalEarnings || 0);
     } catch (err) {
       console.error("Error loading earnings:", err);
+      // Set earnings to 0 or current value on error
+      setEarnings(0);
     }
   };
 
