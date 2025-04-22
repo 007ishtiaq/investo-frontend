@@ -19,6 +19,7 @@ import {
   startTask,
 } from "../functions/tasks";
 import "./Tasks.css";
+import { Camera, Upload } from "lucide-react"; // Make sure you have lucide-react
 
 /**
  * EmptyState component for displaying when no tasks match criteria
@@ -96,6 +97,8 @@ const Tasks = () => {
   const [earnings, setEarnings] = useState(0);
   const [error, setError] = useState("");
   const [isStartingTask, setIsStartingTask] = useState(false);
+  const [screenshot, setScreenshot] = useState(null);
+  const [screenshotPreview, setScreenshotPreview] = useState(null);
 
   // Task difficulty colors
   const difficultyColors = {
@@ -205,20 +208,68 @@ const Tasks = () => {
     }
   };
 
-  // Handle task verification
+  // Open task details
+  const openTaskDetails = (task) => {
+    setActiveTask(task);
+    setVerificationStatus("idle");
+    setError("");
+    setVerificationInput("");
+    setScreenshot(null);
+    setScreenshotPreview(null);
+  };
+
+  // Close task details
+  const closeTaskDetails = () => {
+    if (verificationStatus === "verifying") return; // Prevent closing during verification
+    setActiveTask(null);
+    setVerificationInput("");
+    setVerificationStatus("idle");
+    setError("");
+    setScreenshot(null);
+    setScreenshotPreview(null);
+  };
+
+  // Reset filter to show all tasks
+  const resetFilter = () => setFilterOption("all");
+
+  // Add this function to handle file selection
+  const handleScreenshotChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Preview the image
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setScreenshotPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+
+      // Store the file
+      setScreenshot(file);
+    }
+  };
+
+  // Add this function to convert the file to base64
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  // Update the verifyTask function to include screenshot
   const verifyTask = async (taskId) => {
     if (!user || !user.token) {
       toast.error("Please login to verify task completion.");
       return;
     }
-
     // Start verification process
     setVerificationStatus("verifying");
-
+    setError("");
     try {
       // Prepare verification data based on task type
       const verificationData = {};
-
       if (
         activeTask.type === "twitter_share" ||
         activeTask.type === "twitter_follow"
@@ -230,7 +281,20 @@ const Tasks = () => {
         verificationData.videoUrl = verificationInput;
       } else if (activeTask.type === "telegram_join") {
         verificationData.username = verificationInput;
+      } else if (activeTask.type === "screenshot") {
+        // For screenshot verification
+        if (!screenshot) {
+          setVerificationStatus("error");
+          setError("Please upload a screenshot to verify this task.");
+          toast.error("Please upload a screenshot to verify this task.");
+          return;
+        }
+
+        // Convert screenshot to base64
+        verificationData.screenshot = await fileToBase64(screenshot);
       }
+      // For logging purposes
+      console.log("Verifying task:", taskId);
 
       // Send verification request to API
       const res = await verifyTaskCompletion(
@@ -238,7 +302,7 @@ const Tasks = () => {
         verificationData,
         user.token
       );
-
+      console.log("Verification response:", res.data);
       if (res.data.success) {
         // Update local task state
         const updatedTasks = tasks.map((task) =>
@@ -246,21 +310,23 @@ const Tasks = () => {
             ? { ...task, completed: true, verified: true }
             : task
         );
-
         setTasks(updatedTasks);
         setVerificationStatus("complete");
-        toast.success(
-          `Task completed! +${activeTask.reward.toFixed(3)} ETH earned`
-        );
 
-        // Update earnings
+        const rewardAmount = activeTask.reward.toFixed(3);
+        toast.success(`Task completed! +${rewardAmount} ETH earned`);
+        // Update earnings immediately
         loadEarnings();
-
         // Reset after showing completion
         setTimeout(() => {
           setVerificationInput("");
+          setScreenshot(null);
+          setScreenshotPreview(null);
           setActiveTask(null);
           setVerificationStatus("idle");
+
+          // Refresh the full task list to ensure everything is up to date
+          loadTasks();
         }, 3000);
       } else {
         setVerificationStatus("error");
@@ -270,35 +336,17 @@ const Tasks = () => {
         );
       }
     } catch (err) {
+      console.error("Error verifying task:", err);
       setVerificationStatus("error");
+
       const errorMessage =
         err.response?.data?.message ||
         "Error verifying task. Please try again.";
+
       setError(errorMessage);
       toast.error(errorMessage);
-      console.error("Error verifying task:", err);
     }
   };
-
-  // Open task details
-  const openTaskDetails = (task) => {
-    setActiveTask(task);
-    setVerificationStatus("idle");
-    setError("");
-    setVerificationInput("");
-  };
-
-  // Close task details
-  const closeTaskDetails = () => {
-    if (verificationStatus === "verifying") return; // Prevent closing during verification
-    setActiveTask(null);
-    setVerificationInput("");
-    setVerificationStatus("idle");
-    setError("");
-  };
-
-  // Reset filter to show all tasks
-  const resetFilter = () => setFilterOption("all");
 
   // If not logged in, show login prompt
   if (!user) {
@@ -538,15 +586,33 @@ const Tasks = () => {
                 <div className="task-steps">
                   <h3>Steps to Complete:</h3>
                   <ol>
-                    {activeTask.steps.map((step, index) => (
-                      <li key={index}>{step}</li>
-                    ))}
+                    {activeTask.steps &&
+                      activeTask.steps.map((step, index) => (
+                        <li key={index}>{step}</li>
+                      ))}
+                    {!activeTask.steps &&
+                      activeTask.requirements &&
+                      activeTask.requirements.map((req, index) => (
+                        <li key={index}>{req}</li>
+                      ))}
                   </ol>
                 </div>
 
                 {activeTask.link && (
                   <a
                     href={activeTask.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="task-link-button"
+                  >
+                    <span>Go to Task</span>
+                    <ExternalLinkIcon size={16} />
+                  </a>
+                )}
+
+                {activeTask.externalUrl && (
+                  <a
+                    href={activeTask.externalUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="task-link-button"
@@ -574,79 +640,123 @@ const Tasks = () => {
                   </div>
                 )}
 
-                {!activeTask.completed &&
-                  activeTask.startedAt &&
-                  verificationStatus === "idle" && (
-                    <div className="verification-section">
-                      <h3>Verify Completion</h3>
+                {!activeTask.completed && activeTask.startedAt && (
+                  <div className="verification-section">
+                    {/* Screenshot upload for screenshot type tasks */}
+                    {activeTask.type === "screenshot" && (
+                      <div className="screenshot-upload-container">
+                        <h4>Upload Screenshot</h4>
+                        <p>
+                          {activeTask.screenshotInstructions ||
+                            "Take a screenshot showing you've completed this task and upload it here."}
+                        </p>
 
-                      {(activeTask.type === "twitter_share" ||
-                        activeTask.type === "twitter_follow" ||
-                        activeTask.type === "youtube_subscribe" ||
-                        activeTask.type === "youtube_watch" ||
-                        activeTask.type === "telegram_join") && (
-                        <div className="verification-input-group">
-                          <label>
-                            {activeTask.type === "twitter_share"
-                              ? "Tweet URL:"
-                              : activeTask.type === "twitter_follow"
-                              ? "Your Twitter Profile URL:"
-                              : activeTask.type === "youtube_subscribe"
-                              ? "Channel URL or Screenshot:"
+                        {screenshotPreview ? (
+                          <div className="screenshot-preview">
+                            <img
+                              src={screenshotPreview}
+                              alt="Screenshot preview"
+                            />
+                            <button
+                              className="remove-screenshot-button"
+                              onClick={() => {
+                                setScreenshot(null);
+                                setScreenshotPreview(null);
+                              }}
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="screenshot-upload-box">
+                            <input
+                              type="file"
+                              id="screenshot-upload"
+                              accept="image/*"
+                              onChange={handleScreenshotChange}
+                              style={{ display: "none" }}
+                            />
+                            <label
+                              htmlFor="screenshot-upload"
+                              className="upload-label"
+                            >
+                              <div className="upload-icon">
+                                <Camera size={24} />
+                              </div>
+                              <span>Click to upload screenshot</span>
+                            </label>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Text input for other task types */}
+                    {[
+                      "youtube_subscribe",
+                      "youtube_watch",
+                      "twitter_follow",
+                      "twitter_share",
+                      "telegram_join",
+                    ].includes(activeTask.type) && (
+                      <div className="verification-input-container">
+                        <label htmlFor="verification-input">
+                          {activeTask.type === "youtube_subscribe"
+                            ? "Enter Channel URL:"
+                            : activeTask.type === "youtube_watch"
+                            ? "Enter Video URL:"
+                            : activeTask.type.includes("twitter")
+                            ? "Enter Tweet URL:"
+                            : "Enter Telegram Username:"}
+                        </label>
+                        <input
+                          id="verification-input"
+                          type="text"
+                          value={verificationInput}
+                          onChange={(e) => setVerificationInput(e.target.value)}
+                          placeholder={
+                            activeTask.type === "youtube_subscribe"
+                              ? "https://youtube.com/channel/..."
                               : activeTask.type === "youtube_watch"
-                              ? "Video URL:"
-                              : "Your Telegram Username:"}
-                          </label>
-                          <input
-                            type="text"
-                            placeholder={
-                              activeTask.type === "twitter_share"
-                                ? "https://twitter.com/username/status/123456789"
-                                : activeTask.type === "twitter_follow"
-                                ? "https://twitter.com/yourusername"
-                                : activeTask.type === "youtube_subscribe"
-                                ? "https://youtube.com/channel/..."
-                                : activeTask.type === "youtube_watch"
-                                ? "https://youtube.com/watch?v=..."
-                                : "@yourusername"
-                            }
-                            value={verificationInput}
-                            onChange={(e) =>
-                              setVerificationInput(e.target.value)
-                            }
-                          />
-                        </div>
-                      )}
+                              ? "https://youtube.com/watch?v=..."
+                              : activeTask.type.includes("twitter")
+                              ? "https://twitter.com/..."
+                              : "@username"
+                          }
+                          disabled={verificationStatus === "verifying"}
+                        />
+                      </div>
+                    )}
 
-                      <button
-                        className="verify-button"
-                        onClick={() => verifyTask(activeTask._id)}
-                        disabled={
-                          activeTask.type !== "login" &&
-                          activeTask.type !== "profile" &&
-                          !verificationInput
-                        }
-                      >
-                        Verify Completion
-                      </button>
+                    <TaskVerificationProgress
+                      status={verificationStatus}
+                      error={error}
+                    />
 
-                      <p className="verification-note">
-                        Note: Verification may take a few moments. Please remain
-                        on this page.
-                      </p>
-                    </div>
-                  )}
-
-                {!activeTask.completed &&
-                  activeTask.startedAt &&
-                  verificationStatus !== "idle" && (
-                    <div className="verification-progress-container">
-                      <TaskVerificationProgress
-                        status={verificationStatus}
-                        error={error}
-                      />
-                    </div>
-                  )}
+                    <button
+                      className="verify-task-button"
+                      onClick={() => verifyTask(activeTask._id)}
+                      disabled={
+                        verificationStatus === "verifying" ||
+                        verificationStatus === "complete" ||
+                        ([
+                          "youtube_subscribe",
+                          "youtube_watch",
+                          "twitter_follow",
+                          "twitter_share",
+                          "telegram_join",
+                        ].includes(activeTask.type) &&
+                          !verificationInput) ||
+                        (activeTask.type === "screenshot" && !screenshot)
+                      }
+                    >
+                      {verificationStatus === "verifying"
+                        ? "Verifying..."
+                        : verificationStatus === "complete"
+                        ? "Verified!"
+                        : "Verify Completion"}
+                    </button>
+                  </div>
+                )}
 
                 {activeTask.completed && (
                   <div className="completion-message">
