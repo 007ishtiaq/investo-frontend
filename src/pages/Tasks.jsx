@@ -638,15 +638,14 @@ const Tasks = () => {
                 <div className="task-steps">
                   <h3>Steps to Complete:</h3>
                   <ol>
-                    {activeTask.steps &&
+                    {Array.isArray(activeTask.steps) &&
+                    activeTask.steps.length > 0 ? (
                       activeTask.steps.map((step, index) => (
                         <li key={index}>{step}</li>
-                      ))}
-                    {!activeTask.steps &&
-                      activeTask.requirements &&
-                      activeTask.requirements.map((req, index) => (
-                        <li key={index}>{req}</li>
-                      ))}
+                      ))
+                    ) : (
+                      <li>Complete this task to earn rewards.</li>
+                    )}
                   </ol>
                 </div>
 

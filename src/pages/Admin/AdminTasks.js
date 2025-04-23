@@ -97,13 +97,13 @@ const AdminTasks = () => {
     setFormValues({
       title: task.title,
       description: task.description,
-      steps: task.steps.length ? task.steps : [""],
+      steps: Array.isArray(task.steps) && task.steps.length ? task.steps : [""], // Fix here
       reward: task.reward,
       type: task.type,
       link: task.link || "",
       difficulty: task.difficulty,
       estimatedTime: task.estimatedTime,
-      active: task.active,
+      active: task.active !== undefined ? task.active : true,
     });
     setShowForm(true);
     window.scrollTo(0, 0);
