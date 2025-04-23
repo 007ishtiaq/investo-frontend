@@ -67,13 +67,13 @@ const TaskVerificationProgress = ({ status, error }) => {
           className={`progress-step ${status === "complete" ? "active" : ""}`}
         >
           <div className="step-dot"></div>
-          <div className="step-label">Complete</div>
+          <div className="step-label">Submitted</div>
         </div>
       </div>
       <div className="verification-message">
         {status === "idle" && "Ready to verify completion"}
         {status === "verifying" && "Verifying your task completion..."}
-        {status === "complete" && "Task successfully verified!"}
+        {status === "complete" && "Task Verification is Under Process!"}
         {status === "error" && error}
       </div>
     </div>
@@ -208,7 +208,19 @@ const Tasks = () => {
     try {
       await startTask(taskId, user.token);
       toast.success("Task started successfully!");
-      loadTasks(); // Reload tasks to update status
+
+      // Update the activeTask directly with startedAt property
+      setActiveTask((prevTask) => ({
+        ...prevTask,
+        startedAt: new Date(), // Add current date as startedAt
+      }));
+
+      // Also update the task in the tasks array
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task._id === taskId ? { ...task, startedAt: new Date() } : task
+        )
+      );
     } catch (err) {
       console.error("Error starting task:", err);
       toast.error("Failed to start task. Please try again.");
@@ -699,7 +711,7 @@ const Tasks = () => {
                   activeTask.status !== "pending_verification" &&
                   activeTask.startedAt &&
                   verificationStatus === "idle" && (
-                    <div className="verification-section">
+                    <div className="verification-section ">
                       {/* Screenshot upload for screenshot type tasks */}
                       {activeTask.type === "screenshot" && (
                         <div className="screenshot-upload-container">
