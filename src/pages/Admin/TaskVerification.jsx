@@ -16,6 +16,8 @@ const TaskVerification = () => {
   const [rejectionReason, setRejectionReason] = useState("");
   const [selectedTaskId, setSelectedTaskId] = useState(null);
   const [showRejectModal, setShowRejectModal] = useState(false);
+  const [imageModalOpen, setImageModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     loadPendingTasks();
@@ -67,6 +69,11 @@ const TaskVerification = () => {
     }
   };
 
+  const openImageModal = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    setImageModalOpen(true);
+  };
+
   return (
     <div className="task-verification-page">
       <div className="container">
@@ -86,7 +93,9 @@ const TaskVerification = () => {
                 <div className="submission-header">
                   <h3>{submission.taskId.title}</h3>
                   <span className="task-type">
-                    {submission.taskId.type.replace("_", " ")}
+                    {submission.taskId.type === "screenshot"
+                      ? "Screenshot"
+                      : submission.taskId.type.replace("_", " ")}
                   </span>
                 </div>
 
@@ -112,17 +121,63 @@ const TaskVerification = () => {
                     </span>
                   </div>
 
+                  {/* Display screenshot thumbnail if available */}
+                  {submission.taskId.type === "screenshot" &&
+                    submission.screenshot && (
+                      <div className="screenshot-preview">
+                        <h4>Screenshot Submission:</h4>
+                        <div className="screenshot-thumbnail-container">
+                          <img
+                            src={submission.screenshot}
+                            alt="Task Screenshot"
+                            className="screenshot-thumbnail"
+                            onClick={() =>
+                              openImageModal(submission.screenshot)
+                            }
+                          />
+                          <div className="click-hint">Click to enlarge</div>
+                        </div>
+                      </div>
+                    )}
+
+                  {/* Fallback to showing verification data if screenshot URL not available directly */}
+                  {submission.taskId.type === "screenshot" &&
+                    !submission.screenshot &&
+                    submission.verificationData &&
+                    submission.verificationData.screenshotUrl && (
+                      <div className="screenshot-preview">
+                        <h4>Screenshot Submission:</h4>
+                        <div className="screenshot-thumbnail-container">
+                          <img
+                            src={submission.verificationData.screenshotUrl}
+                            alt="Task Screenshot"
+                            className="screenshot-thumbnail"
+                            onClick={() =>
+                              openImageModal(
+                                submission.verificationData.screenshotUrl
+                              )
+                            }
+                          />
+                          <div className="click-hint">Click to enlarge</div>
+                        </div>
+                      </div>
+                    )}
+
+                  {/* Display other verification data except screenshot (which we're showing above) */}
                   {submission.verificationData && (
                     <div className="verification-data">
                       <h4>Verification Data:</h4>
-                      {Object.entries(submission.verificationData).map(
-                        ([key, value]) => (
+                      {Object.entries(submission.verificationData)
+                        .filter(
+                          ([key]) =>
+                            !["screenshot", "screenshotUrl"].includes(key)
+                        )
+                        .map(([key, value]) => (
                           <div key={key} className="verification-item">
                             <span className="label">{key}:</span>
                             <span className="value">{value}</span>
                           </div>
-                        )
-                      )}
+                        ))}
                     </div>
                   )}
                 </div>
@@ -147,9 +202,13 @@ const TaskVerification = () => {
         )}
       </div>
 
+      {/* Rejection Reason Modal */}
       {showRejectModal && (
-        <div className="modal-overlay">
-          <div className="rejection-modal">
+        <div
+          className="modal-overlay"
+          onClick={() => setShowRejectModal(false)}
+        >
+          <div className="rejection-modal" onClick={(e) => e.stopPropagation()}>
             <h3>Reject Task Submission</h3>
             <p>Please provide a reason for rejection:</p>
             <textarea
@@ -169,6 +228,31 @@ const TaskVerification = () => {
                 Confirm Rejection
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Image Zoom Modal */}
+      {imageModalOpen && selectedImage && (
+        <div
+          className="image-modal-overlay"
+          onClick={() => setImageModalOpen(false)}
+        >
+          <div
+            className="image-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="close-image-modal"
+              onClick={() => setImageModalOpen(false)}
+            >
+              ×
+            </button>
+            <img
+              src={selectedImage}
+              alt="Full size screenshot"
+              className="fullsize-image"
+            />
           </div>
         </div>
       )}

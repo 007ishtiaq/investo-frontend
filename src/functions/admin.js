@@ -50,30 +50,37 @@ export const getTaskCompletions = async (token) => {
 };
 
 // Add to your existing admin.js functions
-export const getPendingTasks = async (token) => {
-  return await axios.get(`${API_URL}/admin/tasks/pending`, {
+// Get pending verification tasks
+export const getPendingTasks = async (authToken) => {
+  return await axios.get(`${process.env.REACT_APP_API}/admin/tasks/pending`, {
     headers: {
-      authtoken: token,
+      authToken,
     },
   });
 };
 
-export const approveTask = async (userTaskId, token) => {
+// Approve a task
+export const approveTask = async (userTaskId, authToken) => {
   return await axios.post(
-    `${API_URL}/admin/tasks/approve/${userTaskId}`,
+    `${process.env.REACT_APP_API}/admin/tasks/${userTaskId}/approve`,
     {},
     {
       headers: {
-        authtoken: token,
+        authToken,
       },
     }
   );
 };
 
-export const rejectTask = async (userTaskId, data, token) => {
-  return await axios.post(`${API_URL}/admin/tasks/reject/${userTaskId}`, data, {
-    headers: {
-      authtoken: token,
-    },
-  });
+// Reject a task
+export const rejectTask = async (userTaskId, data, authToken) => {
+  return await axios.post(
+    `${process.env.REACT_APP_API}/admin/tasks/${userTaskId}/reject`,
+    data,
+    {
+      headers: {
+        authToken,
+      },
+    }
+  );
 };

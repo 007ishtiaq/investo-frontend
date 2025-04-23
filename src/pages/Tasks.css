@@ -747,6 +747,52 @@
   background-color: rgba(200, 0, 0, 0.8);
 }
 
+.pending-verification-badge {
+  display: flex;
+  align-items: center;
+  padding: 0.35rem 0.7rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background-color: rgba(var(--color-warning-rgb), 0.1);
+  color: var(--color-warning);
+}
+
+.pending-verification-badge svg {
+  margin-right: 0.25rem;
+}
+
+.task-completed-info {
+  text-align: center;
+  padding: 1.5rem;
+  background-color: rgba(var(--color-warning-rgb), 0.05);
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.pending-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: var(--color-warning);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+}
+
+.task-completed-info h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--color-warning);
+}
+
+.task-completed-info p {
+  color: var(--color-text);
+}
+
 @media (max-width: 768px) {
   .tasks-list {
     grid-template-columns: 1fr;
