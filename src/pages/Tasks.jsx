@@ -10,6 +10,7 @@ import {
   ExternalLinkIcon,
   EmptyBoxIcon,
   InfoIcon,
+  XIcon, // Add this for rejected tasks
 } from "../utils/icons";
 import {
   getUserTasks,
@@ -19,7 +20,7 @@ import {
   startTask,
 } from "../functions/tasks";
 import "./Tasks.css";
-import { Camera, Upload } from "lucide-react"; // Make sure you have lucide-react
+import { Camera, Upload, AlertTriangle } from "lucide-react"; // Make sure you have lucide-react
 
 /**
  * EmptyState component for displaying when no tasks match criteria
@@ -143,6 +144,7 @@ const Tasks = () => {
                 verified: userTask.verified,
                 startedAt: userTask.startedAt,
                 status: userTask.status, // Make sure this is returned from your API
+                rejectionReason: userTask.rejectionReason, // Add rejection reason
               };
             }
 
@@ -190,7 +192,12 @@ const Tasks = () => {
     if (filterOption === "all") return true;
     if (filterOption === "completed") return task.completed;
     if (filterOption === "pending")
-      return !task.completed && task.status !== "pending_verification";
+      return (
+        !task.completed &&
+        task.status !== "pending_verification" &&
+        task.status !== "rejected"
+      );
+    if (filterOption === "rejected") return task.status === "rejected";
     return true;
   });
 
@@ -543,6 +550,14 @@ const Tasks = () => {
             >
               Completed
             </button>
+            <button
+              className={`filter-option ${
+                filterOption === "rejected" ? "active" : ""
+              }`}
+              onClick={() => setFilterOption("rejected")}
+            >
+              Rejected
+            </button>
           </div>
         </div>
 
@@ -556,6 +571,8 @@ const Tasks = () => {
                   ? "You haven't completed any tasks yet."
                   : filterOption === "pending"
                   ? "No pending tasks found."
+                  : filterOption === "rejected"
+                  ? "You don't have any rejected tasks."
                   : "No tasks available at the moment."
               }
               filterOption={filterOption}
@@ -569,7 +586,7 @@ const Tasks = () => {
                   task.status === "pending_verification"
                     ? "pending-verification"
                     : ""
-                }`}
+                } ${task.status === "rejected" ? "rejected" : ""}`}
               >
                 <div className="task-status">
                   {task.completed ? (
@@ -582,6 +599,11 @@ const Tasks = () => {
                       <ClockIcon size={16} />
                       <span>Under Verification</span>
                     </div>
+                  ) : task.status === "rejected" ? (
+                    <div className="rejected-badge">
+                      <AlertTriangle size={16} />
+                      <span>Rejected</span>
+                    </div>
                   ) : (
                     <div className="reward-badge">
                       <EthereumIcon size={16} />
@@ -592,6 +614,15 @@ const Tasks = () => {
 
                 <h3 className="task-title">{task.title}</h3>
                 <p className="task-description">{task.description}</p>
+
+                {task.status === "rejected" && task.rejectionReason && (
+                  <div className="task-rejection-info">
+                    <div className="rejection-label">Reason for rejection:</div>
+                    <div className="rejection-reason">
+                      {task.rejectionReason}
+                    </div>
+                  </div>
+                )}
 
                 <div className="task-meta">
                   <div
@@ -616,6 +647,8 @@ const Tasks = () => {
                     ? "View Details"
                     : task.status === "pending_verification"
                     ? "View Progress"
+                    : task.status === "rejected"
+                    ? "View Details"
                     : "Complete Task"}
                 </button>
               </div>
@@ -646,6 +679,21 @@ const Tasks = () => {
                 <p className="task-full-description">
                   {activeTask.description}
                 </p>
+
+                {/* Show rejection reason if task was rejected */}
+                {activeTask.status === "rejected" &&
+                  activeTask.rejectionReason && (
+                    <div className="task-rejection-details">
+                      <h3>Task Rejected</h3>
+                      <p className="rejection-reason">
+                        <strong>Reason:</strong> {activeTask.rejectionReason}
+                      </p>
+                      <p className="rejection-note">
+                        You can start a new task to earn rewards. If you believe
+                        this was rejected in error, please contact support.
+                      </p>
+                    </div>
+                  )}
 
                 <div className="task-steps">
                   <h3>Steps to Complete:</h3>
@@ -685,9 +733,10 @@ const Tasks = () => {
                   </a>
                 )}
 
-                {/* FIX: Modified condition here to show the start button correctly */}
+                {/* Only show the start button for non-rejected tasks */}
                 {!activeTask.completed &&
                   activeTask.status !== "pending_verification" &&
+                  activeTask.status !== "rejected" &&
                   !activeTask.startedAt && (
                     <div className="start-task-section">
                       <button
@@ -700,168 +749,149 @@ const Tasks = () => {
                       <div className="task-info-note">
                         <InfoIcon size={16} />
                         <span>
-                          You need to start the task before verification
+                          Starting this task will allow you to submit
+                          verification when complete.
                         </span>
                       </div>
                     </div>
                   )}
 
-                {/* FIX: Modified condition here to show verification section correctly */}
+                {/* If task is completed, show completion info */}
+                {activeTask.completed && (
+                  <div className="task-completed-info">
+                    <div className="completed-status">
+                      <CheckIcon size={24} />
+                      <span>Task Completed</span>
+                    </div>
+                    <p>
+                      You've successfully completed this task and earned{" "}
+                      <strong>{activeTask.reward.toFixed(3)} ETH</strong>!
+                    </p>
+                  </div>
+                )}
+
+                {/* If task is under verification, show pending status */}
+                {activeTask.status === "pending_verification" && (
+                  <div className="task-pending-verification-info">
+                    <div className="pending-status">
+                      <ClockIcon size={24} />
+                      <span>Under Verification</span>
+                    </div>
+                    <p>
+                      Your task submission is under review by our team. You'll
+                      receive your reward once it's approved.
+                    </p>
+                  </div>
+                )}
+
+                {/* Show verification form for started but not completed tasks */}
                 {!activeTask.completed &&
                   activeTask.status !== "pending_verification" &&
-                  activeTask.startedAt &&
-                  verificationStatus === "idle" && (
-                    <div className="verification-section ">
-                      {/* Screenshot upload for screenshot type tasks */}
-                      {activeTask.type === "screenshot" && (
-                        <div className="screenshot-upload-container">
-                          <h4>Upload Screenshot</h4>
-                          <p>
-                            {activeTask.screenshotInstructions ||
-                              "Take a screenshot showing you've completed this task and upload it here."}
-                          </p>
+                  activeTask.status !== "rejected" &&
+                  activeTask.startedAt && (
+                    <>
+                      <div className="task-verification-section">
+                        <h3>Verify Task Completion</h3>
 
-                          {screenshotPreview ? (
-                            <div className="screenshot-preview">
-                              <img
-                                src={screenshotPreview}
-                                alt="Screenshot preview"
-                              />
-                              <button
-                                className="remove-screenshot-button"
-                                onClick={() => {
-                                  setScreenshot(null);
-                                  setScreenshotPreview(null);
-                                }}
-                              >
-                                Remove
-                              </button>
-                            </div>
-                          ) : (
-                            <div className="screenshot-upload-box">
-                              <input
-                                type="file"
-                                id="screenshot-upload"
-                                accept="image/*"
-                                onChange={handleScreenshotChange}
-                                style={{ display: "none" }}
-                              />
-                              <label
-                                htmlFor="screenshot-upload"
-                                className="upload-label"
-                              >
-                                <div className="upload-icon">
-                                  <Camera size={24} />
-                                </div>
-                                <span>Click to upload screenshot</span>
-                              </label>
-                            </div>
-                          )}
-                        </div>
-                      )}
+                        {activeTask.type === "screenshot" ? (
+                          // Screenshot upload form
+                          <div className="verification-section screenshot-upload">
+                            <label
+                              htmlFor="screenshot-upload"
+                              className="screenshot-label"
+                            >
+                              <Camera className="camera-icon" size={24} />
+                              <span>
+                                Upload a screenshot as proof of completion
+                              </span>
+                            </label>
+                            <input
+                              type="file"
+                              id="screenshot-upload"
+                              accept="image/*"
+                              onChange={handleScreenshotChange}
+                              className="hidden-file-input"
+                            />
 
-                      {/* Text input for other task types */}
-                      {[
-                        "youtube_subscribe",
-                        "youtube_watch",
-                        "twitter_follow",
-                        "twitter_share",
-                        "telegram_join",
-                      ].includes(activeTask.type) && (
-                        <div className="verification-input-container">
-                          <label htmlFor="verification-input">
-                            {activeTask.type === "youtube_subscribe"
-                              ? "Enter Channel URL:"
-                              : activeTask.type === "youtube_watch"
-                              ? "Enter Video URL:"
-                              : activeTask.type.includes("twitter")
-                              ? "Enter Tweet URL:"
-                              : "Enter Telegram Username:"}
-                          </label>
-                          <input
-                            id="verification-input"
-                            type="text"
-                            value={verificationInput}
-                            onChange={(e) =>
-                              setVerificationInput(e.target.value)
-                            }
-                            placeholder={
-                              activeTask.type === "youtube_subscribe"
-                                ? "https://youtube.com/channel/..."
+                            {screenshotPreview && (
+                              <div className="screenshot-preview-container">
+                                <img
+                                  src={screenshotPreview}
+                                  alt="Screenshot preview"
+                                  className="screenshot-preview-img"
+                                />
+                                <button
+                                  className="remove-screenshot-button"
+                                  onClick={() => {
+                                    setScreenshot(null);
+                                    setScreenshotPreview(null);
+                                  }}
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            )}
+
+                            <div className="screenshot-instructions">
+                              <p className="instructions-text">
+                                {activeTask.screenshotInstructions ||
+                                  "Take a screenshot showing you've completed the task. Make sure important details are clearly visible."}
+                              </p>
+                            </div>
+                          </div>
+                        ) : (
+                          // Regular verification input form
+                          <div className="verification-input-container">
+                            <label htmlFor="verification-input">
+                              {activeTask.type === "twitter_follow"
+                                ? "Enter your Twitter username:"
+                                : activeTask.type === "twitter_share"
+                                ? "Enter the URL of your tweet:"
+                                : activeTask.type === "youtube_subscribe"
+                                ? "Enter your YouTube username:"
                                 : activeTask.type === "youtube_watch"
-                                ? "https://youtube.com/watch?v=..."
-                                : activeTask.type.includes("twitter")
-                                ? "https://twitter.com/..."
-                                : "@username"
-                            }
-                            disabled={verificationStatus === "verifying"}
-                          />
-                        </div>
-                      )}
+                                ? "Enter your YouTube username:"
+                                : activeTask.type === "telegram_join"
+                                ? "Enter your Telegram username:"
+                                : "Enter verification details:"}
+                            </label>
+                            <input
+                              type="text"
+                              id="verification-input"
+                              value={verificationInput}
+                              onChange={(e) =>
+                                setVerificationInput(e.target.value)
+                              }
+                              placeholder="Enter verification details"
+                            />
+                          </div>
+                        )}
 
-                      <button
-                        className="verify-task-button"
-                        onClick={() => verifyTask(activeTask._id)}
-                        disabled={
-                          verificationStatus === "verifying" ||
-                          verificationStatus === "complete" ||
-                          ([
-                            "youtube_subscribe",
-                            "youtube_watch",
-                            "twitter_follow",
-                            "twitter_share",
-                            "telegram_join",
-                          ].includes(activeTask.type) &&
-                            !verificationInput) ||
-                          (activeTask.type === "screenshot" && !screenshot)
-                        }
-                      >
-                        {verificationStatus === "verifying"
-                          ? "Verifying..."
-                          : verificationStatus === "complete"
-                          ? "Verified!"
-                          : "Verify Completion"}
-                      </button>
-                    </div>
+                        <TaskVerificationProgress
+                          status={verificationStatus}
+                          error={error}
+                        />
+
+                        <button
+                          className="verify-task-button"
+                          onClick={() => verifyTask(activeTask._id)}
+                          disabled={
+                            verificationStatus === "verifying" ||
+                            verificationStatus === "complete" ||
+                            (activeTask.type === "screenshot" && !screenshot) ||
+                            (activeTask.type !== "screenshot" &&
+                              !verificationInput.trim())
+                          }
+                        >
+                          {verificationStatus === "verifying"
+                            ? "Verifying..."
+                            : verificationStatus === "complete"
+                            ? "Verified"
+                            : "Verify Completion"}
+                        </button>
+                      </div>
+                    </>
                   )}
-
-                {!activeTask.completed &&
-                  activeTask.startedAt &&
-                  verificationStatus !== "idle" && (
-                    <div className="verification-progress-container">
-                      <TaskVerificationProgress
-                        status={verificationStatus}
-                        error={error}
-                      />
-                    </div>
-                  )}
-
-                {activeTask.status === "pending_verification" && (
-                  <div className="task-completed-info">
-                    <div className="pending-icon">
-                      <ClockIcon size={32} />
-                    </div>
-                    <h3>Under Verification</h3>
-                    <p>
-                      Your screenshot has been submitted and is pending review
-                      by our team. You'll receive your reward once it's
-                      approved.
-                    </p>
-                  </div>
-                )}
-
-                {activeTask.completed && (
-                  <div className="completion-message">
-                    <div className="completion-icon">
-                      <CheckIcon size={32} />
-                    </div>
-                    <h3>Task Completed!</h3>
-                    <p>
-                      You've successfully completed this task and earned the
-                      reward.
-                    </p>
-                  </div>
-                )}
               </div>
             </div>
           </div>

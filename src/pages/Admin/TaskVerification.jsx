@@ -31,32 +31,16 @@ const TaskVerification = () => {
         setLoading(true);
         setError("");
         const res = await getPendingTasks(user.token);
+        console.log("API response:", res.data);
 
         // Only update state if component is still mounted
         if (isMounted) {
-          // Filter out tasks that don't have valid taskId or userId objects
-          const validTasks = res.data.filter(
-            (task) =>
-              task.taskId &&
-              typeof task.taskId === "object" &&
-              task.userId &&
-              typeof task.userId === "object"
-          );
-
-          setPendingTasks(validTasks);
+          const allTasks = res.data || [];
+          setPendingTasks(allTasks);
 
           // Group tasks by user
-          const groupedByUser = groupTasksByUser(validTasks);
+          const groupedByUser = groupTasksByUser(allTasks);
           setUserGroups(groupedByUser);
-
-          // Show warning if some tasks were filtered out
-          if (validTasks.length < res.data.length) {
-            console.warn(
-              `Filtered out ${
-                res.data.length - validTasks.length
-              } invalid tasks`
-            );
-          }
 
           setLoading(false);
         }
@@ -82,30 +66,57 @@ const TaskVerification = () => {
     };
   }, [user]); // Depend on user to rerun when user changes
 
-  // Group tasks by user
+  // Extract user ID from task
+  const getUserId = (task) => {
+    // Handle if userId is an object with _id or a string directly
+    if (task.userId) {
+      if (typeof task.userId === "object" && task.userId._id) {
+        return task.userId._id;
+      }
+      if (typeof task.userId === "string") {
+        return task.userId;
+      }
+      // If it's an object with $oid (MongoDB format)
+      if (typeof task.userId === "object" && task.userId.$oid) {
+        return task.userId.$oid;
+      }
+    }
+    return null;
+  };
+
+  // Group tasks by user with better error handling
   const groupTasksByUser = (tasks) => {
     const groupedTasks = {};
 
     tasks.forEach((task) => {
-      const userId = task.userId?._id || task.userId;
+      const userId = getUserId(task);
       if (!userId) return;
+
+      // Get user info
+      let userInfo = task.userId;
+      if (typeof userInfo !== "object" || !userInfo.name) {
+        userInfo = { _id: userId, id: userId };
+      }
 
       if (!groupedTasks[userId]) {
         groupedTasks[userId] = {
-          user: task.userId,
+          user: userInfo,
           tasks: [],
           stats: {
             pending: 0,
             underVerification: 0,
             completed: 0,
+            rejected: 0, // Add rejected stat
           },
         };
       }
 
       groupedTasks[userId].tasks.push(task);
 
-      // Update stats
-      if (task.status === "pending_verification") {
+      // Update stats based on task status
+      if (task.status === "rejected") {
+        groupedTasks[userId].stats.rejected++;
+      } else if (task.status === "pending_verification") {
         groupedTasks[userId].stats.underVerification++;
       } else if (task.completed) {
         groupedTasks[userId].stats.completed++;
@@ -123,20 +134,14 @@ const TaskVerification = () => {
       setLoading(true);
       setError("");
       const res = await getPendingTasks(user.token);
+      console.log("Refreshed API response:", res.data);
 
-      // Filter out tasks that don't have valid taskId or userId objects
-      const validTasks = res.data.filter(
-        (task) =>
-          task.taskId &&
-          typeof task.taskId === "object" &&
-          task.userId &&
-          typeof task.userId === "object"
-      );
-
-      setPendingTasks(validTasks);
+      // Set all tasks that have come from API
+      const allTasks = res.data || [];
+      setPendingTasks(allTasks);
 
       // Group tasks by user
-      const groupedByUser = groupTasksByUser(validTasks);
+      const groupedByUser = groupTasksByUser(allTasks);
       setUserGroups(groupedByUser);
 
       setLoading(false);
@@ -212,6 +217,44 @@ const TaskVerification = () => {
       await rejectTask(selectedTaskId, { rejectionReason }, user.token);
       toast.success("Task rejected");
       setShowRejectModal(false);
+
+      // Update the local state to immediately reflect the change
+      if (selectedUser) {
+        // 1. Update the task status in the selected user's tasks
+        const updatedUserTasks = selectedUser.tasks.filter(
+          (task) => task._id !== selectedTaskId
+        );
+
+        // 2. Update the stats
+        const updatedStats = {
+          ...selectedUser.stats,
+          underVerification: selectedUser.stats.underVerification - 1,
+          rejected: selectedUser.stats.rejected + 1,
+        };
+
+        // 3. Update the selected user state
+        setSelectedUser({
+          ...selectedUser,
+          tasks: updatedUserTasks,
+          stats: updatedStats,
+        });
+
+        // 4. Update the user in the userGroups array
+        const updatedUserGroups = userGroups.map((group) => {
+          if (group.user._id === selectedUser.user._id) {
+            return {
+              ...group,
+              tasks: updatedUserTasks,
+              stats: updatedStats,
+            };
+          }
+          return group;
+        });
+
+        setUserGroups(updatedUserGroups);
+      }
+
+      // Also refresh data from the server to ensure consistency
       loadPendingTasks();
     } catch (error) {
       console.error("Error rejecting task:", error);
@@ -230,6 +273,37 @@ const TaskVerification = () => {
 
   const backToUsers = () => {
     setSelectedUser(null);
+  };
+
+  // Extract screenshot URL from task
+  const getScreenshotUrl = (task) => {
+    if (task.screenshot) {
+      return task.screenshot;
+    }
+
+    if (task.verificationData && task.verificationData.screenshotUrl) {
+      return task.verificationData.screenshotUrl;
+    }
+
+    return null;
+  };
+
+  // Extract task details safely
+  const getTaskDetails = (task) => {
+    const taskId = task.taskId;
+    let title = "Unknown Task";
+    let type = "Unknown Type";
+    let reward = task.reward || 0;
+
+    if (taskId) {
+      if (typeof taskId === "object") {
+        title = taskId.title || "Unknown Task";
+        type = taskId.type || "Unknown Type";
+        reward = taskId.reward || reward;
+      }
+    }
+
+    return { title, type, reward };
   };
 
   if (!user || !user.token) {
@@ -287,15 +361,23 @@ const TaskVerification = () => {
               <div className="users-grid">
                 {userGroups.map((userGroup) => (
                   <div
-                    key={userGroup.user._id}
+                    key={userGroup.user._id || userGroup.user.id}
                     className="user-card"
                     onClick={() => selectUser(userGroup)}
                   >
                     <div className="user-card-header">
-                      <h3>{userGroup.user.name || "Unknown User"}</h3>
-                      <span className="user-email">
-                        {userGroup.user.email || "No Email"}
-                      </span>
+                      {userGroup.user.name ? (
+                        <>
+                          <h3>{userGroup.user.name}</h3>
+                          <span className="user-email">
+                            {userGroup.user.email || "No Email"}
+                          </span>
+                        </>
+                      ) : (
+                        <h3>
+                          User ID: {userGroup.user._id || userGroup.user.id}
+                        </h3>
+                      )}
                     </div>
 
                     <div className="task-stats">
@@ -316,6 +398,12 @@ const TaskVerification = () => {
                           {userGroup.stats.completed}
                         </span>
                         <span className="stat-label">Completed</span>
+                      </div>
+                      <div className="stat-badge rejected">
+                        <span className="stat-count">
+                          {userGroup.stats.rejected}
+                        </span>
+                        <span className="stat-label">Rejected</span>
                       </div>
                     </div>
 
@@ -364,10 +452,18 @@ const TaskVerification = () => {
                 Back to Users
               </button>
               <div className="user-info">
-                <h2>{selectedUser.user.name || "Unknown User"}</h2>
-                <span className="user-email">
-                  {selectedUser.user.email || "No Email"}
-                </span>
+                {selectedUser.user.name ? (
+                  <>
+                    <h2>{selectedUser.user.name}</h2>
+                    <span className="user-email">
+                      {selectedUser.user.email || "No Email"}
+                    </span>
+                  </>
+                ) : (
+                  <h2>
+                    User ID: {selectedUser.user._id || selectedUser.user.id}
+                  </h2>
+                )}
               </div>
             </div>
 
@@ -388,141 +484,132 @@ const TaskVerification = () => {
                 </span>
                 <span className="stat-label">Completed</span>
               </div>
+              <div className="stat-badge rejected">
+                <span className="stat-count">
+                  {selectedUser.stats.rejected}
+                </span>
+                <span className="stat-label">Rejected</span>
+              </div>
             </div>
 
             <div className="pending-tasks-list">
-              {selectedUser.tasks.map((submission) => (
-                <div key={submission._id} className="task-submission-card">
-                  <div className="submission-header">
-                    <h3>{submission.taskId?.title || "Unknown Task"}</h3>
-                    <span className="task-type">
-                      {submission.taskId?.type === "screenshot"
-                        ? "Screenshot"
-                        : submission.taskId?.type?.replace("_", " ") ||
-                          "Unknown Type"}
-                    </span>
-                  </div>
+              {selectedUser.tasks.map((submission) => {
+                const { title, type, reward } = getTaskDetails(submission);
+                const screenshotUrl = getScreenshotUrl(submission);
 
-                  <div className="submission-details">
-                    <div className="detail-row">
-                      <span className="label">Submitted on:</span>
-                      <span className="value">
-                        {submission.createdAt
-                          ? new Date(submission.createdAt).toLocaleString()
-                          : "Unknown date"}
+                return (
+                  <div key={submission._id} className="task-submission-card">
+                    <div className="submission-header">
+                      <h3>{title}</h3>
+                      <span className="task-type">
+                        {type === "screenshot"
+                          ? "Screenshot"
+                          : type.replace("_", " ")}
                       </span>
                     </div>
 
-                    <div className="detail-row">
-                      <span className="label">Status:</span>
-                      <span
-                        className={`value status-badge ${submission.status}`}
-                      >
-                        {submission.status === "pending_verification"
-                          ? "Under Verification"
-                          : submission.completed
-                          ? "Completed"
-                          : "Pending"}
-                      </span>
-                    </div>
+                    <div className="submission-details">
+                      <div className="detail-row">
+                        <span className="label">Submitted on:</span>
+                        <span className="value">
+                          {submission.createdAt
+                            ? new Date(submission.createdAt).toLocaleString()
+                            : "Unknown date"}
+                        </span>
+                      </div>
 
-                    <div className="detail-row">
-                      <span className="label">Reward:</span>
-                      <span className="value reward">
-                        {(
-                          submission.taskId?.reward ||
-                          submission.reward ||
-                          0
-                        ).toFixed(3)}{" "}
-                        ETH
-                      </span>
-                    </div>
+                      <div className="detail-row">
+                        <span className="label">Status:</span>
+                        <span
+                          className={`value status-badge ${submission.status}`}
+                        >
+                          {submission.status === "pending_verification"
+                            ? "Under Verification"
+                            : submission.status === "rejected"
+                            ? "Rejected"
+                            : submission.completed
+                            ? "Completed"
+                            : "Pending"}
+                        </span>
+                      </div>
 
-                    {/* Display screenshot thumbnail if available */}
-                    {(submission.taskId?.type === "screenshot" ||
-                      !submission.taskId?.type) &&
-                      submission.screenshot && (
+                      {/* Display rejection reason if task was rejected */}
+                      {submission.status === "rejected" &&
+                        submission.rejectionReason && (
+                          <div className="detail-row rejection-reason">
+                            <span className="label">Rejection Reason:</span>
+                            <span className="value">
+                              {submission.rejectionReason}
+                            </span>
+                          </div>
+                        )}
+
+                      <div className="detail-row">
+                        <span className="label">Reward:</span>
+                        <span className="value reward">
+                          {reward.toFixed(3)} ETH
+                        </span>
+                      </div>
+
+                      {/* Display screenshot thumbnail if available */}
+                      {screenshotUrl && (
                         <div className="screenshot-preview">
                           <h4>Screenshot Submission:</h4>
                           <div className="screenshot-thumbnail-container">
                             <img
-                              src={submission.screenshot}
+                              src={screenshotUrl}
                               alt="Task Screenshot"
                               className="screenshot-thumbnail"
-                              onClick={() =>
-                                openImageModal(submission.screenshot)
-                              }
+                              onClick={() => openImageModal(screenshotUrl)}
                             />
                             <div className="click-hint">Click to enlarge</div>
                           </div>
                         </div>
                       )}
 
-                    {/* Fallback to showing verification data if screenshot URL not available directly */}
-                    {(submission.taskId?.type === "screenshot" ||
-                      !submission.taskId?.type) &&
-                      !submission.screenshot &&
-                      submission.verificationData &&
-                      submission.verificationData.screenshotUrl && (
-                        <div className="screenshot-preview">
-                          <h4>Screenshot Submission:</h4>
-                          <div className="screenshot-thumbnail-container">
-                            <img
-                              src={submission.verificationData.screenshotUrl}
-                              alt="Task Screenshot"
-                              className="screenshot-thumbnail"
-                              onClick={() =>
-                                openImageModal(
-                                  submission.verificationData.screenshotUrl
-                                )
-                              }
-                            />
-                            <div className="click-hint">Click to enlarge</div>
-                          </div>
+                      {/* Display other verification data except screenshot (which we're showing above) */}
+                      {submission.verificationData && (
+                        <div className="verification-data">
+                          <h4>Verification Data:</h4>
+                          {Object.entries(submission.verificationData)
+                            .filter(
+                              ([key]) =>
+                                !["screenshot", "screenshotUrl"].includes(key)
+                            )
+                            .map(([key, value]) => (
+                              <div key={key} className="verification-item">
+                                <span className="label">{key}:</span>
+                                <span className="value">
+                                  {typeof value === "string" &&
+                                  value.length < 100
+                                    ? value
+                                    : "[Data too large to display]"}
+                                </span>
+                              </div>
+                            ))}
                         </div>
                       )}
+                    </div>
 
-                    {/* Display other verification data except screenshot (which we're showing above) */}
-                    {submission.verificationData && (
-                      <div className="verification-data">
-                        <h4>Verification Data:</h4>
-                        {Object.entries(submission.verificationData)
-                          .filter(
-                            ([key]) =>
-                              !["screenshot", "screenshotUrl"].includes(key)
-                          )
-                          .map(([key, value]) => (
-                            <div key={key} className="verification-item">
-                              <span className="label">{key}:</span>
-                              <span className="value">
-                                {typeof value === "string"
-                                  ? value
-                                  : JSON.stringify(value)}
-                              </span>
-                            </div>
-                          ))}
+                    {submission.status === "pending_verification" && (
+                      <div className="submission-actions">
+                        <button
+                          className="approve-button"
+                          onClick={() => handleApprove(submission._id)}
+                        >
+                          Approve & Issue Reward
+                        </button>
+                        <button
+                          className="reject-button"
+                          onClick={() => openRejectModal(submission._id)}
+                        >
+                          Reject
+                        </button>
                       </div>
                     )}
                   </div>
-
-                  {submission.status === "pending_verification" && (
-                    <div className="submission-actions">
-                      <button
-                        className="approve-button"
-                        onClick={() => handleApprove(submission._id)}
-                      >
-                        Approve & Issue Reward
-                      </button>
-                      <button
-                        className="reject-button"
-                        onClick={() => openRejectModal(submission._id)}
-                      >
-                        Reject
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ))}
+                );
+              })}
             </div>
           </>
         )}

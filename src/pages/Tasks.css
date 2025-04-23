@@ -855,6 +855,62 @@
   animation: spin 1s infinite linear;
 }
 
+/* Rejected task styling */
+.task-card.rejected {
+  border-left: 4px solid #ff4757;
+}
+
+.rejected-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background-color: #ff4757;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.task-rejection-info {
+  margin: 10px 0;
+  padding: 12px;
+  background-color: #ffe6e6;
+  border-radius: 8px;
+  border-left: 4px solid #ff4757;
+}
+
+.rejection-label {
+  font-weight: bold;
+  color: #ff4757;
+  margin-bottom: 4px;
+}
+
+.rejection-reason {
+  font-size: 0.9rem;
+  color: #444;
+}
+
+.task-rejection-details {
+  background-color: #ffe6e6;
+  border-radius: 8px;
+  padding: 15px;
+  margin: 15px 0;
+  border-left: 4px solid #ff4757;
+}
+
+.task-rejection-details h3 {
+  color: #ff4757;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.rejection-note {
+  font-style: italic;
+  margin-top: 10px;
+  color: #666;
+}
+
 @keyframes spin {
   from {
     transform: rotate(0deg);

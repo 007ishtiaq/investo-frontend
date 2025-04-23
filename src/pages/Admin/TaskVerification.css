@@ -825,7 +825,43 @@ h1 {
   border-radius: 6px;
   margin-bottom: 1.5rem;
 }
+.stat-badge.rejected {
+  background-color: #ff4757;
+  color: white;
+}
 
+.status-badge.rejected {
+  background-color: #ff4757;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.rejection-reason {
+  margin-top: 10px;
+  background-color: #ffe6e6;
+  padding: 10px;
+  border-radius: 4px;
+  border-left: 3px solid #ff4757;
+}
+.task-rejection-info {
+  margin-top: 10px;
+  background-color: #ffe6e6;
+  padding: 12px;
+  border-radius: 8px;
+  border-left: 4px solid #ff4757;
+}
+
+.rejection-label {
+  font-weight: bold;
+  color: #ff4757;
+  margin-bottom: 4px;
+}
+
+.rejection-reason {
+  font-size: 0.9rem;
+  color: #444;
+}
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .users-grid {
