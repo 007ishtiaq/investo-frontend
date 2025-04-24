@@ -20,6 +20,9 @@ const Header = () => {
     history.push("/login");
   };
 
+  // Determine dashboard path based on user role
+  const dashboardPath = user && user.role === "admin" ? "/admin" : "/user";
+
   return (
     <header className="header">
       <div className="header-content container">
@@ -36,7 +39,7 @@ const Header = () => {
         {/* Navigation */}
         {!isMobile && (
           <nav className="main-nav">
-            <Link to="/dashboard" className="nav-link">
+            <Link to={dashboardPath} className="nav-link">
               Dashboard
             </Link>
             <Link to="/tasks" className="nav-link">

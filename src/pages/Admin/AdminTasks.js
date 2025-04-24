@@ -16,16 +16,19 @@ const AdminTasks = () => {
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
+  // In the initial state and reset form:
   const [formValues, setFormValues] = useState({
     title: "",
     description: "",
     steps: [""],
     reward: 0.001,
     type: "custom",
-    link: "",
+    externalUrl: "", // Change from link to externalUrl
     difficulty: "easy",
     estimatedTime: "5 min",
     active: true,
+    screenshotInstructions: "",
+    screenshotRequired: false, // Add this field
   });
 
   useEffect(() => {
@@ -77,10 +80,12 @@ const AdminTasks = () => {
       steps: [""],
       reward: 0.001,
       type: "custom",
-      link: "",
+      externalUrl: "", // Change from link to externalUrl
       difficulty: "easy",
       estimatedTime: "5 min",
       active: true,
+      screenshotInstructions: "",
+      screenshotRequired: false, // Add this field
     });
     setEditingTask(null);
   };
@@ -92,18 +97,21 @@ const AdminTasks = () => {
     }
   };
 
+  // In the handleEditTask function:
   const handleEditTask = (task) => {
     setEditingTask(task);
     setFormValues({
       title: task.title,
       description: task.description,
-      steps: Array.isArray(task.steps) && task.steps.length ? task.steps : [""], // Fix here
+      steps: Array.isArray(task.steps) && task.steps.length ? task.steps : [""],
       reward: task.reward,
       type: task.type,
-      link: task.link || "",
+      externalUrl: task.externalUrl || "", // Change from link to externalUrl
       difficulty: task.difficulty,
       estimatedTime: task.estimatedTime,
       active: task.active !== undefined ? task.active : true,
+      screenshotInstructions: task.screenshotInstructions || "",
+      screenshotRequired: task.screenshotRequired || false, // Add this field
     });
     setShowForm(true);
     window.scrollTo(0, 0);
@@ -209,7 +217,6 @@ const AdminTasks = () => {
                   required
                 />
               </div>
-
               <div className="form-group">
                 <label htmlFor="description">Description*</label>
                 <textarea
@@ -222,7 +229,6 @@ const AdminTasks = () => {
                   required
                 />
               </div>
-
               <div className="form-group">
                 <label>Steps to Complete*</label>
                 {formValues.steps.map((step, index) => (
@@ -252,7 +258,6 @@ const AdminTasks = () => {
                   + Add Step
                 </button>
               </div>
-
               <div className="form-row">
                 <div className="form-group">
                   <label htmlFor="reward">Reward (ETH)*</label>
@@ -282,25 +287,54 @@ const AdminTasks = () => {
                     <option value="youtube_subscribe">YouTube Subscribe</option>
                     <option value="youtube_watch">YouTube Watch</option>
                     <option value="telegram_join">Telegram Join</option>
+                    <option value="screenshot">Screenshot</option>
                     <option value="login">Login</option>
                     <option value="profile">Profile Update</option>
                     <option value="custom">Custom</option>
                   </select>
                 </div>
               </div>
+              {formValues.type === "screenshot" && (
+                <>
+                  <div className="form-group">
+                    <label htmlFor="screenshotInstructions">
+                      Screenshot Instructions
+                    </label>
+                    <textarea
+                      id="screenshotInstructions"
+                      name="screenshotInstructions"
+                      value={formValues.screenshotInstructions || ""}
+                      onChange={handleChange}
+                      placeholder="Enter specific instructions for taking the screenshot (what to include, etc.)"
+                      rows="3"
+                    />
+                  </div>
+
+                  <div className="form-group checkbox-group">
+                    <label>
+                      <input
+                        type="checkbox"
+                        name="screenshotRequired"
+                        checked={formValues.screenshotRequired}
+                        onChange={handleChange}
+                      />
+                      Screenshot Required for Verification
+                    </label>
+                  </div>
+                </>
+              )}
 
               <div className="form-group">
-                <label htmlFor="link">External Link (optional)</label>
+                <label htmlFor="externalUrl">External URL (optional)</label>
                 <input
                   type="url"
-                  id="link"
-                  name="link"
-                  value={formValues.link}
+                  id="externalUrl"
+                  name="externalUrl"
+                  value={formValues.externalUrl}
                   onChange={handleChange}
                   placeholder="https://example.com"
                 />
               </div>
-
               <div className="form-row">
                 <div className="form-group">
                   <label htmlFor="difficulty">Difficulty*</label>
@@ -330,7 +364,6 @@ const AdminTasks = () => {
                   />
                 </div>
               </div>
-
               <div className="form-group checkbox-group">
                 <label>
                   <input
@@ -342,7 +375,6 @@ const AdminTasks = () => {
                   Active (visible to users)
                 </label>
               </div>
-
               <div className="form-actions">
                 <button
                   type="button"

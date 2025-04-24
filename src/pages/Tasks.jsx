@@ -311,6 +311,16 @@ const Tasks = () => {
         verificationData.username = verificationInput;
       } else if (activeTask.type === "screenshot") {
         // For screenshot verification
+        if (
+          !screenshot &&
+          (activeTask.screenshotRequired || activeTask.type === "screenshot")
+        ) {
+          setVerificationStatus("error");
+          setError("Please upload a screenshot to verify this task.");
+          toast.error("Please upload a screenshot to verify this task.");
+          return;
+        }
+        // For screenshot verification
         if (!screenshot) {
           setVerificationStatus("error");
           setError("Please upload a screenshot to verify this task.");
@@ -709,6 +719,27 @@ const Tasks = () => {
                   </ol>
                 </div>
 
+                {/* Show screenshot instructions for screenshot tasks */}
+                {activeTask.type === "screenshot" && (
+                  <div className="screenshot-instructions">
+                    {/* Display custom screenshot instructions if they exist, otherwise use default */}
+                    <p className="instructions-text">
+                      {activeTask.screenshotInstructions
+                        ? activeTask.screenshotInstructions
+                        : "Take a screenshot showing you've completed the task. Make sure important details are clearly visible."}
+                    </p>
+                    {/* Show required indicator if screenshot is required */}
+                    {activeTask.screenshotRequired && (
+                      <div className="screenshot-required-notice">
+                        <AlertTriangle size={14} className="required-icon" />
+                        <span>
+                          A screenshot is required to verify this task
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {activeTask.link && (
                   <a
                     href={activeTask.link}
@@ -795,7 +826,7 @@ const Tasks = () => {
 
                         {activeTask.type === "screenshot" ? (
                           // Screenshot upload form
-                          <div className="verification-section screenshot-upload">
+                          <div className="verification-section screenshot-upload screenshot-upload-container">
                             <label
                               htmlFor="screenshot-upload"
                               className="screenshot-label"
@@ -812,7 +843,6 @@ const Tasks = () => {
                               onChange={handleScreenshotChange}
                               className="hidden-file-input"
                             />
-
                             {screenshotPreview && (
                               <div className="screenshot-preview-container">
                                 <img
@@ -831,13 +861,6 @@ const Tasks = () => {
                                 </button>
                               </div>
                             )}
-
-                            <div className="screenshot-instructions">
-                              <p className="instructions-text">
-                                {activeTask.screenshotInstructions ||
-                                  "Take a screenshot showing you've completed the task. Make sure important details are clearly visible."}
-                              </p>
-                            </div>
                           </div>
                         ) : (
                           // Regular verification input form

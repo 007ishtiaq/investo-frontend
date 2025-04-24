@@ -32,7 +32,7 @@ function App() {
           {/* Admin routes */}
           <Route path="/admin" exact component={AdminDashboard} />
           <Route path="/admin/tasks" component={AdminTasks} />
-          <Route path="/admin/tasksvarification" component={TaskVerification} />
+          <Route path="/admin/taskverification" component={TaskVerification} />
 
           {/* <Route exact path="*" component={NotFound} /> */}
           <Route path="*" component={NotFound} />

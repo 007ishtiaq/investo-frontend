@@ -877,7 +877,6 @@
   padding: 12px;
   background-color: #ffe6e6;
   border-radius: 8px;
-  border-left: 4px solid #ff4757;
 }
 
 .rejection-label {
@@ -909,6 +908,38 @@
   font-style: italic;
   margin-top: 10px;
   color: #666;
+}
+
+/* Add this to your Tasks.css file */
+.screenshot-instructions {
+  margin: 15px 0;
+  padding: 15px;
+  background-color: #f5f7fa;
+  border-radius: 8px;
+  border-left: 4px solid var(--color-primary);
+}
+
+.instructions-text {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #444;
+}
+
+.screenshot-required-notice {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  padding: 8px 12px;
+  background-color: #fff3e0;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: #e65100;
+}
+
+.required-icon {
+  margin-right: 8px;
+  color: #e65100;
 }
 
 @keyframes spin {
