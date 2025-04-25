@@ -1,5 +1,5 @@
 // client/src/pages/Tasks.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast, Toaster } from "react-hot-toast";
@@ -10,7 +10,7 @@ import {
   ExternalLinkIcon,
   EmptyBoxIcon,
   InfoIcon,
-  XIcon, // Add this for rejected tasks
+  XIcon, // For rejected tasks
 } from "../utils/icons";
 import {
   getUserTasks,
@@ -20,7 +20,7 @@ import {
   startTask,
 } from "../functions/tasks";
 import "./Tasks.css";
-import { Camera, Upload, AlertTriangle } from "lucide-react"; // Make sure you have lucide-react
+import { Camera, Upload, AlertTriangle } from "lucide-react";
 
 /**
  * EmptyState component for displaying when no tasks match criteria
@@ -36,50 +36,6 @@ const EmptyState = ({ message, filterOption, onReset }) => (
     )}
   </div>
 );
-
-/**
- * TaskVerificationProgress component for task verification steps
- */
-const TaskVerificationProgress = ({ status, error }) => {
-  return (
-    <div className="verification-progress">
-      <div className="progress-indicators">
-        <div className={`progress-step ${status !== "idle" ? "active" : ""}`}>
-          <div className="step-dot"></div>
-          <div className="step-label">Submitting</div>
-        </div>
-        <div
-          className={`progress-line ${status !== "idle" ? "active" : ""}`}
-        ></div>
-        <div
-          className={`progress-step ${
-            status === "verifying" || status === "complete" ? "active" : ""
-          }`}
-        >
-          <div className="step-dot"></div>
-          <div className="step-label">Verifying</div>
-        </div>
-        <div
-          className={`progress-line ${
-            status === "verifying" || status === "complete" ? "active" : ""
-          }`}
-        ></div>
-        <div
-          className={`progress-step ${status === "complete" ? "active" : ""}`}
-        >
-          <div className="step-dot"></div>
-          <div className="step-label">Submitted</div>
-        </div>
-      </div>
-      <div className="verification-message">
-        {status === "idle" && "Ready to verify completion"}
-        {status === "verifying" && "Verifying your task completion..."}
-        {status === "complete" && "Task Verification is Under Process!"}
-        {status === "error" && error}
-      </div>
-    </div>
-  );
-};
 
 /**
  * Main Tasks component
@@ -101,6 +57,10 @@ const Tasks = () => {
   const [screenshot, setScreenshot] = useState(null);
   const [screenshotPreview, setScreenshotPreview] = useState(null);
   const [pendingVerificationTasks, setPendingVerificationTasks] = useState([]);
+  const [videoWatchTime, setVideoWatchTime] = useState(0);
+  const [videoWatchComplete, setVideoWatchComplete] = useState(false);
+  const youtubePlayerRef = useRef(null);
+  const videoIntervalRef = useRef(null);
 
   // Task difficulty colors
   const difficultyColors = {
@@ -109,12 +69,59 @@ const Tasks = () => {
     hard: "var(--color-primary)",
   };
 
+  // Utility function to extract YouTube video ID
+  const getYouTubeVideoId = (url) => {
+    if (!url) return null;
+    const regExp =
+      /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return match && match[2].length === 11 ? match[2] : null;
+  };
+
+  // Start tracking when video plays
+  const startVideoTracking = () => {
+    if (videoIntervalRef.current) clearInterval(videoIntervalRef.current);
+
+    videoIntervalRef.current = setInterval(() => {
+      setVideoWatchTime((prev) => {
+        const newTime = prev + 1;
+        // Check if watched enough time
+        if (
+          activeTask.autoVerify &&
+          activeTask.videoDuration &&
+          newTime >= parseInt(activeTask.videoDuration)
+        ) {
+          setVideoWatchComplete(true);
+          clearInterval(videoIntervalRef.current);
+
+          // Auto verify the task
+          verifyTask(activeTask._id);
+        }
+        return newTime;
+      });
+    }, 1000);
+  };
+
+  // Stop tracking when video pauses
+  const stopVideoTracking = () => {
+    if (videoIntervalRef.current) {
+      clearInterval(videoIntervalRef.current);
+    }
+  };
+
   // Load tasks on component mount
   useEffect(() => {
     loadTasks();
     if (user) {
       loadEarnings();
     }
+
+    // Clean up video interval if component unmounts
+    return () => {
+      if (videoIntervalRef.current) {
+        clearInterval(videoIntervalRef.current);
+      }
+    };
   }, [user]);
 
   // Load all tasks from API
@@ -143,8 +150,8 @@ const Tasks = () => {
                 completed: userTask.completed,
                 verified: userTask.verified,
                 startedAt: userTask.startedAt,
-                status: userTask.status, // Make sure this is returned from your API
-                rejectionReason: userTask.rejectionReason, // Add rejection reason
+                status: userTask.status,
+                rejectionReason: userTask.rejectionReason,
               };
             }
 
@@ -173,7 +180,7 @@ const Tasks = () => {
     }
   };
 
-  // In your frontend code
+  // Load user earnings
   const loadEarnings = async () => {
     if (!user || !user.token) return;
     try {
@@ -182,7 +189,6 @@ const Tasks = () => {
       setEarnings(res.data.totalEarnings || 0);
     } catch (err) {
       console.error("Error loading earnings:", err);
-      // Set earnings to 0 or current value on error
       setEarnings(0);
     }
   };
@@ -219,7 +225,7 @@ const Tasks = () => {
       // Update the activeTask directly with startedAt property
       setActiveTask((prevTask) => ({
         ...prevTask,
-        startedAt: new Date(), // Add current date as startedAt
+        startedAt: new Date(),
       }));
 
       // Also update the task in the tasks array
@@ -244,23 +250,40 @@ const Tasks = () => {
     setVerificationInput("");
     setScreenshot(null);
     setScreenshotPreview(null);
+    setVideoWatchTime(0);
+    setVideoWatchComplete(false);
+
+    // Clear any existing interval
+    if (videoIntervalRef.current) {
+      clearInterval(videoIntervalRef.current);
+      videoIntervalRef.current = null;
+    }
   };
 
   // Close task details
   const closeTaskDetails = () => {
     if (verificationStatus === "verifying") return; // Prevent closing during verification
+
+    // Clean up video tracking
+    if (videoIntervalRef.current) {
+      clearInterval(videoIntervalRef.current);
+      videoIntervalRef.current = null;
+    }
+
     setActiveTask(null);
     setVerificationInput("");
     setVerificationStatus("idle");
     setError("");
     setScreenshot(null);
     setScreenshotPreview(null);
+    setVideoWatchTime(0);
+    setVideoWatchComplete(false);
   };
 
   // Reset filter to show all tasks
   const resetFilter = () => setFilterOption("all");
 
-  // Add this function to handle file selection
+  // Handle screenshot file selection
   const handleScreenshotChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -276,7 +299,7 @@ const Tasks = () => {
     }
   };
 
-  // Add this function to convert the file to base64
+  // Convert file to base64
   const fileToBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -286,15 +309,88 @@ const Tasks = () => {
     });
   };
 
-  // Update the verifyTask function to include screenshot
+  // Handle task verification
   const verifyTask = async (taskId) => {
     if (!user || !user.token) {
       toast.error("Please login to verify task completion.");
       return;
     }
-    // Start verification process
+
+    // For YouTube watch tasks, verification is fully automatic
+    if (activeTask.type === "youtube_watch") {
+      // Only verify if enough watch time has accumulated
+      if (
+        videoWatchTime < parseInt(activeTask.videoDuration || 1) &&
+        !videoWatchComplete
+      ) {
+        toast.error("Please finish watching the video first.");
+        return;
+      }
+
+      setVerificationStatus("verifying");
+      setError("");
+
+      try {
+        // Send verification data for YouTube watch
+        const verificationData = {
+          videoUrl: activeTask.externalUrl,
+          watchedDuration: videoWatchTime,
+          autoVerified: true,
+        };
+
+        const res = await verifyTaskCompletion(
+          taskId,
+          verificationData,
+          user.token
+        );
+
+        if (res.data.success) {
+          // Update the task to completed
+          const updatedTasks = tasks.map((task) =>
+            task._id === taskId
+              ? { ...task, completed: true, verified: true }
+              : task
+          );
+          setTasks(updatedTasks);
+
+          const rewardAmount = activeTask.reward.toFixed(3);
+          toast.success(`Task completed! +${rewardAmount} ETH earned`);
+
+          // Update earnings immediately
+          loadEarnings();
+
+          // Reset after showing completion
+          setTimeout(() => {
+            setActiveTask(null);
+            setVerificationStatus("idle");
+            setVideoWatchTime(0);
+            setVideoWatchComplete(false);
+
+            // Refresh the full task list
+            loadTasks();
+          }, 3000);
+        } else {
+          setVerificationStatus("error");
+          setError(
+            res.data.message || "Verification failed. Please try again."
+          );
+          toast.error(
+            res.data.message || "Verification failed. Please try again."
+          );
+        }
+      } catch (err) {
+        setVerificationStatus("error");
+        console.error("Error verifying task:", err);
+        setError("An error occurred during verification. Please try again.");
+        toast.error("An error occurred during verification. Please try again.");
+      }
+      return;
+    }
+
+    // Start verification process for other task types
     setVerificationStatus("verifying");
     setError("");
+
     try {
       // Prepare verification data based on task type
       const verificationData = {};
@@ -305,21 +401,9 @@ const Tasks = () => {
         verificationData.tweetUrl = verificationInput;
       } else if (activeTask.type === "youtube_subscribe") {
         verificationData.channelUrl = verificationInput;
-      } else if (activeTask.type === "youtube_watch") {
-        verificationData.videoUrl = verificationInput;
       } else if (activeTask.type === "telegram_join") {
         verificationData.username = verificationInput;
       } else if (activeTask.type === "screenshot") {
-        // For screenshot verification
-        if (
-          !screenshot &&
-          (activeTask.screenshotRequired || activeTask.type === "screenshot")
-        ) {
-          setVerificationStatus("error");
-          setError("Please upload a screenshot to verify this task.");
-          toast.error("Please upload a screenshot to verify this task.");
-          return;
-        }
         // For screenshot verification
         if (!screenshot) {
           setVerificationStatus("error");
@@ -327,14 +411,12 @@ const Tasks = () => {
           toast.error("Please upload a screenshot to verify this task.");
           return;
         }
-
         // Convert screenshot to base64
         verificationData.screenshot = await fileToBase64(screenshot);
       }
-      // For logging purposes
-      console.log("Verifying task:", taskId);
 
       // Send verification request to API
+      console.log("Sending verification data:", verificationData);
       const res = await verifyTaskCompletion(
         taskId,
         verificationData,
@@ -364,6 +446,8 @@ const Tasks = () => {
             setScreenshotPreview(null);
             setActiveTask(null);
             setVerificationStatus("idle");
+            setVideoWatchTime(0);
+            setVideoWatchComplete(false);
 
             // Refresh the full task list to ensure everything is up to date
             loadTasks();
@@ -391,6 +475,8 @@ const Tasks = () => {
             setScreenshotPreview(null);
             setActiveTask(null);
             setVerificationStatus("idle");
+            setVideoWatchTime(0);
+            setVideoWatchComplete(false);
 
             // Refresh the full task list to ensure everything is up to date
             loadTasks();
@@ -404,73 +490,31 @@ const Tasks = () => {
         );
       }
     } catch (err) {
-      console.error("Error verifying task:", err);
       setVerificationStatus("error");
-
-      const errorMessage =
-        err.response?.data?.message ||
-        "Error verifying task. Please try again.";
-
-      setError(errorMessage);
-      toast.error(errorMessage);
+      console.error("Error verifying task:", err);
+      setError("An error occurred during verification. Please try again.");
+      toast.error("An error occurred during verification. Please try again.");
     }
   };
-
-  // If not logged in, show login prompt
-  if (!user) {
-    return (
-      <div className="tasks-page">
-        <div className="container">
-          <div className="connect-wallet-message">
-            <h2>Please Login to View Tasks</h2>
-            <p>
-              You need to login to access task rewards and track your progress.
-            </p>
-            <Link to="/login" className="login-button">
-              Login Now
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Show loading state
-  if (loading) {
-    return (
-      <div className="tasks-page">
-        <div className="container">
-          <div className="loading-container">
-            <div className="loading-spinner"></div>
-            <p>Loading tasks...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="tasks-page">
       <Toaster
         position="top-center"
         toastOptions={{
-          duration: 4000,
+          duration: 3000,
           style: {
             background: "#363636",
             color: "#fff",
           },
           success: {
-            duration: 3000,
             style: {
               background: "green",
-              color: "white",
             },
           },
           error: {
-            duration: 4000,
             style: {
               background: "red",
-              color: "white",
             },
           },
         }}
@@ -574,7 +618,12 @@ const Tasks = () => {
         {error && !activeTask && <div className="error-message">{error}</div>}
 
         <div className="tasks-list">
-          {filteredTasks.length === 0 ? (
+          {loading ? (
+            <div className="loading-container">
+              <div className="loading-spinner"></div>
+              <p>Loading tasks...</p>
+            </div>
+          ) : filteredTasks.length === 0 ? (
             <EmptyState
               message={
                 filterOption === "completed"
@@ -740,29 +789,19 @@ const Tasks = () => {
                   </div>
                 )}
 
-                {activeTask.link && (
-                  <a
-                    href={activeTask.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="task-link-button"
-                  >
-                    <span>Go to Task</span>
-                    <ExternalLinkIcon size={16} />
-                  </a>
-                )}
-
-                {activeTask.externalUrl && (
-                  <a
-                    href={activeTask.externalUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="task-link-button"
-                  >
-                    <span>Go to Task</span>
-                    <ExternalLinkIcon size={16} />
-                  </a>
-                )}
+                {/* Show external URL link if not YouTube watch task */}
+                {activeTask.externalUrl &&
+                  activeTask.type !== "youtube_watch" && (
+                    <a
+                      href={activeTask.externalUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="task-link-button"
+                    >
+                      <span>Go to Task</span>
+                      <ExternalLinkIcon size={16} />
+                    </a>
+                  )}
 
                 {/* Only show the start button for non-rejected tasks */}
                 {!activeTask.completed &&
@@ -801,40 +840,158 @@ const Tasks = () => {
                   </div>
                 )}
 
-                {/* If task is under verification, show pending status */}
-                {activeTask.status === "pending_verification" && (
-                  <div className="task-pending-verification-info">
-                    <div className="pending-status">
-                      <ClockIcon size={24} />
-                      <span>Under Verification</span>
-                    </div>
-                    <p>
-                      Your task submission is under review by our team. You'll
-                      receive your reward once it's approved.
-                    </p>
-                  </div>
-                )}
-
-                {/* Show verification form for started but not completed tasks */}
+                {/* Only show verification UI if task is started but not completed */}
                 {!activeTask.completed &&
                   activeTask.status !== "pending_verification" &&
                   activeTask.status !== "rejected" &&
                   activeTask.startedAt && (
-                    <>
-                      <div className="task-verification-section">
-                        <h3>Verify Task Completion</h3>
+                    <div className="verification-section">
+                      {/* YouTube watch task */}
 
-                        {activeTask.type === "screenshot" ? (
-                          // Screenshot upload form
-                          <div className="verification-section screenshot-upload screenshot-upload-container">
+                      {/* YouTube watch tasks: show complete button when watch time reaches required duration */}
+                      {/* YouTube watch task */}
+                      {activeTask.type === "youtube_watch" && (
+                        <div className="youtube-container">
+                          <h3>Watch the Video</h3>
+                          <div className="youtube-video-wrapper">
+                            <div className="video-progress-bar">
+                              <div
+                                className="progress-fill"
+                                style={{
+                                  width: `${Math.min(
+                                    100,
+                                    (videoWatchTime /
+                                      parseInt(activeTask.videoDuration || 1)) *
+                                      100
+                                  )}%`,
+                                }}
+                              ></div>
+                            </div>
+
+                            <iframe
+                              ref={youtubePlayerRef}
+                              width="100%"
+                              height="315"
+                              src={`https://www.youtube.com/embed/${getYouTubeVideoId(
+                                activeTask.externalUrl
+                              )}?enablejsapi=1`}
+                              title="YouTube Video"
+                              frameBorder="0"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                              onPlay={startVideoTracking}
+                              onPause={stopVideoTracking}
+                              onEnded={() => {
+                                setVideoWatchComplete(true);
+                                if (activeTask.autoVerify) {
+                                  verifyTask(activeTask._id);
+                                }
+                              }}
+                            ></iframe>
+                          </div>
+
+                          {activeTask.autoVerify && !videoWatchComplete && (
+                            <div className="video-tracking-info">
+                              <div className="tracking-icon">
+                                <ClockIcon size={16} />
+                              </div>
+                              <div className="tracking-details">
+                                <p className="tracking-message">
+                                  Watch the entire video to complete this task
+                                  automatically.
+                                </p>
+                                <div className="tracking-progress">
+                                  <span>Progress:</span>
+                                  <span className="progress-number">
+                                    {Math.floor(videoWatchTime)} /{" "}
+                                    {activeTask.videoDuration} seconds
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Add verification button for YouTube watch tasks */}
+                          <div className="verification-action youtube-verify-action">
+                            {verificationStatus === "error" && (
+                              <div className="verification-error">
+                                <AlertTriangle size={16} />
+                                <span>{error}</span>
+                              </div>
+                            )}
+
+                            {/* Show button when they've watched enough time */}
+                            {(videoWatchComplete ||
+                              videoWatchTime >=
+                                parseInt(activeTask.videoDuration || 1)) && (
+                              <button
+                                className="submit-verification-button"
+                                onClick={() => verifyTask(activeTask._id)}
+                                disabled={verificationStatus === "verifying"}
+                              >
+                                {verificationStatus === "idle"
+                                  ? "Complete Task & Earn Reward"
+                                  : verificationStatus === "verifying"
+                                  ? "Verifying..."
+                                  : verificationStatus === "complete"
+                                  ? "Task Completed!"
+                                  : "Try Again"}
+                              </button>
+                            )}
+
+                            {/* Show disabled button with remaining time */}
+                            {!videoWatchComplete &&
+                              videoWatchTime <
+                                parseInt(activeTask.videoDuration || 1) && (
+                                <button
+                                  className="submit-verification-button incomplete-button"
+                                  disabled={true}
+                                >
+                                  Watch{" "}
+                                  {parseInt(activeTask.videoDuration || 1) -
+                                    Math.floor(videoWatchTime)}{" "}
+                                  more seconds to complete
+                                </button>
+                              )}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Screenshot upload for screenshot tasks */}
+                      {activeTask.type === "screenshot" && (
+                        <div className="screenshot-upload-section">
+                          <h3>Upload Verification</h3>
+                          <div className="upload-container">
                             <label
                               htmlFor="screenshot-upload"
-                              className="screenshot-label"
+                              className="upload-label"
                             >
-                              <Camera className="camera-icon" size={24} />
-                              <span>
-                                Upload a screenshot as proof of completion
-                              </span>
+                              {screenshotPreview ? (
+                                <div className="preview-container">
+                                  <img
+                                    src={screenshotPreview}
+                                    alt="Screenshot preview"
+                                    className="screenshot-preview"
+                                  />
+                                  <div className="preview-overlay">
+                                    <span>Change Image</span>
+                                  </div>
+                                </div>
+                              ) : (
+                                <>
+                                  <div className="upload-icon">
+                                    <Camera size={24} />
+                                  </div>
+                                  <div className="upload-text">
+                                    <span className="primary-text">
+                                      Upload Screenshot
+                                    </span>
+                                    <span className="secondary-text">
+                                      Click or drag image here
+                                    </span>
+                                  </div>
+                                </>
+                              )}
                             </label>
                             <input
                               type="file"
@@ -843,77 +1000,73 @@ const Tasks = () => {
                               onChange={handleScreenshotChange}
                               className="hidden-file-input"
                             />
-                            {screenshotPreview && (
-                              <div className="screenshot-preview-container">
-                                <img
-                                  src={screenshotPreview}
-                                  alt="Screenshot preview"
-                                  className="screenshot-preview-img"
-                                />
-                                <button
-                                  className="remove-screenshot-button"
-                                  onClick={() => {
-                                    setScreenshot(null);
-                                    setScreenshotPreview(null);
-                                  }}
-                                >
-                                  Remove
-                                </button>
-                              </div>
-                            )}
                           </div>
-                        ) : (
-                          // Regular verification input form
-                          <div className="verification-input-container">
-                            <label htmlFor="verification-input">
-                              {activeTask.type === "twitter_follow"
-                                ? "Enter your Twitter username:"
-                                : activeTask.type === "twitter_share"
-                                ? "Enter the URL of your tweet:"
-                                : activeTask.type === "youtube_subscribe"
-                                ? "Enter your YouTube username:"
-                                : activeTask.type === "youtube_watch"
-                                ? "Enter your YouTube username:"
-                                : activeTask.type === "telegram_join"
-                                ? "Enter your Telegram username:"
-                                : "Enter verification details:"}
-                            </label>
-                            <input
-                              type="text"
-                              id="verification-input"
-                              value={verificationInput}
-                              onChange={(e) =>
-                                setVerificationInput(e.target.value)
-                              }
-                              placeholder="Enter verification details"
-                            />
+                        </div>
+                      )}
+
+                      {/* Verification input for other task types (not YouTube watch) */}
+                      {activeTask.type !== "screenshot" &&
+                        activeTask.type !== "youtube_watch" && (
+                          <div className="verification-input-section">
+                            <h3>Verify Completion</h3>
+                            <div className="input-container">
+                              <label className="input-label">
+                                {activeTask.type === "twitter_follow" ||
+                                activeTask.type === "twitter_share"
+                                  ? "Enter the URL of your Twitter post/profile:"
+                                  : activeTask.type === "youtube_subscribe"
+                                  ? "Enter the URL of the YouTube channel:"
+                                  : activeTask.type === "telegram_join"
+                                  ? "Enter your Telegram username:"
+                                  : "Enter verification information:"}
+                              </label>
+                              <input
+                                type="text"
+                                value={verificationInput}
+                                onChange={(e) =>
+                                  setVerificationInput(e.target.value)
+                                }
+                                placeholder={
+                                  activeTask.type === "twitter_follow" ||
+                                  activeTask.type === "twitter_share"
+                                    ? "https://twitter.com/..."
+                                    : activeTask.type === "youtube_subscribe"
+                                    ? "https://youtube.com/..."
+                                    : activeTask.type === "telegram_join"
+                                    ? "@username"
+                                    : "Verification information..."
+                                }
+                                className="verification-input"
+                              />
+                            </div>
                           </div>
                         )}
 
-                        <TaskVerificationProgress
-                          status={verificationStatus}
-                          error={error}
-                        />
-
-                        <button
-                          className="verify-task-button"
-                          onClick={() => verifyTask(activeTask._id)}
-                          disabled={
-                            verificationStatus === "verifying" ||
-                            verificationStatus === "complete" ||
-                            (activeTask.type === "screenshot" && !screenshot) ||
-                            (activeTask.type !== "screenshot" &&
-                              !verificationInput.trim())
-                          }
-                        >
-                          {verificationStatus === "verifying"
-                            ? "Verifying..."
-                            : verificationStatus === "complete"
-                            ? "Verified"
-                            : "Verify Completion"}
-                        </button>
-                      </div>
-                    </>
+                      {/* Verification submit button (only show for non-YouTube watch tasks) */}
+                      {activeTask.type !== "youtube_watch" && (
+                        <div className="verification-action">
+                          {verificationStatus === "error" && (
+                            <div className="verification-error">
+                              <AlertTriangle size={16} />
+                              <span>{error}</span>
+                            </div>
+                          )}
+                          <button
+                            className="submit-verification-button"
+                            onClick={() => verifyTask(activeTask._id)}
+                            disabled={verificationStatus === "verifying"}
+                          >
+                            {verificationStatus === "idle"
+                              ? "Submit for Verification"
+                              : verificationStatus === "verifying"
+                              ? "Verifying..."
+                              : verificationStatus === "complete"
+                              ? "Verification Submitted!"
+                              : "Try Again"}
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   )}
               </div>
             </div>

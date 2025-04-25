@@ -23,12 +23,14 @@ const AdminTasks = () => {
     steps: [""],
     reward: 0.001,
     type: "custom",
-    externalUrl: "", // Change from link to externalUrl
+    externalUrl: "",
     difficulty: "easy",
     estimatedTime: "5 min",
     active: true,
     screenshotInstructions: "",
-    screenshotRequired: false, // Add this field
+    screenshotRequired: false,
+    autoVerify: false, // Add this for YouTube watch auto-verification
+    videoDuration: "", // Add this to specify video duration in seconds
   });
 
   useEffect(() => {
@@ -73,6 +75,7 @@ const AdminTasks = () => {
     }
   };
 
+  // Update resetForm with the same fields
   const resetForm = () => {
     setFormValues({
       title: "",
@@ -80,12 +83,14 @@ const AdminTasks = () => {
       steps: [""],
       reward: 0.001,
       type: "custom",
-      externalUrl: "", // Change from link to externalUrl
+      externalUrl: "",
       difficulty: "easy",
       estimatedTime: "5 min",
       active: true,
       screenshotInstructions: "",
-      screenshotRequired: false, // Add this field
+      screenshotRequired: false,
+      autoVerify: false,
+      videoDuration: "",
     });
     setEditingTask(null);
   };
@@ -97,7 +102,7 @@ const AdminTasks = () => {
     }
   };
 
-  // In the handleEditTask function:
+  // Update handleEditTask to include these fields
   const handleEditTask = (task) => {
     setEditingTask(task);
     setFormValues({
@@ -106,12 +111,14 @@ const AdminTasks = () => {
       steps: Array.isArray(task.steps) && task.steps.length ? task.steps : [""],
       reward: task.reward,
       type: task.type,
-      externalUrl: task.externalUrl || "", // Change from link to externalUrl
+      externalUrl: task.externalUrl || "",
       difficulty: task.difficulty,
       estimatedTime: task.estimatedTime,
       active: task.active !== undefined ? task.active : true,
       screenshotInstructions: task.screenshotInstructions || "",
-      screenshotRequired: task.screenshotRequired || false, // Add this field
+      screenshotRequired: task.screenshotRequired || false,
+      autoVerify: task.autoVerify || false,
+      videoDuration: task.videoDuration || "",
     });
     setShowForm(true);
     window.scrollTo(0, 0);
@@ -320,6 +327,58 @@ const AdminTasks = () => {
                       />
                       Screenshot Required for Verification
                     </label>
+                  </div>
+                </>
+              )}
+
+              {formValues.type === "youtube_watch" && (
+                <>
+                  <div className="form-group">
+                    <label htmlFor="videoDuration">
+                      Video Duration (seconds)*
+                    </label>
+                    <input
+                      type="number"
+                      id="videoDuration"
+                      name="videoDuration"
+                      value={formValues.videoDuration}
+                      onChange={handleChange}
+                      placeholder="Enter video duration in seconds"
+                      min="1"
+                    />
+                    <small className="form-text">
+                      The time in seconds users need to watch to complete this
+                      task
+                    </small>
+                  </div>
+
+                  <div className="form-group checkbox-group">
+                    <label>
+                      <input
+                        type="checkbox"
+                        name="autoVerify"
+                        checked={formValues.autoVerify}
+                        onChange={handleChange}
+                      />
+                      Enable Auto-Verification (watches are verified
+                      automatically)
+                    </label>
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="externalUrl">YouTube Video URL*</label>
+                    <input
+                      type="url"
+                      id="externalUrl"
+                      name="externalUrl"
+                      value={formValues.externalUrl}
+                      onChange={handleChange}
+                      placeholder="https://www.youtube.com/watch?v=..."
+                      required={formValues.type === "youtube_watch"}
+                    />
+                    <small className="form-text">
+                      The YouTube video URL users will watch
+                    </small>
                   </div>
                 </>
               )}
