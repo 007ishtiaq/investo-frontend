@@ -124,6 +124,76 @@ const Tasks = () => {
     };
   }, [user]);
 
+  useEffect(() => {
+    // Only run this effect if activeTask is a YouTube watch task
+    if (!activeTask || activeTask.type !== "youtube_watch") return;
+
+    // Load YouTube API if not already loaded
+    if (!window.YT) {
+      const tag = document.createElement("script");
+      tag.src = "https://www.youtube.com/iframe_api";
+      const firstScriptTag = document.getElementsByTagName("script")[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    }
+
+    // Initialize player once API is ready
+    let player;
+    const onYouTubeIframeAPIReady = () => {
+      if (youtubePlayerRef.current) {
+        player = new window.YT.Player(youtubePlayerRef.current, {
+          events: {
+            onStateChange: (event) => {
+              // Start tracking when video plays
+              if (event.data === window.YT.PlayerState.PLAYING) {
+                if (videoIntervalRef.current)
+                  clearInterval(videoIntervalRef.current);
+
+                videoIntervalRef.current = setInterval(() => {
+                  setVideoWatchTime((prev) => {
+                    const newTime = prev + 1;
+                    // Auto complete when reached duration
+                    if (newTime >= parseInt(activeTask.videoDuration || 30)) {
+                      clearInterval(videoIntervalRef.current);
+                      setVideoWatchComplete(true);
+                    }
+                    return newTime;
+                  });
+                }, 1000);
+              }
+              // Pause tracking when video pauses or ends
+              else if (
+                event.data === window.YT.PlayerState.PAUSED ||
+                event.data === window.YT.PlayerState.ENDED
+              ) {
+                if (videoIntervalRef.current) {
+                  clearInterval(videoIntervalRef.current);
+                }
+                // If video ended, consider it complete
+                if (event.data === window.YT.PlayerState.ENDED) {
+                  setVideoWatchComplete(true);
+                }
+              }
+            },
+          },
+        });
+      }
+    };
+
+    // When YouTube API is ready
+    if (window.YT && window.YT.Player) {
+      onYouTubeIframeAPIReady();
+    } else {
+      window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
+    }
+
+    // Clean up
+    return () => {
+      if (videoIntervalRef.current) {
+        clearInterval(videoIntervalRef.current);
+      }
+    };
+  }, [activeTask]);
+
   // Load all tasks from API
   const loadTasks = async () => {
     try {
@@ -854,20 +924,6 @@ const Tasks = () => {
                         <div className="youtube-container">
                           <h3>Watch the Video</h3>
                           <div className="youtube-video-wrapper">
-                            <div className="video-progress-bar">
-                              <div
-                                className="progress-fill"
-                                style={{
-                                  width: `${Math.min(
-                                    100,
-                                    (videoWatchTime /
-                                      parseInt(activeTask.videoDuration || 1)) *
-                                      100
-                                  )}%`,
-                                }}
-                              ></div>
-                            </div>
-
                             <iframe
                               ref={youtubePlayerRef}
                               width="100%"
@@ -879,39 +935,45 @@ const Tasks = () => {
                               frameBorder="0"
                               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                               allowFullScreen
-                              onPlay={startVideoTracking}
-                              onPause={stopVideoTracking}
-                              onEnded={() => {
-                                setVideoWatchComplete(true);
-                                if (activeTask.autoVerify) {
-                                  verifyTask(activeTask._id);
-                                }
-                              }}
                             ></iframe>
+                            <div className="video-progress-bar">
+                              <div
+                                className="progress-fill"
+                                style={{
+                                  width: `${Math.min(
+                                    100,
+                                    (videoWatchTime /
+                                      parseInt(
+                                        activeTask.videoDuration || 30
+                                      )) *
+                                      100
+                                  )}%`,
+                                }}
+                              ></div>
+                            </div>
                           </div>
 
-                          {activeTask.autoVerify && !videoWatchComplete && (
-                            <div className="video-tracking-info">
-                              <div className="tracking-icon">
-                                <ClockIcon size={16} />
-                              </div>
-                              <div className="tracking-details">
-                                <p className="tracking-message">
-                                  Watch the entire video to complete this task
-                                  automatically.
-                                </p>
-                                <div className="tracking-progress">
-                                  <span>Progress:</span>
-                                  <span className="progress-number">
-                                    {Math.floor(videoWatchTime)} /{" "}
-                                    {activeTask.videoDuration} seconds
-                                  </span>
-                                </div>
+                          <div className="video-tracking-info">
+                            <div className="tracking-icon">
+                              <ClockIcon size={16} />
+                            </div>
+                            <div className="tracking-details">
+                              <p className="tracking-message">
+                                Watch the video for{" "}
+                                {activeTask.videoDuration || 30} seconds to
+                                complete this task.
+                              </p>
+                              <div className="tracking-progress">
+                                <span>Progress:</span>
+                                <span className="progress-number">
+                                  {Math.floor(videoWatchTime)} /{" "}
+                                  {activeTask.videoDuration || 30} seconds
+                                </span>
                               </div>
                             </div>
-                          )}
+                          </div>
 
-                          {/* Add verification button for YouTube watch tasks */}
+                          {/* Always show a verification button for YouTube tasks */}
                           <div className="verification-action youtube-verify-action">
                             {verificationStatus === "error" && (
                               <div className="verification-error">
@@ -920,39 +982,25 @@ const Tasks = () => {
                               </div>
                             )}
 
-                            {/* Show button when they've watched enough time */}
-                            {(videoWatchComplete ||
-                              videoWatchTime >=
-                                parseInt(activeTask.videoDuration || 1)) && (
-                              <button
-                                className="submit-verification-button"
-                                onClick={() => verifyTask(activeTask._id)}
-                                disabled={verificationStatus === "verifying"}
-                              >
-                                {verificationStatus === "idle"
+                            <button
+                              className="submit-verification-button"
+                              onClick={() => verifyTask(activeTask._id)}
+                              disabled={verificationStatus === "verifying"}
+                            >
+                              {videoWatchTime >=
+                              parseInt(activeTask.videoDuration || 30)
+                                ? verificationStatus === "idle"
                                   ? "Complete Task & Earn Reward"
                                   : verificationStatus === "verifying"
                                   ? "Verifying..."
                                   : verificationStatus === "complete"
                                   ? "Task Completed!"
-                                  : "Try Again"}
-                              </button>
-                            )}
-
-                            {/* Show disabled button with remaining time */}
-                            {!videoWatchComplete &&
-                              videoWatchTime <
-                                parseInt(activeTask.videoDuration || 1) && (
-                                <button
-                                  className="submit-verification-button incomplete-button"
-                                  disabled={true}
-                                >
-                                  Watch{" "}
-                                  {parseInt(activeTask.videoDuration || 1) -
-                                    Math.floor(videoWatchTime)}{" "}
-                                  more seconds to complete
-                                </button>
-                              )}
+                                  : "Try Again"
+                                : `Watch ${
+                                    parseInt(activeTask.videoDuration || 30) -
+                                    Math.floor(videoWatchTime)
+                                  } more seconds to complete`}
+                            </button>
                           </div>
                         </div>
                       )}
