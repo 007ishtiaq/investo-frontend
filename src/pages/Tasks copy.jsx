@@ -405,99 +405,81 @@ const Tasks = () => {
     });
   };
 
-  // Add this function to handle YouTube video tasks specifically
-  const handleYoutubeVideoVerification = async (taskId) => {
-    if (!user || !user.token) {
-      toast.error("Please login to verify task completion.");
-      return;
-    }
-
-    // Only verify if enough watch time has accumulated
-    if (
-      videoWatchTime < parseInt(activeTask.videoDuration || 30) &&
-      !videoWatchComplete
-    ) {
-      toast.error("Please finish watching the video first.");
-      return;
-    }
-
-    setVerificationStatus("verifying");
-    setError("");
-
-    try {
-      // Prepare verification data for YouTube video task
-      const verificationData = {
-        videoUrl: activeTask.externalUrl,
-        watchedDuration: videoWatchTime,
-        autoVerified: true, // This flag tells backend this can be auto-verified
-      };
-
-      console.log("Verifying YouTube task:", taskId, verificationData);
-
-      // Send verification request to API - backend will handle reward crediting
-      const res = await verifyTaskCompletion(
-        taskId,
-        verificationData,
-        user.token
-      );
-      console.log("YouTube verification response:", res.data);
-
-      if (res.data.success) {
-        // Update local task state
-        const updatedTasks = tasks.map((task) =>
-          task._id === taskId
-            ? { ...task, completed: true, verified: true }
-            : task
-        );
-        setTasks(updatedTasks);
-        setVerificationStatus("complete");
-
-        // Show success message without mentioning the specific reward amount
-        // The backend has already credited the wallet
-        toast.success(
-          res.data.message || "Task completed! Reward credited to your wallet!"
-        );
-
-        // Update earnings and wallet balance by fetching fresh data
-        loadEarnings();
-        loadWalletBalance();
-
-        // Reset after showing completion
-        setTimeout(() => {
-          setVerificationInput("");
-          setActiveTask(null);
-          setVerificationStatus("idle");
-          setVideoWatchTime(0);
-          setVideoWatchComplete(false);
-
-          // Refresh the full task list
-          loadTasks();
-        }, 3000);
-      } else {
-        setVerificationStatus("error");
-        setError(res.data.message || "Verification failed. Please try again.");
-        toast.error(
-          res.data.message || "Verification failed. Please try again."
-        );
-      }
-    } catch (err) {
-      console.error("Error verifying YouTube task:", err);
-      setVerificationStatus("error");
-      setError("An error occurred during verification. Please try again.");
-      toast.error("An error occurred during verification. Please try again.");
-    }
-  };
-
-  // Modified regular verification function - backend handles reward crediting
+  // Handle task verification
   const verifyTask = async (taskId) => {
     if (!user || !user.token) {
       toast.error("Please login to verify task completion.");
       return;
     }
 
-    // For YouTube watch tasks, use the specialized handler
+    // For YouTube watch tasks, verification is fully automatic
     if (activeTask.type === "youtube_watch") {
-      handleYoutubeVideoVerification(taskId);
+      // Only verify if enough watch time has accumulated
+      if (
+        videoWatchTime < parseInt(activeTask.videoDuration || 30) &&
+        !videoWatchComplete
+      ) {
+        toast.error("Please finish watching the video first.");
+        return;
+      }
+
+      setVerificationStatus("verifying");
+      setError("");
+
+      try {
+        // Send verification data for YouTube watch
+        const verificationData = {
+          videoUrl: activeTask.externalUrl,
+          watchedDuration: videoWatchTime,
+          autoVerified: true,
+        };
+
+        const res = await verifyTaskCompletion(
+          taskId,
+          verificationData,
+          user.token
+        );
+
+        if (res.data.success) {
+          // Update the task to completed
+          const updatedTasks = tasks.map((task) =>
+            task._id === taskId
+              ? { ...task, completed: true, verified: true }
+              : task
+          );
+          setTasks(updatedTasks);
+
+          const rewardAmount = activeTask.reward.toFixed(3);
+          toast.success(`Task completed! +${rewardAmount} ETH earned`);
+
+          // Update earnings immediately
+          loadEarnings();
+
+          // Reset after showing completion
+          setTimeout(() => {
+            setActiveTask(null);
+            setVerificationStatus("idle");
+            setVideoWatchTime(0);
+            setVideoWatchComplete(false);
+
+            // Refresh the full task list
+            loadTasks();
+          }, 3000);
+        } else {
+          setVerificationStatus("error");
+          setError(
+            res.data.message || "Verification failed. Please try again."
+          );
+          toast.error(
+            res.data.message || "Verification failed. Please try again."
+          );
+        }
+      } catch (err) {
+        setVerificationStatus("error");
+        console.error("Error verifying task:", err);
+        setError("An error occurred during verification. Please try again.");
+        toast.error("An error occurred during verification. Please try again.");
+      }
       return;
     }
 
@@ -524,7 +506,9 @@ const Tasks = () => {
         }
       }
 
-      // Send verification request to API - backend will handle reward crediting if applicable
+      // For custom tasks, no special verification data needed
+
+      // Send verification request to API
       console.log("Sending verification data:", verificationData);
       const res = await verifyTaskCompletion(
         taskId,
@@ -535,7 +519,7 @@ const Tasks = () => {
 
       if (res.data.success) {
         if (res.data.status === "pending_verification") {
-          // For tasks that require manual verification
+          // For screenshot tasks that require manual verification
           const updatedTasks = tasks.map((task) =>
             task._id === taskId
               ? { ...task, status: "pending_verification" }
@@ -545,10 +529,24 @@ const Tasks = () => {
           setVerificationStatus("complete");
 
           toast.success(
-            "Task submitted for verification. Our team will review it shortly."
+            "Screenshot submitted for verification. Our team will review it shortly."
           );
+
+          // Reset after showing completion
+          setTimeout(() => {
+            setVerificationInput("");
+            setScreenshot(null);
+            setScreenshotPreview(null);
+            setActiveTask(null);
+            setVerificationStatus("idle");
+            setVideoWatchTime(0);
+            setVideoWatchComplete(false);
+
+            // Refresh the full task list to ensure everything is up to date
+            loadTasks();
+          }, 3000);
         } else {
-          // For tasks with immediate verification and reward
+          // For regular tasks with immediate verification
           const updatedTasks = tasks.map((task) =>
             task._id === taskId
               ? { ...task, completed: true, verified: true }
@@ -557,27 +555,26 @@ const Tasks = () => {
           setTasks(updatedTasks);
           setVerificationStatus("complete");
 
-          // Show success message - backend has already credited the wallet if applicable
-          toast.success(res.data.message || "Task completed successfully!");
+          const rewardAmount = activeTask.reward.toFixed(3);
+          toast.success(`Task completed! +${rewardAmount} ETH earned`);
 
           // Update earnings immediately
           loadEarnings();
-          loadWalletBalance();
+
+          // Reset after showing completion
+          setTimeout(() => {
+            setVerificationInput("");
+            setScreenshot(null);
+            setScreenshotPreview(null);
+            setActiveTask(null);
+            setVerificationStatus("idle");
+            setVideoWatchTime(0);
+            setVideoWatchComplete(false);
+
+            // Refresh the full task list to ensure everything is up to date
+            loadTasks();
+          }, 3000);
         }
-
-        // Reset after showing completion
-        setTimeout(() => {
-          setVerificationInput("");
-          setScreenshot(null);
-          setScreenshotPreview(null);
-          setActiveTask(null);
-          setVerificationStatus("idle");
-          setVideoWatchTime(0);
-          setVideoWatchComplete(false);
-
-          // Refresh the full task list to ensure everything is up to date
-          loadTasks();
-        }, 3000);
       } else {
         setVerificationStatus("error");
         setError(res.data.message || "Verification failed. Please try again.");
@@ -1036,9 +1033,7 @@ const Tasks = () => {
                                   ? "incomplete-button"
                                   : ""
                               }`}
-                              onClick={() =>
-                                handleYoutubeVideoVerification(activeTask._id)
-                              }
+                              onClick={() => verifyTask(activeTask._id)}
                               disabled={
                                 videoWatchTime <
                                   parseInt(activeTask.videoDuration || 30) ||
@@ -1159,13 +1154,40 @@ const Tasks = () => {
                               disabled={verificationStatus === "verifying"}
                             >
                               {verificationStatus === "idle"
-                                ? "Verify Completion"
+                                ? "Submit for Verification"
                                 : verificationStatus === "verifying"
                                 ? "Verifying..."
                                 : verificationStatus === "complete"
-                                ? "Task Completed!"
+                                ? "Verification Submitted!"
                                 : "Try Again"}
                             </button>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Show verification progress UI during verification */}
+                      {verificationStatus === "verifying" && (
+                        <div className="verification-progress-container">
+                          <div className="verification-progress">
+                            <div className="progress-indicators">
+                              <div className="progress-step active">
+                                <div className="step-dot"></div>
+                                <div className="step-label">Submitting</div>
+                              </div>
+                              <div className="progress-line active"></div>
+                              <div className="progress-step">
+                                <div className="step-dot"></div>
+                                <div className="step-label">Verifying</div>
+                              </div>
+                              <div className="progress-line"></div>
+                              <div className="progress-step">
+                                <div className="step-dot"></div>
+                                <div className="step-label">Complete</div>
+                              </div>
+                            </div>
+                            <div className="verification-message">
+                              Verifying task completion...
+                            </div>
                           </div>
                         </div>
                       )}
