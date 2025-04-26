@@ -267,7 +267,7 @@ const AdminTasks = () => {
               </div>
               <div className="form-row">
                 <div className="form-group">
-                  <label htmlFor="reward">Reward (ETH)*</label>
+                  <label htmlFor="reward">Reward (USD)*</label>
                   <input
                     type="number"
                     id="reward"
@@ -289,14 +289,8 @@ const AdminTasks = () => {
                     onChange={handleChange}
                     required
                   >
-                    <option value="twitter_follow">Twitter Follow</option>
-                    <option value="twitter_share">Twitter Share</option>
-                    <option value="youtube_subscribe">YouTube Subscribe</option>
                     <option value="youtube_watch">YouTube Watch</option>
-                    <option value="telegram_join">Telegram Join</option>
                     <option value="screenshot">Screenshot</option>
-                    <option value="login">Login</option>
-                    <option value="profile">Profile Update</option>
                     <option value="custom">Custom</option>
                   </select>
                 </div>
