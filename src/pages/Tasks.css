@@ -1189,6 +1189,240 @@
   color: #666 !important;
   cursor: not-allowed !important;
 }
+
+/* Task completed info styling */
+.task-completed-info {
+  background-color: rgba(72, 187, 120, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 20px;
+  border-left: 4px solid var(--color-success);
+}
+
+.completed-status {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  color: var(--color-success);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.completed-status svg {
+  margin-right: 8px;
+}
+
+/* YouTube verification styling */
+.youtube-verify-action {
+  margin-top: 20px;
+}
+
+.incomplete-button {
+  background-color: #e0e0e0 !important;
+  color: #666 !important;
+  cursor: not-allowed !important;
+}
+
+/* YouTube video container styling */
+.youtube-container {
+  margin: 20px 0;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.youtube-video-wrapper {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.video-tracking-info {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 15px;
+  padding: 12px 15px;
+  background-color: #fff3e0;
+  border-left: 4px solid #ff9800;
+  border-radius: 4px;
+}
+
+.tracking-icon {
+  color: #ff9800;
+  margin-right: 12px;
+  margin-top: 2px;
+}
+
+.tracking-details {
+  flex: 1;
+}
+
+.tracking-message {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.tracking-progress {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #555;
+}
+
+.progress-number {
+  font-weight: 600;
+}
+
+/* More verification input styling */
+.verification-input-section {
+  margin-bottom: 20px;
+  background-color: #f7fafc;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-label {
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.verification-input {
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.2s;
+}
+
+.verification-input:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+/* Screenshot upload styling */
+.screenshot-upload-section {
+  margin-bottom: 20px;
+  background-color: #f7fafc;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.upload-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.upload-label {
+  width: 100%;
+  max-width: 400px;
+  height: 150px;
+  border: 2px dashed #ddd;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+  padding: 20px;
+  text-align: center;
+}
+
+.upload-label:hover {
+  border-color: var(--color-primary);
+  background-color: rgba(33, 150, 243, 0.05);
+}
+
+.hidden-file-input {
+  display: none;
+}
+
+/* Verification error styling */
+.verification-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 15px;
+  background-color: #ffebee;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  color: #d32f2f;
+  font-size: 14px;
+}
+/* Task pending verification styling */
+.task-pending-verification {
+  background-color: #fff8e1;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px 0;
+  border-left: 4px solid #ffc107;
+  display: flex;
+  align-items: flex-start;
+}
+
+.pending-icon {
+  color: #ffc107;
+  margin-right: 15px;
+}
+
+.pending-message h3 {
+  color: #795548;
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+.pending-message p {
+  margin: 0 0 10px 0;
+  color: #4a4a4a;
+}
+
+.pending-note {
+  font-style: italic;
+  font-size: 0.9rem;
+  color: #757575;
+}
+.verification-status-message {
+  display: flex;
+  align-items: center;
+  background-color: #fff8e1;
+  border: 1px solid #ffecb3;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 15px 0;
+}
+
+.verification-status-icon {
+  margin-right: 12px;
+  color: #ffa000;
+}
+
+.verification-status-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.status-title {
+  font-weight: 600;
+  color: #795548;
+  margin-bottom: 4px;
+}
+
+.status-description {
+  font-size: 0.9rem;
+  color: #5d4037;
+}
 @keyframes spin {
   from {
     transform: rotate(0deg);

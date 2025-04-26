@@ -390,7 +390,7 @@ const Tasks = () => {
     if (activeTask.type === "youtube_watch") {
       // Only verify if enough watch time has accumulated
       if (
-        videoWatchTime < parseInt(activeTask.videoDuration || 1) &&
+        videoWatchTime < parseInt(activeTask.videoDuration || 30) &&
         !videoWatchComplete
       ) {
         toast.error("Please finish watching the video first.");
@@ -809,59 +809,27 @@ const Tasks = () => {
                   {activeTask.description}
                 </p>
 
-                {/* Show rejection reason if task was rejected */}
-                {activeTask.status === "rejected" &&
-                  activeTask.rejectionReason && (
-                    <div className="task-rejection-details">
-                      <h3>Task Rejected</h3>
-                      <p className="rejection-reason">
-                        <strong>Reason:</strong> {activeTask.rejectionReason}
-                      </p>
-                      <p className="rejection-note">
-                        You can start a new task to earn rewards. If you believe
-                        this was rejected in error, please contact support.
-                      </p>
+                {/* Show task status based on state */}
+                {/* Tasks under verification: Show verification status instead of external link */}
+                {activeTask.status === "pending_verification" ? (
+                  <div className="verification-status-message">
+                    <div className="verification-status-icon">
+                      <ClockIcon size={18} />
                     </div>
-                  )}
-
-                <div className="task-steps">
-                  <h3>Steps to Complete:</h3>
-                  <ol>
-                    {Array.isArray(activeTask.steps) &&
-                    activeTask.steps.length > 0 ? (
-                      activeTask.steps.map((step, index) => (
-                        <li key={index}>{step}</li>
-                      ))
-                    ) : (
-                      <li>Complete this task to earn rewards.</li>
-                    )}
-                  </ol>
-                </div>
-
-                {/* Show screenshot instructions for screenshot tasks */}
-                {activeTask.type === "screenshot" && (
-                  <div className="screenshot-instructions">
-                    {/* Display custom screenshot instructions if they exist, otherwise use default */}
-                    <p className="instructions-text">
-                      {activeTask.screenshotInstructions
-                        ? activeTask.screenshotInstructions
-                        : "Take a screenshot showing you've completed the task. Make sure important details are clearly visible."}
-                    </p>
-                    {/* Show required indicator if screenshot is required */}
-                    {activeTask.screenshotRequired && (
-                      <div className="screenshot-required-notice">
-                        <AlertTriangle size={14} className="required-icon" />
-                        <span>
-                          A screenshot is required to verify this task
-                        </span>
-                      </div>
-                    )}
+                    <div className="verification-status-text">
+                      <span className="status-title">Under Verification</span>
+                      <span className="status-description">
+                        Our team is reviewing your submission. You'll be
+                        notified once verified.
+                      </span>
+                    </div>
                   </div>
-                )}
-
-                {/* Show external URL link if not YouTube watch task */}
-                {activeTask.externalUrl &&
-                  activeTask.type !== "youtube_watch" && (
+                ) : (
+                  /* Show external URL link for regular tasks that aren't YouTube watch */
+                  activeTask.externalUrl &&
+                  activeTask.type !== "youtube_watch" &&
+                  !activeTask.completed &&
+                  activeTask.status !== "rejected" && (
                     <a
                       href={activeTask.externalUrl}
                       target="_blank"
@@ -871,28 +839,22 @@ const Tasks = () => {
                       <span>Go to Task</span>
                       <ExternalLinkIcon size={16} />
                     </a>
-                  )}
+                  )
+                )}
 
-                {/* Only show the start button for non-rejected tasks */}
-                {!activeTask.completed &&
-                  activeTask.status !== "pending_verification" &&
-                  activeTask.status !== "rejected" &&
-                  !activeTask.startedAt && (
-                    <div className="start-task-section">
-                      <button
-                        className="start-task-button"
-                        onClick={() => handleStartTask(activeTask._id)}
-                        disabled={isStartingTask}
-                      >
-                        {isStartingTask ? "Starting..." : "Start Task"}
-                      </button>
-                      <div className="task-info-note">
-                        <InfoIcon size={16} />
-                        <span>
-                          Starting this task will allow you to submit
-                          verification when complete.
-                        </span>
-                      </div>
+                {/* Show rejection reason if task was rejected */}
+                {activeTask.status === "rejected" &&
+                  activeTask.rejectionReason && (
+                    <div className="task-rejection-details">
+                      <h3>Task Rejected</h3>
+                      <p className="rejection-reason">
+                        <strong>Reason:</strong> {activeTask.rejectionReason}
+                      </p>
+                      <p className="rejection-note">
+                        You can try a different task to earn rewards. If you
+                        believe this was rejected in error, please contact
+                        support.
+                      </p>
                     </div>
                   )}
 
@@ -910,211 +872,335 @@ const Tasks = () => {
                   </div>
                 )}
 
-                {/* Only show verification UI if task is started but not completed */}
+                {/* Only show steps and external links for non-completed, non-verification-pending tasks */}
                 {!activeTask.completed &&
                   activeTask.status !== "pending_verification" &&
-                  activeTask.status !== "rejected" &&
-                  activeTask.startedAt && (
-                    <div className="verification-section">
-                      {/* YouTube watch task */}
+                  activeTask.status !== "rejected" && (
+                    <>
+                      <div className="task-steps">
+                        <h3>Steps to Complete:</h3>
+                        <ol>
+                          {Array.isArray(activeTask.steps) &&
+                          activeTask.steps.length > 0 ? (
+                            activeTask.steps.map((step, index) => (
+                              <li key={index}>{step}</li>
+                            ))
+                          ) : (
+                            <li>Complete this task to earn rewards.</li>
+                          )}
+                        </ol>
+                      </div>
 
-                      {/* YouTube watch tasks: show complete button when watch time reaches required duration */}
-                      {/* YouTube watch task */}
-                      {activeTask.type === "youtube_watch" && (
-                        <div className="youtube-container">
-                          <h3>Watch the Video</h3>
-                          <div className="youtube-video-wrapper">
-                            <iframe
-                              ref={youtubePlayerRef}
-                              width="100%"
-                              height="315"
-                              src={`https://www.youtube.com/embed/${getYouTubeVideoId(
-                                activeTask.externalUrl
-                              )}?enablejsapi=1`}
-                              title="YouTube Video"
-                              frameBorder="0"
-                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                              allowFullScreen
-                            ></iframe>
-                            <div className="video-progress-bar">
-                              <div
-                                className="progress-fill"
-                                style={{
-                                  width: `${Math.min(
-                                    100,
-                                    (videoWatchTime /
-                                      parseInt(
-                                        activeTask.videoDuration || 30
-                                      )) *
-                                      100
-                                  )}%`,
-                                }}
-                              ></div>
-                            </div>
-                          </div>
-
-                          <div className="video-tracking-info">
-                            <div className="tracking-icon">
-                              <ClockIcon size={16} />
-                            </div>
-                            <div className="tracking-details">
-                              <p className="tracking-message">
-                                Watch the video for{" "}
-                                {activeTask.videoDuration || 30} seconds to
-                                complete this task.
-                              </p>
-                              <div className="tracking-progress">
-                                <span>Progress:</span>
-                                <span className="progress-number">
-                                  {Math.floor(videoWatchTime)} /{" "}
-                                  {activeTask.videoDuration || 30} seconds
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Always show a verification button for YouTube tasks */}
-                          <div className="verification-action youtube-verify-action">
-                            {verificationStatus === "error" && (
-                              <div className="verification-error">
-                                <AlertTriangle size={16} />
-                                <span>{error}</span>
-                              </div>
-                            )}
-
-                            <button
-                              className="submit-verification-button"
-                              onClick={() => verifyTask(activeTask._id)}
-                              disabled={verificationStatus === "verifying"}
-                            >
-                              {videoWatchTime >=
-                              parseInt(activeTask.videoDuration || 30)
-                                ? verificationStatus === "idle"
-                                  ? "Complete Task & Earn Reward"
-                                  : verificationStatus === "verifying"
-                                  ? "Verifying..."
-                                  : verificationStatus === "complete"
-                                  ? "Task Completed!"
-                                  : "Try Again"
-                                : `Watch ${
-                                    parseInt(activeTask.videoDuration || 30) -
-                                    Math.floor(videoWatchTime)
-                                  } more seconds to complete`}
-                            </button>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Screenshot upload for screenshot tasks */}
+                      {/* Show screenshot instructions for screenshot tasks */}
                       {activeTask.type === "screenshot" && (
-                        <div className="screenshot-upload-section">
-                          <h3>Upload Verification</h3>
-                          <div className="upload-container">
-                            <label
-                              htmlFor="screenshot-upload"
-                              className="upload-label"
-                            >
-                              {screenshotPreview ? (
-                                <div className="preview-container">
-                                  <img
-                                    src={screenshotPreview}
-                                    alt="Screenshot preview"
-                                    className="screenshot-preview"
-                                  />
-                                  <div className="preview-overlay">
-                                    <span>Change Image</span>
-                                  </div>
-                                </div>
-                              ) : (
-                                <>
-                                  <div className="upload-icon">
-                                    <Camera size={24} />
-                                  </div>
-                                  <div className="upload-text">
-                                    <span className="primary-text">
-                                      Upload Screenshot
-                                    </span>
-                                    <span className="secondary-text">
-                                      Click or drag image here
-                                    </span>
-                                  </div>
-                                </>
-                              )}
-                            </label>
-                            <input
-                              type="file"
-                              id="screenshot-upload"
-                              accept="image/*"
-                              onChange={handleScreenshotChange}
-                              className="hidden-file-input"
-                            />
-                          </div>
+                        <div className="screenshot-instructions">
+                          {/* Display custom screenshot instructions if they exist, otherwise use default */}
+                          <p className="instructions-text">
+                            {activeTask.screenshotInstructions
+                              ? activeTask.screenshotInstructions
+                              : "Take a screenshot showing you've completed the task. Make sure important details are clearly visible."}
+                          </p>
+                          {/* Show required indicator if screenshot is required */}
+                          {activeTask.screenshotRequired && (
+                            <div className="screenshot-required-notice">
+                              <AlertTriangle
+                                size={14}
+                                className="required-icon"
+                              />
+                              <span>
+                                A screenshot is required to verify this task
+                              </span>
+                            </div>
+                          )}
                         </div>
                       )}
 
-                      {/* Verification input for other task types (not YouTube watch) */}
-                      {activeTask.type !== "screenshot" &&
+                      {/* Show external URL link if not YouTube watch task */}
+                      {activeTask.externalUrl &&
                         activeTask.type !== "youtube_watch" && (
-                          <div className="verification-input-section">
-                            <h3>Verify Completion</h3>
-                            <div className="input-container">
-                              <label className="input-label">
-                                {activeTask.type === "twitter_follow" ||
-                                activeTask.type === "twitter_share"
-                                  ? "Enter the URL of your Twitter post/profile:"
-                                  : activeTask.type === "youtube_subscribe"
-                                  ? "Enter the URL of the YouTube channel:"
-                                  : activeTask.type === "telegram_join"
-                                  ? "Enter your Telegram username:"
-                                  : "Enter verification information:"}
-                              </label>
-                              <input
-                                type="text"
-                                value={verificationInput}
-                                onChange={(e) =>
-                                  setVerificationInput(e.target.value)
-                                }
-                                placeholder={
-                                  activeTask.type === "twitter_follow" ||
-                                  activeTask.type === "twitter_share"
-                                    ? "https://twitter.com/..."
-                                    : activeTask.type === "youtube_subscribe"
-                                    ? "https://youtube.com/..."
-                                    : activeTask.type === "telegram_join"
-                                    ? "@username"
-                                    : "Verification information..."
-                                }
-                                className="verification-input"
-                              />
+                          <a
+                            href={activeTask.externalUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="task-link-button"
+                          >
+                            <span>Go to Task</span>
+                            <ExternalLinkIcon size={16} />
+                          </a>
+                        )}
+
+                      {/* Only show the start button for non-rejected tasks that haven't been started */}
+                      {!activeTask.completed &&
+                        activeTask.status !== "pending_verification" &&
+                        activeTask.status !== "rejected" &&
+                        !activeTask.startedAt && (
+                          <div className="start-task-section">
+                            <button
+                              className="start-task-button"
+                              onClick={() => handleStartTask(activeTask._id)}
+                              disabled={isStartingTask}
+                            >
+                              {isStartingTask ? "Starting..." : "Start Task"}
+                            </button>
+                            <div className="task-info-note">
+                              <InfoIcon size={16} />
+                              <span>
+                                Starting this task will allow you to submit
+                                verification when complete.
+                              </span>
                             </div>
                           </div>
                         )}
 
-                      {/* Verification submit button (only show for non-YouTube watch tasks) */}
-                      {activeTask.type !== "youtube_watch" && (
-                        <div className="verification-action">
-                          {verificationStatus === "error" && (
-                            <div className="verification-error">
-                              <AlertTriangle size={16} />
-                              <span>{error}</span>
-                            </div>
-                          )}
-                          <button
-                            className="submit-verification-button"
-                            onClick={() => verifyTask(activeTask._id)}
-                            disabled={verificationStatus === "verifying"}
-                          >
-                            {verificationStatus === "idle"
-                              ? "Submit for Verification"
-                              : verificationStatus === "verifying"
-                              ? "Verifying..."
-                              : verificationStatus === "complete"
-                              ? "Verification Submitted!"
-                              : "Try Again"}
-                          </button>
-                        </div>
-                      )}
-                    </div>
+                      {/* Only show verification UI if task is started but not completed */}
+                      {!activeTask.completed &&
+                        activeTask.status !== "pending_verification" &&
+                        activeTask.status !== "rejected" &&
+                        activeTask.startedAt && (
+                          <div className="verification-section">
+                            {/* YouTube watch task */}
+                            {activeTask.type === "youtube_watch" && (
+                              <div className="youtube-container">
+                                <h3>Watch the Video</h3>
+                                <div className="youtube-video-wrapper">
+                                  <div className="video-progress-bar">
+                                    <div
+                                      className="progress-fill"
+                                      style={{
+                                        width: `${Math.min(
+                                          100,
+                                          (videoWatchTime /
+                                            parseInt(
+                                              activeTask.videoDuration || 30
+                                            )) *
+                                            100
+                                        )}%`,
+                                      }}
+                                    ></div>
+                                  </div>
+
+                                  <iframe
+                                    ref={youtubePlayerRef}
+                                    width="100%"
+                                    height="315"
+                                    src={`https://www.youtube.com/embed/${getYouTubeVideoId(
+                                      activeTask.externalUrl
+                                    )}?enablejsapi=1`}
+                                    title="YouTube Video"
+                                    frameBorder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                  ></iframe>
+                                </div>
+
+                                <div className="video-tracking-info">
+                                  <div className="tracking-icon">
+                                    <ClockIcon size={16} />
+                                  </div>
+                                  <div className="tracking-details">
+                                    <p className="tracking-message">
+                                      Watch the video for{" "}
+                                      {activeTask.videoDuration || 30} seconds
+                                      to complete this task.
+                                    </p>
+                                    <div className="tracking-progress">
+                                      <span>Progress:</span>
+                                      <span className="progress-number">
+                                        {Math.floor(videoWatchTime)} /{" "}
+                                        {activeTask.videoDuration || 30} seconds
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Always show a verification button for YouTube tasks */}
+                                <div className="verification-action youtube-verify-action">
+                                  {verificationStatus === "error" && (
+                                    <div className="verification-error">
+                                      <AlertTriangle size={16} />
+                                      <span>{error}</span>
+                                    </div>
+                                  )}
+
+                                  <button
+                                    className={`submit-verification-button ${
+                                      videoWatchTime <
+                                      parseInt(activeTask.videoDuration || 30)
+                                        ? "incomplete-button"
+                                        : ""
+                                    }`}
+                                    onClick={() => verifyTask(activeTask._id)}
+                                    disabled={
+                                      videoWatchTime <
+                                        parseInt(
+                                          activeTask.videoDuration || 30
+                                        ) || verificationStatus === "verifying"
+                                    }
+                                  >
+                                    {videoWatchTime >=
+                                    parseInt(activeTask.videoDuration || 30)
+                                      ? verificationStatus === "idle"
+                                        ? "Complete Task & Earn Reward"
+                                        : verificationStatus === "verifying"
+                                        ? "Verifying..."
+                                        : verificationStatus === "complete"
+                                        ? "Task Completed!"
+                                        : "Try Again"
+                                      : `Watch ${
+                                          parseInt(
+                                            activeTask.videoDuration || 30
+                                          ) - Math.floor(videoWatchTime)
+                                        } more seconds to complete`}
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Screenshot upload for screenshot tasks */}
+                            {activeTask.type === "screenshot" && (
+                              <div className="screenshot-upload-section">
+                                <h3>Upload Verification</h3>
+                                <div className="upload-container">
+                                  <label
+                                    htmlFor="screenshot-upload"
+                                    className="upload-label"
+                                  >
+                                    {screenshotPreview ? (
+                                      <div className="preview-container">
+                                        <img
+                                          src={screenshotPreview}
+                                          alt="Screenshot preview"
+                                          className="screenshot-preview"
+                                        />
+                                        <div className="preview-overlay">
+                                          <span>Change Image</span>
+                                        </div>
+                                      </div>
+                                    ) : (
+                                      <>
+                                        <div className="upload-icon">
+                                          <Camera size={24} />
+                                        </div>
+                                        <div className="upload-text">
+                                          <span className="primary-text">
+                                            Upload Screenshot
+                                          </span>
+                                          <span className="secondary-text">
+                                            Click or drag image here
+                                          </span>
+                                        </div>
+                                      </>
+                                    )}
+                                  </label>
+                                  <input
+                                    type="file"
+                                    id="screenshot-upload"
+                                    accept="image/*"
+                                    onChange={handleScreenshotChange}
+                                    className="hidden-file-input"
+                                  />
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Verification input for other task types */}
+                            {activeTask.type !== "screenshot" &&
+                              activeTask.type !== "youtube_watch" && (
+                                <div className="verification-input-section">
+                                  <h3>Verify Completion</h3>
+                                  <div className="input-container">
+                                    <label className="input-label">
+                                      {activeTask.type === "twitter_follow" ||
+                                      activeTask.type === "twitter_share"
+                                        ? "Enter the URL of your Twitter post/profile:"
+                                        : activeTask.type ===
+                                          "youtube_subscribe"
+                                        ? "Enter the URL of the YouTube channel:"
+                                        : activeTask.type === "telegram_join"
+                                        ? "Enter your Telegram username:"
+                                        : "Enter verification information:"}
+                                    </label>
+                                    <input
+                                      type="text"
+                                      value={verificationInput}
+                                      onChange={(e) =>
+                                        setVerificationInput(e.target.value)
+                                      }
+                                      placeholder={
+                                        activeTask.type === "twitter_follow" ||
+                                        activeTask.type === "twitter_share"
+                                          ? "https://twitter.com/..."
+                                          : activeTask.type ===
+                                            "youtube_subscribe"
+                                          ? "https://youtube.com/..."
+                                          : activeTask.type === "telegram_join"
+                                          ? "@username"
+                                          : "Verification information..."
+                                      }
+                                      className="verification-input"
+                                    />
+                                  </div>
+                                </div>
+                              )}
+
+                            {/* Verification submit button for non-YouTube watch tasks */}
+                            {activeTask.type !== "youtube_watch" && (
+                              <div className="verification-action">
+                                {verificationStatus === "error" && (
+                                  <div className="verification-error">
+                                    <AlertTriangle size={16} />
+                                    <span>{error}</span>
+                                  </div>
+                                )}
+                                <button
+                                  className="submit-verification-button"
+                                  onClick={() => verifyTask(activeTask._id)}
+                                  disabled={verificationStatus === "verifying"}
+                                >
+                                  {verificationStatus === "idle"
+                                    ? "Submit for Verification"
+                                    : verificationStatus === "verifying"
+                                    ? "Verifying..."
+                                    : verificationStatus === "complete"
+                                    ? "Verification Submitted!"
+                                    : "Try Again"}
+                                </button>
+                              </div>
+                            )}
+
+                            {/* Show verification progress UI during verification */}
+                            {verificationStatus === "verifying" && (
+                              <div className="verification-progress-container">
+                                <div className="verification-progress">
+                                  <div className="progress-indicators">
+                                    <div className="progress-step active">
+                                      <div className="step-dot"></div>
+                                      <div className="step-label">
+                                        Submitting
+                                      </div>
+                                    </div>
+                                    <div className="progress-line active"></div>
+                                    <div className="progress-step">
+                                      <div className="step-dot"></div>
+                                      <div className="step-label">
+                                        Verifying
+                                      </div>
+                                    </div>
+                                    <div className="progress-line"></div>
+                                    <div className="progress-step">
+                                      <div className="step-dot"></div>
+                                      <div className="step-label">Complete</div>
+                                    </div>
+                                  </div>
+                                  <div className="verification-message">
+                                    Verifying task completion...
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                    </>
                   )}
               </div>
             </div>
