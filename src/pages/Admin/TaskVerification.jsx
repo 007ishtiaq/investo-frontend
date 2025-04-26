@@ -21,6 +21,8 @@ const TaskVerification = () => {
   const [error, setError] = useState("");
   const [userGroups, setUserGroups] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
+  // Track processing state for approving/rejecting
+  const [processingTaskId, setProcessingTaskId] = useState(null);
 
   // Cleanup function to handle component unmounting
   useEffect(() => {
@@ -154,9 +156,22 @@ const TaskVerification = () => {
   };
 
   const handleApprove = async (userTaskId) => {
+    // Prevent duplicate clicks
+    if (processingTaskId) return;
+
+    setProcessingTaskId(userTaskId);
+
     try {
-      await approveTask(userTaskId, user.token);
-      toast.success("Task approved and reward issued");
+      // Show processing state to user
+      toast.loading("Processing approval and crediting reward...", {
+        id: "approval",
+      });
+
+      const res = await approveTask(userTaskId, user.token);
+
+      // Dismiss the loading toast and show success
+      toast.dismiss("approval");
+      toast.success("Task approved and reward credited to user's wallet");
 
       // Update the local state to immediately reflect the change
       if (selectedUser) {
@@ -168,7 +183,10 @@ const TaskVerification = () => {
         // 2. Update the stats
         const updatedStats = {
           ...selectedUser.stats,
-          underVerification: selectedUser.stats.underVerification - 1,
+          underVerification: Math.max(
+            0,
+            selectedUser.stats.underVerification - 1
+          ),
           completed: selectedUser.stats.completed + 1,
         };
 
@@ -198,7 +216,10 @@ const TaskVerification = () => {
       loadPendingTasks();
     } catch (error) {
       console.error("Error approving task:", error);
-      toast.error("Failed to approve task");
+      toast.dismiss("approval");
+      toast.error("Failed to approve task and credit wallet");
+    } finally {
+      setProcessingTaskId(null);
     }
   };
 
@@ -213,9 +234,18 @@ const TaskVerification = () => {
       return toast.error("Please provide a reason for rejection");
     }
 
+    // Prevent duplicate submissions
+    if (processingTaskId) return;
+
+    setProcessingTaskId(selectedTaskId);
+
     try {
+      toast.loading("Processing rejection...", { id: "rejection" });
+
       await rejectTask(selectedTaskId, { rejectionReason }, user.token);
-      toast.success("Task rejected");
+
+      toast.dismiss("rejection");
+      toast.success("Task rejected - no reward credited");
       setShowRejectModal(false);
 
       // Update the local state to immediately reflect the change
@@ -228,7 +258,10 @@ const TaskVerification = () => {
         // 2. Update the stats
         const updatedStats = {
           ...selectedUser.stats,
-          underVerification: selectedUser.stats.underVerification - 1,
+          underVerification: Math.max(
+            0,
+            selectedUser.stats.underVerification - 1
+          ),
           rejected: selectedUser.stats.rejected + 1,
         };
 
@@ -258,7 +291,10 @@ const TaskVerification = () => {
       loadPendingTasks();
     } catch (error) {
       console.error("Error rejecting task:", error);
+      toast.dismiss("rejection");
       toast.error("Failed to reject task");
+    } finally {
+      setProcessingTaskId(null);
     }
   };
 
@@ -279,6 +315,10 @@ const TaskVerification = () => {
   const getScreenshotUrl = (task) => {
     if (task.screenshot) {
       return task.screenshot;
+    }
+
+    if (task.verificationData && task.verificationData.screenshot) {
+      return task.verificationData.screenshot;
     }
 
     if (task.verificationData && task.verificationData.screenshotUrl) {
@@ -406,26 +446,11 @@ const TaskVerification = () => {
                         <span className="stat-label">Rejected</span>
                       </div>
                     </div>
-
-                    <div className="user-task-count">
-                      <span>{userGroup.tasks.length} tasks</span>
-                    </div>
-
-                    <div className="view-tasks-button">
-                      <span>View Tasks</span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        width="16"
-                        height="16"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M9 18l6-6-6-6" />
-                      </svg>
+                    <div className="task-count">
+                      {userGroup.stats.underVerification} pending verification{" "}
+                      {userGroup.stats.underVerification === 1
+                        ? "task"
+                        : "tasks"}
                     </div>
                   </div>
                 ))}
@@ -434,238 +459,222 @@ const TaskVerification = () => {
           </>
         ) : (
           <>
-            <div className="user-tasks-header">
+            <div className="user-verification-view">
               <button className="back-button" onClick={backToUsers}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  width="16"
-                  height="16"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M15 18l-6-6 6-6" />
-                </svg>
-                Back to Users
+                ← Back to Users
               </button>
-              <div className="user-info">
-                {selectedUser.user.name ? (
-                  <>
-                    <h2>{selectedUser.user.name}</h2>
-                    <span className="user-email">
-                      {selectedUser.user.email || "No Email"}
-                    </span>
-                  </>
-                ) : (
-                  <h2>
-                    User ID: {selectedUser.user._id || selectedUser.user.id}
-                  </h2>
-                )}
+
+              <div className="user-profile-header">
+                <h2>
+                  {selectedUser.user.name
+                    ? `${selectedUser.user.name}'s Tasks`
+                    : `User ${
+                        selectedUser.user._id || selectedUser.user.id
+                      }'s Tasks`}
+                </h2>
+                <div className="user-email">
+                  {selectedUser.user.email || "No Email"}
+                </div>
               </div>
-            </div>
 
-            <div className="task-stats-summary">
-              <div className="stat-badge pending">
-                <span className="stat-count">{selectedUser.stats.pending}</span>
-                <span className="stat-label">Pending</span>
-              </div>
-              <div className="stat-badge verification">
-                <span className="stat-count">
-                  {selectedUser.stats.underVerification}
-                </span>
-                <span className="stat-label">Verifying</span>
-              </div>
-              <div className="stat-badge completed">
-                <span className="stat-count">
-                  {selectedUser.stats.completed}
-                </span>
-                <span className="stat-label">Completed</span>
-              </div>
-              <div className="stat-badge rejected">
-                <span className="stat-count">
-                  {selectedUser.stats.rejected}
-                </span>
-                <span className="stat-label">Rejected</span>
-              </div>
-            </div>
-
-            <div className="pending-tasks-list">
-              {selectedUser.tasks.map((submission) => {
-                const { title, type, reward } = getTaskDetails(submission);
-                const screenshotUrl = getScreenshotUrl(submission);
-
-                return (
-                  <div key={submission._id} className="task-submission-card">
-                    <div className="submission-header">
-                      <h3>{title}</h3>
-                      <span className="task-type">
-                        {type === "screenshot"
-                          ? "Screenshot"
-                          : type.replace("_", " ")}
-                      </span>
-                    </div>
-
-                    <div className="submission-details">
-                      <div className="detail-row">
-                        <span className="label">Submitted on:</span>
-                        <span className="value">
-                          {submission.createdAt
-                            ? new Date(submission.createdAt).toLocaleString()
-                            : "Unknown date"}
-                        </span>
-                      </div>
-
-                      <div className="detail-row">
-                        <span className="label">Status:</span>
-                        <span
-                          className={`value status-badge ${submission.status}`}
-                        >
-                          {submission.status === "pending_verification"
-                            ? "Under Verification"
-                            : submission.status === "rejected"
-                            ? "Rejected"
-                            : submission.completed
-                            ? "Completed"
-                            : "Pending"}
-                        </span>
-                      </div>
-
-                      {/* Display rejection reason if task was rejected */}
-                      {submission.status === "rejected" &&
-                        submission.rejectionReason && (
-                          <div className="detail-row rejection-reason">
-                            <span className="label">Rejection Reason:</span>
-                            <span className="value">
-                              {submission.rejectionReason}
-                            </span>
-                          </div>
-                        )}
-
-                      <div className="detail-row">
-                        <span className="label">Reward:</span>
-                        <span className="value reward">
-                          {reward.toFixed(3)} ETH
-                        </span>
-                      </div>
-
-                      {/* Display screenshot thumbnail if available */}
-                      {screenshotUrl && (
-                        <div className="screenshot-preview">
-                          <h4>Screenshot Submission:</h4>
-                          <div className="screenshot-thumbnail-container">
-                            <img
-                              src={screenshotUrl}
-                              alt="Task Screenshot"
-                              className="screenshot-thumbnail"
-                              onClick={() => openImageModal(screenshotUrl)}
-                            />
-                            <div className="click-hint">Click to enlarge</div>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Display other verification data except screenshot (which we're showing above) */}
-                      {submission.verificationData && (
-                        <div className="verification-data">
-                          <h4>Verification Data:</h4>
-                          {Object.entries(submission.verificationData)
-                            .filter(
-                              ([key]) =>
-                                !["screenshot", "screenshotUrl"].includes(key)
-                            )
-                            .map(([key, value]) => (
-                              <div key={key} className="verification-item">
-                                <span className="label">{key}:</span>
-                                <span className="value">
-                                  {typeof value === "string" &&
-                                  value.length < 100
-                                    ? value
-                                    : "[Data too large to display]"}
-                                </span>
-                              </div>
-                            ))}
-                        </div>
-                      )}
-                    </div>
-
-                    {submission.status === "pending_verification" && (
-                      <div className="submission-actions">
-                        <button
-                          className="approve-button"
-                          onClick={() => handleApprove(submission._id)}
-                        >
-                          Approve & Issue Reward
-                        </button>
-                        <button
-                          className="reject-button"
-                          onClick={() => openRejectModal(submission._id)}
-                        >
-                          Reject
-                        </button>
-                      </div>
-                    )}
+              <div className="user-verification-stats">
+                <div className="stat-card verification">
+                  <div className="stat-count">
+                    {selectedUser.stats.underVerification}
                   </div>
-                );
-              })}
+                  <div className="stat-label">Pending Verification</div>
+                </div>
+                <div className="stat-card completed">
+                  <div className="stat-count">
+                    {selectedUser.stats.completed}
+                  </div>
+                  <div className="stat-label">Completed Tasks</div>
+                </div>
+                <div className="stat-card rejected">
+                  <div className="stat-count">
+                    {selectedUser.stats.rejected}
+                  </div>
+                  <div className="stat-label">Rejected Tasks</div>
+                </div>
+              </div>
+
+              {selectedUser.tasks.length === 0 ? (
+                <div className="no-tasks-message">
+                  <p>This user has no pending task verifications.</p>
+                </div>
+              ) : (
+                <div className="verification-tasks-list">
+                  {selectedUser.tasks
+                    .filter((task) => task.status === "pending_verification")
+                    .map((task) => {
+                      const taskDetails = getTaskDetails(task);
+                      const screenshotUrl = getScreenshotUrl(task);
+
+                      return (
+                        <div key={task._id} className="verification-task-card">
+                          <div className="task-header">
+                            <h3 className="task-title">{taskDetails.title}</h3>
+                            <div className="task-reward-badge">
+                              ${taskDetails.reward.toFixed(3)} USD
+                            </div>
+                          </div>
+
+                          <div className="task-type-badge">
+                            {taskDetails.type}
+                          </div>
+
+                          <div className="task-verification-details">
+                            <div className="submitted-info">
+                              <div className="info-label">Submitted:</div>
+                              <div className="info-value">
+                                {new Date(task.updatedAt).toLocaleString()}
+                              </div>
+                            </div>
+
+                            {/* Display screenshot if available */}
+                            {screenshotUrl && (
+                              <div className="screenshot-preview-container">
+                                <div className="info-label">Screenshot:</div>
+                                <div
+                                  className="screenshot-preview"
+                                  onClick={() => openImageModal(screenshotUrl)}
+                                >
+                                  <img
+                                    src={screenshotUrl}
+                                    alt="Verification screenshot"
+                                  />
+                                  <div className="preview-overlay">
+                                    <span>Click to enlarge</span>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Task specific data */}
+                            {task.verificationData && (
+                              <div className="verification-data">
+                                {Object.entries(task.verificationData).map(
+                                  ([key, value]) => {
+                                    // Skip screenshot as it's handled separately
+                                    if (
+                                      key === "screenshot" ||
+                                      key === "screenshotUrl"
+                                    )
+                                      return null;
+
+                                    return (
+                                      <div key={key} className="data-item">
+                                        <div className="info-label">
+                                          {key.charAt(0).toUpperCase() +
+                                            key
+                                              .slice(1)
+                                              .replace(/([A-Z])/g, " $1")}
+                                          :
+                                        </div>
+                                        <div className="info-value">
+                                          {typeof value === "boolean"
+                                            ? value
+                                              ? "Yes"
+                                              : "No"
+                                            : value}
+                                        </div>
+                                      </div>
+                                    );
+                                  }
+                                )}
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="verification-actions">
+                            <div className="reward-credit-info">
+                              <div className="credit-icon">💰</div>
+                              <span className="credit-text">
+                                Approving will credit $
+                                {taskDetails.reward.toFixed(3)} USD to user's
+                                wallet
+                              </span>
+                            </div>
+                            <div className="action-buttons">
+                              <button
+                                className="reject-button"
+                                onClick={() => openRejectModal(task._id)}
+                                disabled={processingTaskId === task._id}
+                              >
+                                Reject
+                              </button>
+                              <button
+                                className="approve-button"
+                                onClick={() => handleApprove(task._id)}
+                                disabled={processingTaskId === task._id}
+                              >
+                                {processingTaskId === task._id
+                                  ? "Processing..."
+                                  : "Approve & Credit Reward"}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              )}
             </div>
           </>
         )}
       </div>
 
-      {/* Rejection Reason Modal */}
-      {showRejectModal && (
-        <div
-          className="modal-overlay"
-          onClick={() => setShowRejectModal(false)}
-        >
-          <div className="rejection-modal" onClick={(e) => e.stopPropagation()}>
-            <h3>Reject Task Submission</h3>
-            <p>Please provide a reason for rejection:</p>
-            <textarea
-              value={rejectionReason}
-              onChange={(e) => setRejectionReason(e.target.value)}
-              placeholder="Enter reason for rejection"
-              rows={4}
-            ></textarea>
-            <div className="modal-actions">
-              <button
-                className="cancel-button"
-                onClick={() => setShowRejectModal(false)}
-              >
-                Cancel
-              </button>
-              <button className="confirm-button" onClick={handleReject}>
-                Confirm Rejection
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Image Zoom Modal */}
+      {/* Image Modal */}
       {imageModalOpen && selectedImage && (
-        <div
-          className="image-modal-overlay"
-          onClick={() => setImageModalOpen(false)}
-        >
-          <div
-            className="image-modal-content"
-            onClick={(e) => e.stopPropagation()}
-          >
+        <div className="modal-overlay" onClick={() => setImageModalOpen(false)}>
+          <div className="image-modal" onClick={(e) => e.stopPropagation()}>
             <button
-              className="close-image-modal"
+              className="close-modal"
               onClick={() => setImageModalOpen(false)}
             >
               ×
             </button>
             <img
               src={selectedImage}
-              alt="Full size screenshot"
+              alt="Verification screenshot"
               className="fullsize-image"
             />
+          </div>
+        </div>
+      )}
+
+      {/* Reject Confirmation Modal */}
+      {showRejectModal && (
+        <div className="modal-overlay">
+          <div className="reject-modal">
+            <h3>Reject Task</h3>
+            <p>Please provide a reason for rejecting this task:</p>
+            <textarea
+              value={rejectionReason}
+              onChange={(e) => setRejectionReason(e.target.value)}
+              placeholder="Example: 'Screenshot doesn't show the required proof of completion'"
+              rows="4"
+            ></textarea>
+            <div className="modal-actions">
+              <button
+                className="cancel-button"
+                onClick={() => setShowRejectModal(false)}
+                disabled={processingTaskId === selectedTaskId}
+              >
+                Cancel
+              </button>
+              <button
+                className="confirm-reject-button"
+                onClick={handleReject}
+                disabled={
+                  !rejectionReason.trim() || processingTaskId === selectedTaskId
+                }
+              >
+                {processingTaskId === selectedTaskId
+                  ? "Processing..."
+                  : "Confirm Rejection"}
+              </button>
+            </div>
           </div>
         </div>
       )}

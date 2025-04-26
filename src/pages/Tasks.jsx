@@ -19,6 +19,7 @@ import {
   getTasksEarnings,
   startTask,
 } from "../functions/tasks";
+import { getUserWallet } from "../functions/wallet";
 import "./Tasks.css";
 import { Camera, Upload, AlertTriangle } from "lucide-react";
 
@@ -61,6 +62,31 @@ const Tasks = () => {
   const [videoWatchComplete, setVideoWatchComplete] = useState(false);
   const youtubePlayerRef = useRef(null);
   const videoIntervalRef = useRef(null);
+
+  const [walletBalance, setWalletBalance] = useState(0);
+
+  const loadWalletBalance = async () => {
+    if (!user || !user.token) return;
+
+    try {
+      const res = await getUserWallet(user.token);
+      setWalletBalance(res.data.balance || 0);
+    } catch (err) {
+      console.error("Error loading wallet balance:", err);
+      setWalletBalance(0);
+    }
+  };
+
+  // Add this to your useEffect that runs on component mount:
+  useEffect(() => {
+    loadTasks();
+    if (user) {
+      loadEarnings();
+      loadWalletBalance(); // Add this line
+    }
+
+    // Other cleanup code...
+  }, [user]);
 
   // Task difficulty colors
   const difficultyColors = {
@@ -602,16 +628,19 @@ const Tasks = () => {
             <div className="stat-title">Total Available Rewards</div>
             <div className="stat-value">
               <EthereumIcon size={18} />
-              <span>{totalRewards.toFixed(3)} ETH</span>
+              <span>{totalRewards.toFixed(3)} USD</span>
             </div>
           </div>
 
           <div className="stat-card">
-            <div className="stat-title">Your Earned Rewards</div>
+            <div className="stat-title">Your Wallet Balance</div>
             <div className="stat-value">
               <EthereumIcon size={18} />
-              <span>{earnings.toFixed(3)} ETH</span>
+              <span>{walletBalance.toFixed(3)} USD</span>
             </div>
+            <Link to="/wallet" className="wallet-link">
+              View Wallet
+            </Link>
           </div>
 
           <div className="stat-card">
