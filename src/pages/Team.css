@@ -1,0 +1,258 @@
+/* client/src/pages/Team.css */
+.team-page {
+  padding: 40px 0;
+  min-height: 100vh;
+  background-color: #f5f8fa;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.team-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.stat-card {
+  background-color: white;
+  border-radius: 10px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #666;
+}
+
+/* Affiliate Section */
+.affiliate-section {
+  background-color: white;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.affiliate-section h2 {
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.affiliate-section p {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.affiliate-code-container {
+  background-color: #f7f9fc;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.affiliate-code {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.affiliate-code span {
+  font-family: monospace;
+  font-size: 18px;
+  color: #333;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 10px 15px;
+  border-radius: 6px;
+  flex-grow: 1;
+  margin-right: 15px;
+}
+
+.copy-btn {
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.copy-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.copy-btn.copied {
+  background: #2ecc71;
+}
+
+.affiliate-info {
+  font-size: 14px;
+  color: #888;
+  margin: 0;
+}
+
+/* Team Members Section */
+.team-members-section {
+  background-color: white;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.team-members-section h2 {
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.loading,
+.no-members {
+  text-align: center;
+  padding: 30px;
+  color: #666;
+}
+
+.team-table-container {
+  overflow-x: auto;
+}
+
+.team-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.team-table th,
+.team-table td {
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.team-table th {
+  color: #333;
+  font-weight: 600;
+  background-color: #f7f9fc;
+}
+
+.team-table tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* Level Benefits Section */
+.level-benefits-section {
+  background-color: white;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.level-benefits-section h2 {
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.level-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
+}
+
+.level-card {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.level-header {
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  color: white;
+  padding: 15px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.level-benefits {
+  list-style: none;
+  padding: 15px;
+  margin: 0;
+}
+
+.level-benefits li {
+  padding: 8px 0;
+  font-size: 14px;
+  color: #666;
+  position: relative;
+}
+
+.level-benefits li::before {
+  content: "✓";
+  color: #2ecc71;
+  margin-right: 8px;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 968px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .level-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .stats-grid,
+  .level-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .affiliate-code {
+    flex-direction: column;
+  }
+
+  .affiliate-code span {
+    margin-right: 0;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+}

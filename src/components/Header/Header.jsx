@@ -79,7 +79,16 @@ const Header = () => {
             </>
           ) : (
             <div className="user-auth-section">
-              <Link to="/wallet" className="user-balance">
+              <button
+                onClick={handleLogout}
+                className="logout-button button-to-hide"
+              >
+                Logout
+              </button>
+              <Link
+                to="/wallet"
+                className="user-balance connect-wallet-button gradient-bg wallet-button"
+              >
                 <WalletIcon size={16} />
                 <span>
                   {loading
@@ -87,9 +96,6 @@ const Header = () => {
                     : formatBalance(walletBalance, walletCurrency)}
                 </span>
               </Link>
-              <button onClick={handleLogout} className="logout-button">
-                Logout
-              </button>
             </div>
           )}
 

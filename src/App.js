@@ -15,6 +15,7 @@ import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AdminTasks from "./pages/Admin/AdminTasks";
 import TaskVerification from "./pages/Admin/TaskVerification";
 import Wallet from "./pages/Wallet";
+import Team from "./pages/Team";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
           <Route exact path="/otpVerification" component={OTPVerification} />
           <Route exact path="/register/complete" component={RegisterComplete} />
           <Route exact path="/wallet" component={Wallet} />
+          <Route path="/team" component={Team} />
 
           {/* Admin routes */}
           <Route path="/admin" exact component={AdminDashboard} />

@@ -6,8 +6,10 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { auth } from "../../firebase";
 import { createOrUpdateUser, infoOTP } from "../../functions/auth";
+import { registerWithAffiliateCode } from "../../functions/team";
 import { EthereumIcon } from "../../utils/icons";
 import "../Login/Login.css";
+import { useLocation } from "react-router-dom";
 
 // Spinner component for loading state
 const Spinner = () => (
@@ -49,6 +51,8 @@ const registerCompleteSchema = Yup.object({
 const RegisterComplete = () => {
   const [loading, setLoading] = useState(false);
   const [noNetModal, setNoNetModal] = useState(false);
+  const [affiliateCode, setAffiliateCode] = useState("");
+  const location = useLocation();
 
   const { user } = useSelector((state) => ({ ...state }));
   const dispatch = useDispatch();
@@ -66,6 +70,15 @@ const RegisterComplete = () => {
       window.removeEventListener("online", handleOnlineStatus);
     };
   }, []);
+
+  useEffect(() => {
+    // Extract affiliate code from URL if present
+    const urlParams = new URLSearchParams(location.search);
+    const refCode = urlParams.get("ref");
+    if (refCode) {
+      setAffiliateCode(refCode);
+    }
+  }, [location]);
 
   // Formik setup
   const initialValues = {
@@ -130,6 +143,25 @@ const RegisterComplete = () => {
                       _id: res.data._id,
                     },
                   });
+
+                  // Check for affiliate code and register it if exists
+                  if (affiliateCode) {
+                    // Use the user ID from the response
+                    registerWithAffiliateCode(affiliateCode, res.data._id)
+                      .then(() => {
+                        toast.success(
+                          `You've been successfully registered with a referral code!`
+                        );
+                      })
+                      .catch((error) => {
+                        console.error(
+                          "Error registering affiliate code:",
+                          error
+                        );
+                        // Optional: show a toast for affiliate error, but don't stop the flow
+                        toast.error("Note: Could not register affiliate code");
+                      });
+                  }
 
                   // Show success message
                   toast.success(`Registration successful. Welcome, ${name}!`);
@@ -327,6 +359,17 @@ const RegisterComplete = () => {
                 {errors.confim_password && touched.confim_password ? (
                   <p className="error-message">{errors.confim_password}</p>
                 ) : null}
+              </div>
+
+              <div className="form-group">
+                <label>Affiliate Code (Optional)</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={affiliateCode}
+                  onChange={(e) => setAffiliateCode(e.target.value)}
+                  placeholder="Enter affiliate code if you have one"
+                />
               </div>
 
               <div className="form-actions">

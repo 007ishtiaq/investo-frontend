@@ -355,7 +355,7 @@
 }
 
 .user-balance svg {
-  color: var(--color-primary);
+  color: white;
 }
 
 .logout-button {
@@ -380,6 +380,9 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+.button-to-hide {
+  display: flex;
 }
 @media (max-width: 768px) {
   .mobile-nav {
@@ -431,6 +434,12 @@
   }
 
   .mobile-menu-button {
+    display: none;
+  }
+}
+
+@media (max-width: 450px) {
+  .button-to-hide {
     display: none;
   }
 }
