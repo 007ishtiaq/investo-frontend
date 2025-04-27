@@ -14,16 +14,21 @@ export const EthereumIcon = ({ size = 24, className = "" }) => {
       className={className}
     >
       <path
-        d="M12 1.75L5.75 12.25L12 16L18.25 12.25L12 1.75Z"
-        fill="currentColor"
+        d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2Z"
         stroke="currentColor"
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
-        d="M5.75 12.25L12 22.25L18.25 12.25L12 16L5.75 12.25Z"
-        fill="none"
+        d="M12 6V18"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M15 9.5C15 8.12 13.66 7 12 7C10.34 7 9 8.12 9 9.5C9 10.88 10.34 12 12 12C13.66 12 15 13.12 15 14.5C15 15.88 13.66 17 12 17C10.34 17 9 15.88 9 14.5"
         stroke="currentColor"
         strokeWidth="1.5"
         strokeLinecap="round"

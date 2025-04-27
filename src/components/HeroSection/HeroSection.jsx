@@ -111,7 +111,7 @@ const HeroSection = ({ featuredNft, creator }) => {
                   <div className="bid-label">Current bid</div>
                   <div className="bid-price">
                     <EthereumIcon size={16} />
-                    <span>{featuredNft.price?.toFixed(2) || "0.00"} ETH</span>
+                    <span>{featuredNft.price?.toFixed(2) || "0.00"} USD</span>
                   </div>
 
                   {featuredNft.endTime && (

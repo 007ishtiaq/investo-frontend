@@ -487,7 +487,7 @@ const AdminTasks = () => {
                 >
                   <div className="task-cell task-title-cell">{task.title}</div>
                   <div className="task-cell">{task.type.replace("_", " ")}</div>
-                  <div className="task-cell">{task.reward.toFixed(3)} ETH</div>
+                  <div className="task-cell">{task.reward.toFixed(3)} USD</div>
                   <div className="task-cell">{task.difficulty}</div>
                   <div className="task-cell">
                     <span

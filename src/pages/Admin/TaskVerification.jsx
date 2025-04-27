@@ -156,6 +156,8 @@ const TaskVerification = () => {
   };
 
   const handleApprove = async (userTaskId) => {
+    console.log("userTaskId", userTaskId);
+
     // Prevent duplicate clicks
     if (processingTaskId) return;
 

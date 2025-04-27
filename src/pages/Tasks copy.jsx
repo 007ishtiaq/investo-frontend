@@ -450,7 +450,7 @@ const Tasks = () => {
           setTasks(updatedTasks);
 
           const rewardAmount = activeTask.reward.toFixed(3);
-          toast.success(`Task completed! +${rewardAmount} ETH earned`);
+          toast.success(`Task completed! +${rewardAmount} USD earned`);
 
           // Update earnings immediately
           loadEarnings();
@@ -556,7 +556,7 @@ const Tasks = () => {
           setVerificationStatus("complete");
 
           const rewardAmount = activeTask.reward.toFixed(3);
-          toast.success(`Task completed! +${rewardAmount} ETH earned`);
+          toast.success(`Task completed! +${rewardAmount} USD earned`);
 
           // Update earnings immediately
           loadEarnings();
@@ -762,7 +762,7 @@ const Tasks = () => {
                   ) : (
                     <div className="reward-badge">
                       <EthereumIcon size={16} />
-                      <span>{task.reward.toFixed(3)} ETH</span>
+                      <span>{task.reward.toFixed(3)} USD</span>
                     </div>
                   )}
                 </div>
@@ -826,7 +826,7 @@ const Tasks = () => {
                 <h2>{activeTask.title}</h2>
                 <div className="task-reward">
                   <EthereumIcon size={18} />
-                  <span>{activeTask.reward.toFixed(3)} ETH</span>
+                  <span>{activeTask.reward.toFixed(3)} USD</span>
                 </div>
               </div>
 
@@ -928,7 +928,7 @@ const Tasks = () => {
                     </div>
                     <p>
                       You've successfully completed this task and earned{" "}
-                      <strong>{activeTask.reward.toFixed(3)} ETH</strong>!
+                      <strong>{activeTask.reward.toFixed(3)} USD</strong>!
                     </p>
                   </div>
                 )}

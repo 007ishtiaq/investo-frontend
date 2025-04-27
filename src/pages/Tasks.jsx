@@ -85,6 +85,13 @@ const Tasks = () => {
       loadWalletBalance(); // Add this line
     }
 
+    // Clean up video interval if component unmounts
+    return () => {
+      if (videoIntervalRef.current) {
+        clearInterval(videoIntervalRef.current);
+      }
+    };
+
     // Other cleanup code...
   }, [user]);
 
@@ -134,21 +141,6 @@ const Tasks = () => {
       clearInterval(videoIntervalRef.current);
     }
   };
-
-  // Load tasks on component mount
-  useEffect(() => {
-    loadTasks();
-    if (user) {
-      loadEarnings();
-    }
-
-    // Clean up video interval if component unmounts
-    return () => {
-      if (videoIntervalRef.current) {
-        clearInterval(videoIntervalRef.current);
-      }
-    };
-  }, [user]);
 
   useEffect(() => {
     // Only run this effect if activeTask is a YouTube watch task
@@ -432,7 +424,7 @@ const Tasks = () => {
         autoVerified: true, // This flag tells backend this can be auto-verified
       };
 
-      console.log("Verifying YouTube task:", taskId, verificationData);
+      // console.log("Verifying YouTube task:", taskId, verificationData);
 
       // Send verification request to API - backend will handle reward crediting
       const res = await verifyTaskCompletion(
@@ -440,7 +432,7 @@ const Tasks = () => {
         verificationData,
         user.token
       );
-      console.log("YouTube verification response:", res.data);
+      // console.log("YouTube verification response:", res.data);
 
       if (res.data.success) {
         // Update local task state
@@ -525,13 +517,13 @@ const Tasks = () => {
       }
 
       // Send verification request to API - backend will handle reward crediting if applicable
-      console.log("Sending verification data:", verificationData);
+      // console.log("Sending verification data:", verificationData);
       const res = await verifyTaskCompletion(
         taskId,
         verificationData,
         user.token
       );
-      console.log("Verification response:", res.data);
+      // console.log("Verification response:", res.data);
 
       if (res.data.success) {
         if (res.data.status === "pending_verification") {
@@ -765,7 +757,7 @@ const Tasks = () => {
                   ) : (
                     <div className="reward-badge">
                       <EthereumIcon size={16} />
-                      <span>{task.reward.toFixed(3)} ETH</span>
+                      <span>{task.reward.toFixed(3)} USD</span>
                     </div>
                   )}
                 </div>
@@ -829,7 +821,7 @@ const Tasks = () => {
                 <h2>{activeTask.title}</h2>
                 <div className="task-reward">
                   <EthereumIcon size={18} />
-                  <span>{activeTask.reward.toFixed(3)} ETH</span>
+                  <span>{activeTask.reward.toFixed(3)} USD</span>
                 </div>
               </div>
 
@@ -931,7 +923,7 @@ const Tasks = () => {
                     </div>
                     <p>
                       You've successfully completed this task and earned{" "}
-                      <strong>{activeTask.reward.toFixed(3)} ETH</strong>!
+                      <strong>{activeTask.reward.toFixed(3)} USD</strong>!
                     </p>
                   </div>
                 )}

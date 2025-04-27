@@ -96,7 +96,7 @@ const NFTCard = ({ nft, creator }) => {
             <div className="price-label">Price</div>
             <div className="price-amount">
               <EthereumIcon size={14} />
-              <span>{nft.price?.toFixed(2) || "0.00"} ETH</span>
+              <span>{nft.price?.toFixed(2) || "0.00"} USD</span>
             </div>
           </div>
 
