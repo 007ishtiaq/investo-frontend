@@ -4,7 +4,7 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import { BrowserRouter } from "react-router-dom";
-
+import { WalletProvider } from "./contexts/WalletContext";
 import { createStore } from "redux";
 import { Provider } from "react-redux";
 import { composeWithDevTools } from "redux-devtools-extension";
@@ -26,9 +26,11 @@ const initialState = {
 const store = createStore(rootReducer, initialState, composeWithDevTools());
 ReactDOM.render(
   <Provider store={store}>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <WalletProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </WalletProvider>
   </Provider>,
   document.getElementById("root")
 );

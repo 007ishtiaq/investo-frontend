@@ -4,7 +4,8 @@ import { WalletIcon, MenuIcon } from "../../utils/icons";
 import { useIsMobile } from "../../hooks/use-mobile";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../../actions/auth";
-import { getUserWallet, formatBalance } from "../../functions/wallet";
+import { formatBalance } from "../../functions/wallet";
+import { useWallet } from "../../contexts/WalletContext";
 import "./Header.css";
 
 const Header = () => {
@@ -12,36 +13,7 @@ const Header = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { user } = useSelector((state) => ({ ...state }));
-  const [walletBalance, setWalletBalance] = useState(0);
-  const [walletCurrency, setWalletCurrency] = useState("USD");
-  const [loading, setLoading] = useState(false);
-
-  // Fetch wallet balance when user is logged in
-  useEffect(() => {
-    if (user && user.token) {
-      fetchWalletBalance();
-    }
-  }, [user]);
-
-  const fetchWalletBalance = async () => {
-    setLoading(true);
-    try {
-      // Pass the auth token to the function
-      const res = await getUserWallet(user.token);
-
-      // Check if we have data and access the data property from the axios response
-      if (res && res.data && res.data.balance !== undefined) {
-        setWalletBalance(res.data.balance);
-        if (res.data.currency) {
-          setWalletCurrency(res.data.currency);
-        }
-      }
-    } catch (error) {
-      console.error("Error fetching wallet balance:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { walletBalance, walletCurrency, loading } = useWallet();
 
   const handleLogout = () => {
     dispatch(logout());

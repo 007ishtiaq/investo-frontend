@@ -22,6 +22,7 @@ import {
 import { getUserWallet } from "../functions/wallet";
 import "./Tasks.css";
 import { Camera, Upload, AlertTriangle } from "lucide-react";
+import { useWallet } from "../contexts/WalletContext";
 
 /**
  * EmptyState component for displaying when no tasks match criteria
@@ -44,6 +45,7 @@ const EmptyState = ({ message, filterOption, onReset }) => (
 const Tasks = () => {
   // Get user from Redux store
   const { user } = useSelector((state) => ({ ...state }));
+  const { refreshWalletBalance } = useWallet();
 
   // Component state
   const [tasks, setTasks] = useState([]);
@@ -443,6 +445,7 @@ const Tasks = () => {
         );
         setTasks(updatedTasks);
         setVerificationStatus("complete");
+        refreshWalletBalance();
 
         // Show success message without mentioning the specific reward amount
         // The backend has already credited the wallet

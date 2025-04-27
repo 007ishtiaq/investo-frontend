@@ -8,9 +8,12 @@ import {
   rejectTask,
 } from "../../functions/admin";
 import "./TaskVerification.css";
+import { useWallet } from "../../contexts/WalletContext";
 
 const TaskVerification = () => {
   const { user } = useSelector((state) => ({ ...state }));
+  const { refreshWalletBalance } = useWallet();
+
   const [pendingTasks, setPendingTasks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
@@ -170,6 +173,7 @@ const TaskVerification = () => {
       });
 
       const res = await approveTask(userTaskId, user.token);
+      refreshWalletBalance();
 
       // Dismiss the loading toast and show success
       toast.dismiss("approval");
