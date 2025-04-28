@@ -101,11 +101,11 @@ const Team = () => {
               <span className="stat-value">
                 {formatBalance(stats.affiliateEarnings, "USD")}
               </span>
-              <span className="stat-label">Earnings</span>
+              <span className="stat-label">Earnings By team</span>
             </div>
             <div className="stat-card">
               <span className="stat-value">{user.level || 1}</span>
-              <span className="stat-label">Your Level</span>
+              <span className="stat-label">Your Account Level</span>
             </div>
           </div>
 
