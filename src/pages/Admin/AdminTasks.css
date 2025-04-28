@@ -331,6 +331,118 @@
   margin: 0;
 }
 
+/* client/src/pages/admin/AdminTasks.css */
+
+/* Add these styles to your existing CSS file */
+
+/* Task Summary Styles */
+.tasks-summary {
+  background: #f7f9fc;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.tasks-summary h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 16px;
+  color: #555;
+}
+
+.level-stats {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.level-stat-box {
+  flex: 1;
+  min-width: 100px;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.level-label {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.level-count {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.level-percentage {
+  font-size: 12px;
+  color: #666;
+}
+
+/* Level Group Styles */
+.level-task-group {
+  margin-bottom: 30px;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.level-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #f0f4fa;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.level-header h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.level-task-count {
+  font-size: 14px;
+  color: #666;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+/* Level Color Indicators */
+.level-task-group:nth-child(1) .level-header {
+  background-color: #e8f5e9; /* Level 1 - Light Green */
+}
+
+.level-task-group:nth-child(2) .level-header {
+  background-color: #e3f2fd; /* Level 2 - Light Blue */
+}
+
+.level-task-group:nth-child(3) .level-header {
+  background-color: #fff8e1; /* Level 3 - Light Amber */
+}
+
+.level-task-group:nth-child(4) .level-header {
+  background-color: #f3e5f5; /* Level 4 - Light Purple */
+}
+
+.level-task-group:nth-child(5) .level-header {
+  background-color: #ffebee; /* Level 5 - Light Red */
+}
+
+/* Ensure consistent table styles */
+.tasks-table {
+  width: 100%;
+}
+
 @media (max-width: 992px) {
   .form-row {
     grid-template-columns: 1fr;

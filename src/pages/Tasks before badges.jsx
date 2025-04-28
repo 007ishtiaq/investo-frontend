@@ -11,8 +11,6 @@ import {
   EmptyBoxIcon,
   InfoIcon,
   XIcon, // For rejected tasks
-  StarIcon, // For level indicators
-  LockIcon, // For locked tasks
 } from "../utils/icons";
 import {
   getUserTasks,
@@ -55,7 +53,6 @@ const Tasks = () => {
   const [activeTask, setActiveTask] = useState(null);
   const [verificationInput, setVerificationInput] = useState("");
   const [filterOption, setFilterOption] = useState("all");
-  const [levelFilter, setLevelFilter] = useState("all");
   const [verificationStatus, setVerificationStatus] = useState("idle");
   const [earnings, setEarnings] = useState(0);
   const [error, setError] = useState("");
@@ -67,7 +64,6 @@ const Tasks = () => {
   const [videoWatchComplete, setVideoWatchComplete] = useState(false);
   const youtubePlayerRef = useRef(null);
   const videoIntervalRef = useRef(null);
-  const [userLevel, setUserLevel] = useState(1); // Default user level to 1
 
   const [walletBalance, setWalletBalance] = useState(0);
 
@@ -77,11 +73,6 @@ const Tasks = () => {
     try {
       const res = await getUserWallet(user.token);
       setWalletBalance(res.data.balance || 0);
-
-      // Set user level based on wallet data
-      if (res.data.level) {
-        setUserLevel(res.data.level);
-      }
     } catch (err) {
       console.error("Error loading wallet balance:", err);
       setWalletBalance(0);
@@ -292,15 +283,8 @@ const Tasks = () => {
     }
   };
 
-  // Filter tasks based on selected option and level
+  // Filter tasks based on selected option
   const filteredTasks = tasks.filter((task) => {
-    // First check level filter
-    if (!task.minLevel) task.minLevel = 1; // Ensure all tasks have a minLevel
-
-    // Tasks only available for user's level or below
-    if (task.minLevel > userLevel) return false;
-
-    // Then apply regular status filter
     if (filterOption === "all") return true;
     if (filterOption === "completed") return task.completed;
     if (filterOption === "pending")
@@ -310,13 +294,6 @@ const Tasks = () => {
         task.status !== "rejected"
       );
     if (filterOption === "rejected") return task.status === "rejected";
-
-    // Then apply optional level filter (if not "all")
-    if (levelFilter !== "all") {
-      const requiredLevel = parseInt(levelFilter);
-      return task.minLevel === requiredLevel;
-    }
-
     return true;
   });
 
@@ -394,10 +371,7 @@ const Tasks = () => {
   };
 
   // Reset filter to show all tasks
-  const resetFilter = () => {
-    setFilterOption("all");
-    setLevelFilter("all");
-  };
+  const resetFilter = () => setFilterOption("all");
 
   // Handle screenshot file selection
   const handleScreenshotChange = (e) => {
@@ -425,7 +399,7 @@ const Tasks = () => {
     });
   };
 
-  // YouTube video task verification
+  // Add this function to handle YouTube video tasks specifically
   const handleYoutubeVideoVerification = async (taskId) => {
     if (!user || !user.token) {
       toast.error("Please login to verify task completion.");
@@ -437,19 +411,7 @@ const Tasks = () => {
       videoWatchTime < parseInt(activeTask.videoDuration || 30) &&
       !videoWatchComplete
     ) {
-      toast.error(
-        `Please watch at least ${activeTask.videoDuration} seconds of the video.`
-      );
-      return;
-    }
-
-    verifyTask(taskId);
-  };
-
-  // Verify task completion
-  const verifyTask = async (taskId) => {
-    if (!user || !user.token) {
-      toast.error("Please login to verify task completion.");
+      toast.error("Please finish watching the video first.");
       return;
     }
 
@@ -457,86 +419,174 @@ const Tasks = () => {
     setError("");
 
     try {
-      let verificationData = {};
+      // Prepare verification data for YouTube video task
+      const verificationData = {
+        videoUrl: activeTask.externalUrl,
+        watchedDuration: videoWatchTime,
+        autoVerified: true, // This flag tells backend this can be auto-verified
+      };
 
-      // If it's a screenshot task and screenshot is required
-      if (
-        activeTask.type === "screenshot" &&
-        activeTask.screenshotRequired &&
-        screenshot
-      ) {
-        const base64Screenshot = await fileToBase64(screenshot);
-        verificationData.screenshot = base64Screenshot;
-      }
+      // console.log("Verifying YouTube task:", taskId, verificationData);
 
-      // Add verification input if provided
-      if (verificationInput.trim()) {
-        verificationData.verificationText = verificationInput.trim();
-      }
-
-      // For YouTube tasks, add watch time
-      if (activeTask.type === "youtube_watch") {
-        verificationData.watchTime = videoWatchTime;
-      }
-
-      const response = await verifyTaskCompletion(
+      // Send verification request to API - backend will handle reward crediting
+      const res = await verifyTaskCompletion(
         taskId,
         verificationData,
         user.token
       );
+      // console.log("YouTube verification response:", res.data);
 
-      setVerificationStatus("success");
-      toast.success("Task verification submitted successfully!");
-
-      if (response.data.autoVerified) {
-        toast.success("Task automatically verified and reward credited!");
+      if (res.data.success) {
+        // Update local task state
+        const updatedTasks = tasks.map((task) =>
+          task._id === taskId
+            ? { ...task, completed: true, verified: true }
+            : task
+        );
+        setTasks(updatedTasks);
+        setVerificationStatus("complete");
         refreshWalletBalance();
+
+        // Show success message without mentioning the specific reward amount
+        // The backend has already credited the wallet
+        toast.success(
+          res.data.message || "Task completed! Reward credited to your wallet!"
+        );
+
+        // Update earnings and wallet balance by fetching fresh data
+        loadEarnings();
+        loadWalletBalance();
+
+        // Reset after showing completion
+        setTimeout(() => {
+          setVerificationInput("");
+          setActiveTask(null);
+          setVerificationStatus("idle");
+          setVideoWatchTime(0);
+          setVideoWatchComplete(false);
+
+          // Refresh the full task list
+          loadTasks();
+        }, 3000);
       } else {
-        toast.success("Task submitted for verification by admin.");
+        setVerificationStatus("error");
+        setError(res.data.message || "Verification failed. Please try again.");
+        toast.error(
+          res.data.message || "Verification failed. Please try again."
+        );
       }
-
-      // Update task status in the tasks array
-      const updatedTasks = tasks.map((task) => {
-        if (task._id === taskId) {
-          return {
-            ...task,
-            status: response.data.autoVerified
-              ? "verified"
-              : "pending_verification",
-            completed: response.data.autoVerified,
-          };
-        }
-        return task;
-      });
-
-      setTasks(updatedTasks);
-
-      // Close modal after a short delay
-      setTimeout(() => {
-        closeTaskDetails();
-        refreshWalletBalance();
-      }, 2000);
     } catch (err) {
-      console.error("Error verifying task:", err);
-      setVerificationStatus("idle");
-      setError(
-        err.response?.data?.message ||
-          "Failed to verify task. Please try again."
-      );
-      toast.error(
-        err.response?.data?.message ||
-          "Failed to verify task. Please try again."
-      );
+      console.error("Error verifying YouTube task:", err);
+      setVerificationStatus("error");
+      setError("An error occurred during verification. Please try again.");
+      toast.error("An error occurred during verification. Please try again.");
     }
   };
 
-  // Count tasks for each level
-  const tasksPerLevel = [1, 2, 3, 4, 5].map((level) => {
-    return {
-      level,
-      count: tasks.filter((task) => (task.minLevel || 1) === level).length,
-    };
-  });
+  // Modified regular verification function - backend handles reward crediting
+  const verifyTask = async (taskId) => {
+    if (!user || !user.token) {
+      toast.error("Please login to verify task completion.");
+      return;
+    }
+
+    // For YouTube watch tasks, use the specialized handler
+    if (activeTask.type === "youtube_watch") {
+      handleYoutubeVideoVerification(taskId);
+      return;
+    }
+
+    // Start verification process for other task types
+    setVerificationStatus("verifying");
+    setError("");
+
+    try {
+      // Prepare verification data based on task type
+      const verificationData = {};
+
+      if (activeTask.type === "screenshot") {
+        // For screenshot verification
+        if (!screenshot && activeTask.screenshotRequired) {
+          setVerificationStatus("error");
+          setError("Please upload a screenshot to verify this task.");
+          toast.error("Please upload a screenshot to verify this task.");
+          return;
+        }
+
+        // Convert screenshot to base64 if it exists
+        if (screenshot) {
+          verificationData.screenshot = await fileToBase64(screenshot);
+        }
+      }
+
+      // Send verification request to API - backend will handle reward crediting if applicable
+      // console.log("Sending verification data:", verificationData);
+      const res = await verifyTaskCompletion(
+        taskId,
+        verificationData,
+        user.token
+      );
+      // console.log("Verification response:", res.data);
+
+      if (res.data.success) {
+        if (res.data.status === "pending_verification") {
+          // For tasks that require manual verification
+          const updatedTasks = tasks.map((task) =>
+            task._id === taskId
+              ? { ...task, status: "pending_verification" }
+              : task
+          );
+          setTasks(updatedTasks);
+          setVerificationStatus("complete");
+
+          toast.success(
+            "Task submitted for verification. Our team will review it shortly."
+          );
+        } else {
+          // For tasks with immediate verification and reward
+          const updatedTasks = tasks.map((task) =>
+            task._id === taskId
+              ? { ...task, completed: true, verified: true }
+              : task
+          );
+          setTasks(updatedTasks);
+          setVerificationStatus("complete");
+
+          // Show success message - backend has already credited the wallet if applicable
+          toast.success(res.data.message || "Task completed successfully!");
+
+          // Update earnings immediately
+          loadEarnings();
+          loadWalletBalance();
+        }
+
+        // Reset after showing completion
+        setTimeout(() => {
+          setVerificationInput("");
+          setScreenshot(null);
+          setScreenshotPreview(null);
+          setActiveTask(null);
+          setVerificationStatus("idle");
+          setVideoWatchTime(0);
+          setVideoWatchComplete(false);
+
+          // Refresh the full task list to ensure everything is up to date
+          loadTasks();
+        }, 3000);
+      } else {
+        setVerificationStatus("error");
+        setError(res.data.message || "Verification failed. Please try again.");
+        toast.error(
+          res.data.message || "Verification failed. Please try again."
+        );
+      }
+    } catch (err) {
+      setVerificationStatus("error");
+      console.error("Error verifying task:", err);
+      setError("An error occurred during verification. Please try again.");
+      toast.error("An error occurred during verification. Please try again.");
+    }
+  };
 
   return (
     <div className="tasks-page">
@@ -621,38 +671,6 @@ const Tasks = () => {
           </div>
         </div>
 
-        {/* Level-based tasks info */}
-        <div className="level-tasks-info">
-          <h3>Tasks Per Level</h3>
-          <div className="level-tasks-grid">
-            {tasksPerLevel.map((levelData) => (
-              <div
-                className={`level-task-count ${
-                  levelData.level > userLevel ? "locked-level" : ""
-                }`}
-                key={levelData.level}
-              >
-                <div className={`level-number level-${levelData.level}`}>
-                  Level {levelData.level}
-                  {levelData.level > userLevel && (
-                    <LockIcon size={14} className="lock-icon" />
-                  )}
-                </div>
-                <div className="task-count">{levelData.count} Tasks</div>
-              </div>
-            ))}
-          </div>
-          <div className="user-level-indicator">
-            Your Level: <span className="current-level">{userLevel}</span>
-            {userLevel < 5 && (
-              <div className="level-up-hint">
-                <InfoIcon size={16} />
-                <span>Level up to unlock more tasks!</span>
-              </div>
-            )}
-          </div>
-        </div>
-
         <div className="tasks-filter-section">
           <div className="filter-label">Filter Tasks:</div>
           <div className="filter-options">
@@ -691,123 +709,106 @@ const Tasks = () => {
           </div>
         </div>
 
-        {error && <div className="error-message">{error}</div>}
+        {error && !activeTask && <div className="error-message">{error}</div>}
 
-        {loading ? (
-          <div className="loading-indicator">Loading tasks...</div>
-        ) : filteredTasks.length === 0 ? (
-          <EmptyState
-            message={
-              levelFilter !== "all"
-                ? `No ${levelFilter} level tasks found with the selected filter.`
-                : `No tasks found with the selected filter.`
-            }
-            filterOption={filterOption}
-            onReset={resetFilter}
-          />
-        ) : (
-          <div className="tasks-list">
-            {loading ? (
-              <div className="loading-container">
-                <div className="loading-spinner"></div>
-                <p>Loading tasks...</p>
-              </div>
-            ) : filteredTasks.length === 0 ? (
-              <EmptyState
-                message={
-                  filterOption === "completed"
-                    ? "You haven't completed any tasks yet."
-                    : filterOption === "pending"
-                    ? "No pending tasks found."
-                    : filterOption === "rejected"
-                    ? "You don't have any rejected tasks."
-                    : "No tasks available at the moment."
-                }
-                filterOption={filterOption}
-                onReset={resetFilter}
-              />
-            ) : (
-              filteredTasks.map((task) => (
-                <div
-                  key={task._id}
-                  className={`task-card ${task.completed ? "completed" : ""} ${
-                    task.status === "pending_verification"
-                      ? "pending-verification"
-                      : ""
-                  } ${task.status === "rejected" ? "rejected" : ""}`}
-                >
-                  <div className="task-status">
-                    {task.completed ? (
-                      <div className="completed-badge">
-                        <CheckIcon size={16} />
-                        <span>Completed</span>
-                      </div>
-                    ) : task.status === "pending_verification" ? (
-                      <div className="pending-verification-badge">
-                        <ClockIcon size={16} />
-                        <span>Under Verification</span>
-                      </div>
-                    ) : task.status === "rejected" ? (
-                      <div className="rejected-badge">
-                        <AlertTriangle size={16} />
-                        <span>Rejected</span>
-                      </div>
-                    ) : (
-                      <div className="reward-badge">
-                        <EthereumIcon size={16} />
-                        <span>{task.reward.toFixed(3)} USD</span>
-                      </div>
-                    )}
-                  </div>
-
-                  <h3 className="task-title">{task.title}</h3>
-                  <p className="task-description">{task.description}</p>
-
-                  {task.status === "rejected" && task.rejectionReason && (
-                    <div className="task-rejection-info">
-                      <div className="rejection-label">
-                        Reason for rejection:
-                      </div>
-                      <div className="rejection-reason">
-                        {task.rejectionReason}
-                      </div>
+        <div className="tasks-list">
+          {loading ? (
+            <div className="loading-container">
+              <div className="loading-spinner"></div>
+              <p>Loading tasks...</p>
+            </div>
+          ) : filteredTasks.length === 0 ? (
+            <EmptyState
+              message={
+                filterOption === "completed"
+                  ? "You haven't completed any tasks yet."
+                  : filterOption === "pending"
+                  ? "No pending tasks found."
+                  : filterOption === "rejected"
+                  ? "You don't have any rejected tasks."
+                  : "No tasks available at the moment."
+              }
+              filterOption={filterOption}
+              onReset={resetFilter}
+            />
+          ) : (
+            filteredTasks.map((task) => (
+              <div
+                key={task._id}
+                className={`task-card ${task.completed ? "completed" : ""} ${
+                  task.status === "pending_verification"
+                    ? "pending-verification"
+                    : ""
+                } ${task.status === "rejected" ? "rejected" : ""}`}
+              >
+                <div className="task-status">
+                  {task.completed ? (
+                    <div className="completed-badge">
+                      <CheckIcon size={16} />
+                      <span>Completed</span>
+                    </div>
+                  ) : task.status === "pending_verification" ? (
+                    <div className="pending-verification-badge">
+                      <ClockIcon size={16} />
+                      <span>Under Verification</span>
+                    </div>
+                  ) : task.status === "rejected" ? (
+                    <div className="rejected-badge">
+                      <AlertTriangle size={16} />
+                      <span>Rejected</span>
+                    </div>
+                  ) : (
+                    <div className="reward-badge">
+                      <EthereumIcon size={16} />
+                      <span>{task.reward.toFixed(3)} USD</span>
                     </div>
                   )}
+                </div>
 
-                  <div className="task-meta">
-                    <div
-                      className="difficulty-tag"
-                      style={{ color: difficultyColors[task.difficulty] }}
-                    >
-                      {task.difficulty.charAt(0).toUpperCase() +
-                        task.difficulty.slice(1)}
-                    </div>
+                <h3 className="task-title">{task.title}</h3>
+                <p className="task-description">{task.description}</p>
 
-                    <div className="time-estimate">
-                      <ClockIcon size={14} />
-                      <span>{task.estimatedTime}</span>
+                {task.status === "rejected" && task.rejectionReason && (
+                  <div className="task-rejection-info">
+                    <div className="rejection-label">Reason for rejection:</div>
+                    <div className="rejection-reason">
+                      {task.rejectionReason}
                     </div>
                   </div>
+                )}
 
-                  <button
-                    className="view-task-button"
-                    onClick={() => openTaskDetails(task)}
+                <div className="task-meta">
+                  <div
+                    className="difficulty-tag"
+                    style={{ color: difficultyColors[task.difficulty] }}
                   >
-                    {task.completed
-                      ? "View Details"
-                      : task.status === "pending_verification"
-                      ? "View Progress"
-                      : task.status === "rejected"
-                      ? "View Details"
-                      : "Complete Task"}
-                  </button>
-                </div>
-              ))
-            )}
-          </div>
-        )}
+                    {task.difficulty.charAt(0).toUpperCase() +
+                      task.difficulty.slice(1)}
+                  </div>
 
-        {/* Task details modal */}
+                  <div className="time-estimate">
+                    <ClockIcon size={14} />
+                    <span>{task.estimatedTime}</span>
+                  </div>
+                </div>
+
+                <button
+                  className="view-task-button"
+                  onClick={() => openTaskDetails(task)}
+                >
+                  {task.completed
+                    ? "View Details"
+                    : task.status === "pending_verification"
+                    ? "View Progress"
+                    : task.status === "rejected"
+                    ? "View Details"
+                    : "Complete Task"}
+                </button>
+              </div>
+            ))
+          )}
+        </div>
+
         {activeTask && (
           <div className="task-modal-overlay" onClick={closeTaskDetails}>
             <div className="task-modal" onClick={(e) => e.stopPropagation()}>

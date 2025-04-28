@@ -31,6 +31,7 @@ const AdminTasks = () => {
     screenshotRequired: false,
     autoVerify: false, // Add this for YouTube watch auto-verification
     videoDuration: "", // Add this to specify video duration in seconds
+    minLevel: 1,
   });
 
   useEffect(() => {
@@ -91,6 +92,7 @@ const AdminTasks = () => {
       screenshotRequired: false,
       autoVerify: false,
       videoDuration: "",
+      minLevel: 1,
     });
     setEditingTask(null);
   };
@@ -119,6 +121,7 @@ const AdminTasks = () => {
       screenshotRequired: task.screenshotRequired || false,
       autoVerify: task.autoVerify || false,
       videoDuration: task.videoDuration || "",
+      minLevel: task.minLevel || 1,
     });
     setShowForm(true);
     window.scrollTo(0, 0);
@@ -212,6 +215,24 @@ const AdminTasks = () => {
           <div className="task-form-container">
             <h2>{editingTask ? "Edit Task" : "Create New Task"}</h2>
             <form onSubmit={handleSubmit} className="task-form">
+              <div className="form-group">
+                <label htmlFor="minLevel">Minimum User Level Required</label>
+                <select
+                  id="minLevel"
+                  name="minLevel"
+                  value={formValues.minLevel}
+                  onChange={handleChange}
+                >
+                  <option value="1">Level 1 (Everyone)</option>
+                  <option value="2">Level 2</option>
+                  <option value="3">Level 3</option>
+                  <option value="4">Level 4</option>
+                  <option value="5">Level 5 (VIP Only)</option>
+                </select>
+                <small className="form-text">
+                  Only users at or above this level will see this task
+                </small>
+              </div>
               <div className="form-group">
                 <label htmlFor="title">Task Title*</label>
                 <input
@@ -469,51 +490,103 @@ const AdminTasks = () => {
             </div>
           ) : (
             <div className="admin-tasks-list">
-              <div className="tasks-table-header">
-                <div className="task-cell">Title</div>
-                <div className="task-cell">Type</div>
-                <div className="task-cell">Reward</div>
-                <div className="task-cell">Difficulty</div>
-                <div className="task-cell">Status</div>
-                <div className="task-cell">Actions</div>
+              {/* Tasks Summary By Level */}
+              <div className="tasks-summary">
+                <h3>Tasks Distribution By Level</h3>
+                <div className="level-stats">
+                  {[1, 2, 3, 4, 5].map((level) => {
+                    const tasksCount = tasks.filter(
+                      (task) => (task.minLevel || 1) === level
+                    ).length;
+                    return (
+                      <div className="level-stat-box" key={level}>
+                        <span className="level-label">Level {level}</span>
+                        <span className="level-count">{tasksCount}</span>
+                        <span className="level-percentage">
+                          {tasks.length
+                            ? Math.round((tasksCount / tasks.length) * 100)
+                            : 0}
+                          %
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
 
-              {tasks.map((task) => (
-                <div
-                  key={task._id}
-                  className={`tasks-table-row ${
-                    !task.active ? "inactive-task" : ""
-                  }`}
-                >
-                  <div className="task-cell task-title-cell">{task.title}</div>
-                  <div className="task-cell">{task.type.replace("_", " ")}</div>
-                  <div className="task-cell">{task.reward.toFixed(3)} USD</div>
-                  <div className="task-cell">{task.difficulty}</div>
-                  <div className="task-cell">
-                    <span
-                      className={`status-badge ${
-                        task.active ? "active" : "inactive"
-                      }`}
-                    >
-                      {task.active ? "Active" : "Inactive"}
-                    </span>
+              {/* Level Groupings */}
+              {[1, 2, 3, 4, 5].map((level) => {
+                const levelTasks = tasks.filter(
+                  (task) => (task.minLevel || 1) === level
+                );
+
+                if (levelTasks.length === 0) return null;
+
+                return (
+                  <div key={level} className="level-task-group">
+                    <div className="level-header">
+                      <h3>Level {level} Tasks</h3>
+                      <span className="level-task-count">
+                        {levelTasks.length} tasks
+                      </span>
+                    </div>
+
+                    <div className="tasks-table">
+                      <div className="tasks-table-header">
+                        <div className="task-cell">Title</div>
+                        <div className="task-cell">Type</div>
+                        <div className="task-cell">Reward</div>
+                        <div className="task-cell">Difficulty</div>
+                        <div className="task-cell">Status</div>
+                        <div className="task-cell">Actions</div>
+                      </div>
+
+                      {levelTasks.map((task) => (
+                        <div
+                          key={task._id}
+                          className={`tasks-table-row ${
+                            !task.active ? "inactive-task" : ""
+                          }`}
+                        >
+                          <div className="task-cell task-title-cell">
+                            {task.title}
+                          </div>
+                          <div className="task-cell">
+                            {task.type.replace("_", " ")}
+                          </div>
+                          <div className="task-cell">
+                            {task.reward.toFixed(3)} USD
+                          </div>
+                          <div className="task-cell">{task.difficulty}</div>
+                          <div className="task-cell">
+                            <span
+                              className={`status-badge ${
+                                task.active ? "active" : "inactive"
+                              }`}
+                            >
+                              {task.active ? "Active" : "Inactive"}
+                            </span>
+                          </div>
+                          <div className="task-cell actions-cell">
+                            <button
+                              className="edit-button"
+                              onClick={() => handleEditTask(task)}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              className="delete-button"
+                              onClick={() => handleDeleteTask(task._id)}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <div className="task-cell actions-cell">
-                    <button
-                      className="edit-button"
-                      onClick={() => handleEditTask(task)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="delete-button"
-                      onClick={() => handleDeleteTask(task._id)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
