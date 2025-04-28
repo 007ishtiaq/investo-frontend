@@ -7,6 +7,7 @@ import { registerSchema } from "../../schemas";
 import { SendOTP } from "../../functions/auth";
 import { EthereumIcon } from "../../utils/icons";
 import "../Login/Login.css";
+import { useLocation } from "react-router-dom";
 
 // Spinner component for loading state
 const Spinner = () => (
@@ -38,6 +39,7 @@ const Register = () => {
   const { user } = useSelector((state) => ({ ...state }));
   const dispatch = useDispatch();
   const history = useHistory();
+  const location = useLocation();
 
   useEffect(() => {
     const handleOnlineStatus = () => {
@@ -94,6 +96,14 @@ const Register = () => {
           if (response.status === 200) {
             toast.success(`OTP sent to your email. Please check your inbox.`);
             window.localStorage.setItem("emailForRegistration", values.email);
+
+            // Extract referral code from URL if present and save it
+            const urlParams = new URLSearchParams(location.search);
+            const refCode = urlParams.get("ref");
+            if (refCode) {
+              window.localStorage.setItem("referralCode", refCode);
+            }
+
             action.resetForm();
             setLoading(false);
             history.push("/otpVerification");

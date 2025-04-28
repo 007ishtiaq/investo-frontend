@@ -72,11 +72,20 @@ const RegisterComplete = () => {
   }, []);
 
   useEffect(() => {
-    // Extract affiliate code from URL if present
+    // First check URL parameters
     const urlParams = new URLSearchParams(location.search);
     const refCode = urlParams.get("ref");
+
+    // If not in URL, check localStorage
     if (refCode) {
       setAffiliateCode(refCode);
+    } else {
+      const storedRefCode = window.localStorage.getItem("referralCode");
+      if (storedRefCode) {
+        setAffiliateCode(storedRefCode);
+        // Optionally remove from localStorage after using
+        // window.localStorage.removeItem("referralCode");
+      }
     }
   }, [location]);
 
@@ -131,7 +140,7 @@ const RegisterComplete = () => {
 
               const idTokenResult = await user.getIdTokenResult();
 
-              createOrUpdateUser(idTokenResult.token)
+              createOrUpdateUser(idTokenResult.token, name)
                 .then((res) => {
                   dispatch({
                     type: "LOGGED_IN_USER",
