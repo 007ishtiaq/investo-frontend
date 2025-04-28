@@ -78,9 +78,12 @@ const Tasks = () => {
       const res = await getUserWallet(user.token);
       setWalletBalance(res.data.balance || 0);
 
-      // Set user level based on wallet data
+      // Set user level from the response
       if (res.data.level) {
         setUserLevel(res.data.level);
+      } else {
+        // Default to level 1 if no level is found
+        setUserLevel(1);
       }
     } catch (err) {
       console.error("Error loading wallet balance:", err);
@@ -623,31 +626,46 @@ const Tasks = () => {
 
         {/* Level-based tasks info */}
         <div className="level-tasks-info">
-          <h3>Tasks Per Level</h3>
+          <h3>Rewards Per Level</h3>
           <div className="level-tasks-grid">
-            {tasksPerLevel.map((levelData) => (
-              <div
-                className={`level-task-count ${
-                  levelData.level > userLevel ? "locked-level" : ""
-                }`}
-                key={levelData.level}
-              >
-                <div className={`level-number level-${levelData.level}`}>
-                  Level {levelData.level}
-                  {levelData.level > userLevel && (
-                    <LockIcon size={14} className="lock-icon" />
-                  )}
+            {[1, 2, 3, 4, 5].map((level) => {
+              const levelTasks = tasks.filter(
+                (task) => (task.minLevel || 1) === level
+              );
+              const totalReward = levelTasks
+                .reduce((sum, task) => sum + task.reward, 0)
+                .toFixed(3);
+
+              return (
+                <div
+                  className={`level-task-count ${
+                    level > userLevel ? "locked-level" : ""
+                  }`}
+                  key={level}
+                >
+                  <div className={`level-number level-${level}`}>
+                    Level {level}
+                    {level > userLevel && (
+                      <LockIcon size={14} className="lock-icon" />
+                    )}
+                  </div>
+                  <div className="reward-amount">
+                    <EthereumIcon size={14} />
+                    <span>{totalReward} USD</span>
+                  </div>
+                  <div className="task-count small">
+                    ({levelTasks.length} Tasks)
+                  </div>
                 </div>
-                <div className="task-count">{levelData.count} Tasks</div>
-              </div>
-            ))}
+              );
+            })}
           </div>
           <div className="user-level-indicator">
             Your Level: <span className="current-level">{userLevel}</span>
             {userLevel < 5 && (
               <div className="level-up-hint">
                 <InfoIcon size={16} />
-                <span>Level up to unlock more tasks!</span>
+                <span>Level up to unlock more rewards!</span>
               </div>
             )}
           </div>
