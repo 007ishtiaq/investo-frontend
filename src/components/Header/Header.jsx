@@ -51,8 +51,8 @@ const Header = () => {
             <Link to="/team" className="nav-link">
               My Team
             </Link>
-            <Link to="/vip" className="nav-link">
-              VIP
+            <Link to="/plans" className="nav-link">
+              Plans
             </Link>
             <Link to="/profile" className="nav-link">
               Me

@@ -16,6 +16,7 @@ import AdminTasks from "./pages/Admin/AdminTasks";
 import TaskVerification from "./pages/Admin/TaskVerification";
 import Wallet from "./pages/Wallet";
 import Team from "./pages/Team";
+import Plans from "./pages/Plans";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
           <Route exact path="/register/complete" component={RegisterComplete} />
           <Route exact path="/wallet" component={Wallet} />
           <Route path="/team" component={Team} />
+          <Route path="/plans" component={Plans} />
 
           {/* Admin routes */}
           <Route path="/admin" exact component={AdminDashboard} />
