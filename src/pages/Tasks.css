@@ -70,6 +70,7 @@
 
 .progress-bar {
   height: 8px;
+  width: 100%;
   background-color: #e2e8f0;
   border-radius: 4px;
   margin-top: 10px;
@@ -78,7 +79,7 @@
 
 .progress-fill {
   height: 100%;
-  background-color: var(--color-primary);
+  background-color: var(--color-primary, #2196f3);
   border-radius: 4px;
   transition: width 0.5s ease-in-out;
 }
@@ -1691,13 +1692,47 @@
   font-size: 12px;
   color: #777;
 }
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Add to your CSS file or component styles */
+
+.wallet-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #627eea, #3d5afe);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 24px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(98, 126, 234, 0.3);
+  text-decoration: none;
+}
+
+.wallet-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(98, 126, 234, 0.4);
+  background: linear-gradient(135deg, #3d5afe, #627eea);
+}
+
+.wallet-link:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 5px rgba(98, 126, 234, 0.4);
+}
+
+.wallet-link svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Variants */
+
+/* For secondary placement (e.g. in a navbar) */
+.wallet-link.compact {
+  padding: 6px 12px;
+  font-size: 13px;
 }
 
 @media (max-width: 768px) {

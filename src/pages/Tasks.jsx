@@ -589,7 +589,7 @@ const Tasks = () => {
               <EthereumIcon size={18} />
               <span>{walletBalance.toFixed(3)} USD</span>
             </div>
-            <Link to="/wallet" className="wallet-link">
+            <Link to="/wallet" className="wallet-link ">
               View Wallet
             </Link>
           </div>
