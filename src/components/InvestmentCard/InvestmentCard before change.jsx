@@ -5,7 +5,7 @@ import { EthereumIcon } from "../../utils/icons";
 /**
  * Investment Card component for displaying investment plans
  */
-const InvestmentCard = ({ plan, userLevel }) => {
+const InvestmentCard = ({ plan }) => {
   // Calculate daily and total profit
   const calculateProfit = () => {
     const dailyProfit = plan.minAmount * (plan.dailyRoi / 100);
@@ -24,27 +24,12 @@ const InvestmentCard = ({ plan, userLevel }) => {
 
   const profit = calculateProfit();
 
-  // Check if this plan matches the user's level
-  const isUserLevel = plan.level === userLevel;
-
-  // Check if the plan is available to the user based on their level
-  const isAvailable = userLevel >= plan.level;
-
   return (
-    <div
-      className={`investment-card ${plan.featured ? "featured-card" : ""} ${
-        isUserLevel ? "your-level-card" : ""
-      } ${!isAvailable ? "locked-card" : ""}`}
-    >
+    <div className={`investment-card ${plan.featured ? "featured-card" : ""}`}>
       {plan.featured && <div className="card-badge">Most Popular</div>}
-      {isUserLevel && (
-        <div className="card-badge your-level-badge">Your Level</div>
-      )}
 
       <div className="card-header">
-        <div className={`level-tag ${isUserLevel ? "your-level-tag" : ""}`}>
-          Level {plan.level}
-        </div>
+        <div className="level-tag">Level {plan.level}</div>
         <h3 className="plan-name">{plan.name}</h3>
         <div className="plan-duration">{plan.duration}</div>
       </div>
@@ -92,16 +77,9 @@ const InvestmentCard = ({ plan, userLevel }) => {
         </ul>
       </div>
 
-      {isAvailable ? (
-        <Link to={`/invest/${plan.id}`} className="invest-button">
-          Invest Now
-        </Link>
-      ) : (
-        <div className="locked-message">
-          <span className="lock-icon">🔒</span>
-          Unlock at Level {plan.level}
-        </div>
-      )}
+      <Link href={`/invest/${plan.id}`} className="invest-button">
+        Invest Now
+      </Link>
     </div>
   );
 };
@@ -131,16 +109,6 @@ document.head.appendChild(document.createElement("style")).textContent = `
   border: 2px solid var(--color-primary);
 }
 
-.your-level-card {
-  border: 2px solid #00d0ff;
-  box-shadow: 0 0 15px rgba(0, 208, 255, 0.3);
-}
-
-.locked-card {
-  opacity: 0.7;
-  filter: grayscale(30%);
-}
-
 .card-badge {
   position: absolute;
   top: -10px;
@@ -151,13 +119,6 @@ document.head.appendChild(document.createElement("style")).textContent = `
   font-weight: 500;
   padding: 0.25rem 0.75rem;
   border-radius: 9999px;
-  z-index: 1;
-}
-
-.your-level-badge {
-  background: linear-gradient(45deg, #00c3ff, #00e5ff);
-  left: 1.5rem;
-  right: auto;
 }
 
 .card-header {
@@ -170,30 +131,11 @@ document.head.appendChild(document.createElement("style")).textContent = `
   font-weight: 700;
   color: var(--color-text-primary);
   margin-bottom: 0.25rem;
-  margin-top: 1rem;
 }
 
 .plan-duration {
   font-size: 0.875rem;
   color: var(--color-text-secondary);
-}
-
-.level-tag {
-  margin: 0 auto;
-  width: 5rem;
-  padding: 0.25rem 0.5rem;
-  background: linear-gradient(45deg, #627eea, #3d5afe);
-  color: white;
-  font-size: 0.75rem;
-  font-weight: 600;
-  border-radius: 1rem;
-  display: inline-block;
-}
-
-.your-level-tag {
-  background: linear-gradient(45deg, #00c3ff, #00e5ff);
-  font-weight: 700;
-  transform: scale(1.05);
 }
 
 .daily-roi {
@@ -302,28 +244,5 @@ document.head.appendChild(document.createElement("style")).textContent = `
 
 .invest-button:hover {
   opacity: 0.9;
-}
-
-.locked-message {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.75rem;
-  background-color: #f5f5f5;
-  color: #666;
-  text-align: center;
-  border-radius: 0.5rem;
-  font-weight: 500;
-  margin-top: auto;
-  gap: 0.5rem;
-}
-
-.lock-icon {
-  font-size: 1.1rem;
-}
-
-.your-level-card .invest-button {
-  background: linear-gradient(45deg, #00c3ff, #00e5ff);
-  font-weight: 600;
 }
 `;

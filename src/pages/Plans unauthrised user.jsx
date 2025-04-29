@@ -1,44 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import InvestmentCard from "../components/InvestmentCard/InvestmentCard";
 import FixedDepositPlan from "../components/FixedDepositPlan/FixedDepositPlan";
-import axios from "axios";
-import { useSelector } from "react-redux";
 
 /**
  * Investment page component displaying available investment plans
  */
 const Plans = () => {
-  const { user } = useSelector((state) => ({ ...state }));
-  const [userLevel, setUserLevel] = useState(1);
-  const [loading, setLoading] = useState(true);
-
-  // Fetch user level from backend
-  useEffect(() => {
-    const fetchUserLevel = async () => {
-      if (user && user.token) {
-        try {
-          const res = await axios.get("/api/user/level", {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-          });
-
-          setUserLevel(res.data.level || 2);
-        } catch (error) {
-          console.error("Error fetching user level:", error);
-          // Default to level 1 if there's an error
-          setUserLevel(3);
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        setLoading(false);
-      }
-    };
-
-    fetchUserLevel();
-  }, [user]);
-
   // Sample investment plan data
   const [investmentPlans] = useState([
     {
@@ -196,7 +163,7 @@ const Plans = () => {
         <div className="investment-grid">
           {investmentPlans.map((plan) => (
             <div key={plan.id} className="investment-grid-item">
-              <InvestmentCard plan={plan} userLevel={userLevel} />
+              <InvestmentCard plan={plan} />
             </div>
           ))}
         </div>
@@ -415,5 +382,16 @@ document.head.appendChild(document.createElement("style")).textContent = `
   font-size: 1rem;
   color: var(--color-text-secondary);
   line-height: 1.6;
+}
+  .level-tag {
+  padding: 0.25rem 0.75rem;
+  width: 5rem;
+  margin: 1rem;
+  background: linear-gradient(45deg, #00edf9, #7894ff);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 1rem;
+  line-height: 1.2;
 }
 `;
