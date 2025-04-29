@@ -534,7 +534,7 @@ const Tasks = () => {
   };
 
   // Count tasks for each level
-  const tasksPerLevel = [1, 2, 3, 4, 5].map((level) => {
+  const tasksPerLevel = [1, 2, 3, 4].map((level) => {
     return {
       level,
       count: tasks.filter((task) => (task.minLevel || 1) === level).length,
@@ -628,7 +628,7 @@ const Tasks = () => {
         <div className="level-tasks-info">
           <h3>Rewards Per Level</h3>
           <div className="level-tasks-grid">
-            {[1, 2, 3, 4, 5].map((level) => {
+            {[1, 2, 3, 4].map((level) => {
               const levelTasks = tasks.filter(
                 (task) => (task.minLevel || 1) === level
               );
@@ -662,7 +662,7 @@ const Tasks = () => {
           </div>
           <div className="user-level-indicator">
             Your Level: <span className="current-level">{userLevel}</span>
-            {userLevel < 5 && (
+            {userLevel < 4 && (
               <div className="level-up-hint">
                 <InfoIcon size={16} />
                 <span>Level up to unlock more rewards!</span>

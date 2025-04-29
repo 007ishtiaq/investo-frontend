@@ -227,7 +227,6 @@ const AdminTasks = () => {
                   <option value="2">Level 2</option>
                   <option value="3">Level 3</option>
                   <option value="4">Level 4</option>
-                  <option value="5">Level 5 (VIP Only)</option>
                 </select>
                 <small className="form-text">
                   Only users at or above this level will see this task
@@ -494,7 +493,7 @@ const AdminTasks = () => {
               <div className="tasks-summary">
                 <h3>Tasks Distribution By Level</h3>
                 <div className="level-stats">
-                  {[1, 2, 3, 4, 5].map((level) => {
+                  {[1, 2, 3, 4].map((level) => {
                     const tasksCount = tasks.filter(
                       (task) => (task.minLevel || 1) === level
                     ).length;
@@ -515,7 +514,7 @@ const AdminTasks = () => {
               </div>
 
               {/* Level Groupings */}
-              {[1, 2, 3, 4, 5].map((level) => {
+              {[1, 2, 3, 4].map((level) => {
                 const levelTasks = tasks.filter(
                   (task) => (task.minLevel || 1) === level
                 );
