@@ -17,11 +17,35 @@ import TaskVerification from "./pages/Admin/TaskVerification";
 import Wallet from "./pages/Wallet";
 import Team from "./pages/Team";
 import Plans from "./pages/Plans";
+import Deposit from "./pages/Deposit";
+import AdminDeposits from "./pages/Admin/AdminDeposits";
+import UserManagement from "./pages/Admin/UserManagement";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
     <Suspense>
       <Router>
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: "#363636",
+              color: "#fff",
+            },
+            success: {
+              style: {
+                background: "green",
+              },
+            },
+            error: {
+              style: {
+                background: "red",
+              },
+            },
+          }}
+        />
         <Header />
         <Switch>
           {/* common unprotected Routes */}
@@ -39,6 +63,9 @@ function App() {
           <Route path="/admin" exact component={AdminDashboard} />
           <Route path="/admin/tasks" component={AdminTasks} />
           <Route path="/admin/taskverification" component={TaskVerification} />
+          <Route path="/deposit" component={Deposit} />
+          <Route path="/admin/deposits" component={AdminDeposits} />
+          <Route path="/admin/users" component={UserManagement} />
 
           {/* <Route exact path="*" component={NotFound} /> */}
           <Route path="*" component={NotFound} />

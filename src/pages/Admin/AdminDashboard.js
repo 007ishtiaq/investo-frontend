@@ -88,6 +88,26 @@ const AdminDashboard = () => {
             <p>View and manage platform users</p>
           </Link>
 
+          <Link to="/admin/deposits" className="admin-menu-item">
+            <div className="admin-menu-icon">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M18 20V10"></path>
+                <path d="M12 20V4"></path>
+                <path d="M6 20v-6"></path>
+              </svg>
+            </div>
+            <h3>Deposits</h3>
+            <p>View User deposits</p>
+          </Link>
           <Link to="/admin/analytics" className="admin-menu-item">
             <div className="admin-menu-icon">
               <svg
