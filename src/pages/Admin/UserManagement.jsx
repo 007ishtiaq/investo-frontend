@@ -1,8 +1,13 @@
 // client/src/pages/admin/UserManagement.jsx
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import axios from "axios";
 import toast from "react-hot-toast";
+import {
+  getUsers,
+  updateUserLevel,
+  getLevelBadgeClass,
+  formatDate,
+} from "../../functions/user";
 import "./UserManagement.css";
 
 const UserManagement = () => {
@@ -20,16 +25,11 @@ const UserManagement = () => {
   const loadUsers = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("/api/admin/users", {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      });
-      setUsers(res.data);
+      const data = await getUsers(user.token);
+      setUsers(data);
       setLoading(false);
     } catch (error) {
-      console.error("Load users error:", error);
-      toast.error("Error loading users");
+      toast.error(error.message || "Error loading users");
       setLoading(false);
     }
   };
@@ -46,30 +46,17 @@ const UserManagement = () => {
   const handleLevelUpdate = async () => {
     try {
       setLoading(true);
-      await axios.put(
-        `/api/admin/user/${activeUser._id}/level`,
-        {
-          level: selectedLevel,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        }
-      );
-
+      await updateUserLevel(activeUser._id, selectedLevel, user.token);
       // Update local user data
       const updatedUsers = users.map((u) =>
         u._id === activeUser._id ? { ...u, level: selectedLevel } : u
       );
       setUsers(updatedUsers);
-
       toast.success(`User level updated to ${selectedLevel}`);
       closeUserModal();
       setLoading(false);
     } catch (error) {
-      console.error("Update user level error:", error);
-      toast.error("Failed to update user level");
+      toast.error(error.message || "Failed to update user level");
       setLoading(false);
     }
   };

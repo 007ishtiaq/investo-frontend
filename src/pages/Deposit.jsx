@@ -1,7 +1,12 @@
 // client/src/pages/Deposit.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-import axios from "axios";
+import {
+  getUserDeposits,
+  submitDeposit,
+  getStatusBadgeClass,
+  formatPaymentMethod,
+} from "../functions/deposit";
 import toast from "react-hot-toast";
 import "./Deposit.css";
 
@@ -24,16 +29,11 @@ const Deposit = () => {
   const loadDeposits = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("/api/user/deposits", {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      });
-      setDeposits(res.data);
+      const data = await getUserDeposits(user.token);
+      setDeposits(data);
       setLoading(false);
     } catch (error) {
-      console.error("Load deposits error:", error);
-      toast.error("Error loading deposit history");
+      toast.error(error.message || "Error loading deposit history");
       setLoading(false);
     }
   };
@@ -44,30 +44,6 @@ const Deposit = () => {
     if (file) {
       setScreenshot(file);
       setPreviewUrl(URL.createObjectURL(file));
-    }
-  };
-
-  const uploadScreenshot = async () => {
-    if (!screenshot) return null;
-
-    try {
-      setUploading(true);
-      const formData = new FormData();
-      formData.append("file", screenshot);
-      formData.append("upload_preset", "investment_proofs"); // Configure your Cloudinary upload preset
-
-      const response = await axios.post(
-        "https://api.cloudinary.com/v1_1/yourcloudname/image/upload", // Replace with your Cloudinary cloud name
-        formData
-      );
-
-      setUploading(false);
-      return response.data.secure_url;
-    } catch (error) {
-      console.error("Screenshot upload error:", error);
-      toast.error("Failed to upload screenshot");
-      setUploading(false);
-      return null;
     }
   };
 
@@ -82,29 +58,16 @@ const Deposit = () => {
 
     try {
       setLoading(true);
+      setUploading(true);
 
-      // Upload screenshot first
-      const screenshotUrl = await uploadScreenshot();
-
-      if (!screenshotUrl) {
-        setLoading(false);
-        return;
-      }
-
-      // Create deposit request
-      const res = await axios.post(
-        "/api/deposit/create",
+      await submitDeposit(
         {
-          amount: parseFloat(amount),
+          amount,
           paymentMethod,
           transactionId,
-          screenshotUrl,
+          screenshot,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        }
+        user.token
       );
 
       // Reset form
@@ -118,10 +81,11 @@ const Deposit = () => {
       loadDeposits();
 
       toast.success("Deposit request submitted successfully");
+      setUploading(false);
       setLoading(false);
     } catch (error) {
-      console.error("Submit deposit error:", error);
-      toast.error("Failed to submit deposit request");
+      toast.error(error.message || "Failed to submit deposit request");
+      setUploading(false);
       setLoading(false);
     }
   };

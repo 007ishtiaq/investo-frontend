@@ -1,8 +1,13 @@
 // client/src/pages/admin/AdminDeposits.jsx
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import axios from "axios";
 import toast from "react-hot-toast";
+import {
+  getDeposits,
+  getInvestmentPlans,
+  reviewDeposit,
+  formatDate,
+} from "../../functions/adminDeposit";
 import "./AdminDeposits.css";
 
 const AdminDeposits = () => {
@@ -23,36 +28,21 @@ const AdminDeposits = () => {
   const loadDeposits = async () => {
     try {
       setLoading(true);
-      const endpoint =
-        filter === "pending"
-          ? "/api/admin/deposits/pending"
-          : "/api/admin/deposits";
-
-      const res = await axios.get(endpoint, {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      });
-      setDeposits(res.data);
+      const data = await getDeposits(user.token, filter);
+      setDeposits(data);
       setLoading(false);
     } catch (error) {
-      console.error("Load deposits error:", error);
-      toast.error("Error loading deposits");
+      toast.error(error.message || "Error loading deposits");
       setLoading(false);
     }
   };
 
   const loadInvestmentPlans = async () => {
     try {
-      const res = await axios.get("/api/investment-plans", {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      });
-      setInvestmentPlans(res.data);
+      const data = await getInvestmentPlans(user.token);
+      setInvestmentPlans(data);
     } catch (error) {
-      console.error("Load investment plans error:", error);
-      toast.error("Error loading investment plans");
+      toast.error(error.message || "Error loading investment plans");
     }
   };
 
@@ -70,30 +60,23 @@ const AdminDeposits = () => {
     if (status === "approved" && !selectedPlanId) {
       return toast.error("Please select an investment plan");
     }
-
     try {
       setLoading(true);
-      await axios.post(
-        `/api/admin/deposit/${activeDeposit._id}/review`,
+      await reviewDeposit(
+        activeDeposit._id,
         {
           status,
           planId: selectedPlanId,
           adminNotes,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        }
+        user.token
       );
-
       toast.success(`Deposit ${status} successfully`);
       loadDeposits();
       closeReviewModal();
       setLoading(false);
     } catch (error) {
-      console.error("Review deposit error:", error);
-      toast.error(`Failed to ${status} deposit`);
+      toast.error(error.message || `Failed to ${status} deposit`);
       setLoading(false);
     }
   };
