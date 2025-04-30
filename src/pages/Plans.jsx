@@ -27,7 +27,7 @@ const Plans = () => {
         } catch (error) {
           console.error("Error fetching user level:", error);
           // Default to level 1 if there's an error
-          setUserLevel(3);
+          setUserLevel(2);
         } finally {
           setLoading(false);
         }
@@ -196,7 +196,7 @@ const Plans = () => {
         <div className="investment-grid">
           {investmentPlans.map((plan) => (
             <div key={plan.id} className="investment-grid-item">
-              <InvestmentCard plan={plan} userLevel={userLevel} />
+              <InvestmentCard plan={plan} userLevel={userLevel} user={user} />
             </div>
           ))}
         </div>

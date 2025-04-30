@@ -5,7 +5,7 @@ import { EthereumIcon } from "../../utils/icons";
 /**
  * Investment Card component for displaying investment plans
  */
-const InvestmentCard = ({ plan, userLevel }) => {
+const InvestmentCard = ({ plan, userLevel, user }) => {
   // Calculate daily and total profit
   const calculateProfit = () => {
     const dailyProfit = plan.minAmount * (plan.dailyRoi / 100);
@@ -24,29 +24,40 @@ const InvestmentCard = ({ plan, userLevel }) => {
 
   const profit = calculateProfit();
 
+  // Is user logged in (userLevel will be undefined if not logged in)
+  const isLoggedIn = user && user.token !== undefined;
+
   // Check if this plan matches the user's level
-  const isUserLevel = plan.level === userLevel;
+  const isUserLevel = isLoggedIn && plan.level === userLevel;
 
   // Check if the plan is available to the user based on their level
-  const isAvailable = userLevel >= plan.level;
+  const isAvailable = isLoggedIn && userLevel >= plan.level;
 
   return (
     <div
-      className={`investment-card ${plan.featured ? "featured-card" : ""} ${
-        isUserLevel ? "your-level-card" : ""
-      } ${!isAvailable ? "locked-card" : ""}`}
+      className={`investment-card ${
+        !isLoggedIn && plan.featured ? "featured-card" : ""
+      } ${isLoggedIn && isUserLevel ? "your-level-card" : ""}`}
     >
-      {plan.featured && <div className="card-badge">Most Popular</div>}
-      {isUserLevel && (
-        <div className="card-badge your-level-badge">Your Level</div>
+      {/* Only show "Most Popular" if no user is logged in OR user is logged in but this isn't their level */}
+      {!isLoggedIn && plan.featured && (
+        <div className="card-badge">Most Popular</div>
+      )}
+
+      {/* Only show "Your Level" if user is logged in and this is their level */}
+      {isLoggedIn && isUserLevel && (
+        <div className="card-badge your-level-badge">Your Account Level</div>
       )}
 
       <div className="card-header">
-        <div className={`level-tag ${isUserLevel ? "your-level-tag" : ""}`}>
+        <div
+          className={`level-tag ${
+            isLoggedIn && isUserLevel ? "your-level-tag" : ""
+          }`}
+        >
           Level {plan.level}
         </div>
         <h3 className="plan-name">{plan.name}</h3>
-        <div className="plan-duration">{plan.duration}</div>
       </div>
 
       <div className="daily-roi">
@@ -92,15 +103,18 @@ const InvestmentCard = ({ plan, userLevel }) => {
         </ul>
       </div>
 
-      {isAvailable ? (
-        <Link to={`/invest/${plan.id}`} className="invest-button">
+      {isLoggedIn ? (
+        isAvailable ? (
+          <div className="locked-message">Achieved Level {plan.level}</div>
+        ) : (
+          <Link to={`/invest/${plan.id}`} className="invest-button">
+            Upgrade Now
+          </Link>
+        )
+      ) : (
+        <Link to={`/login`} className="invest-button">
           Invest Now
         </Link>
-      ) : (
-        <div className="locked-message">
-          <span className="lock-icon">🔒</span>
-          Unlock at Level {plan.level}
-        </div>
       )}
     </div>
   );
@@ -134,11 +148,6 @@ document.head.appendChild(document.createElement("style")).textContent = `
 .your-level-card {
   border: 2px solid #00d0ff;
   box-shadow: 0 0 15px rgba(0, 208, 255, 0.3);
-}
-
-.locked-card {
-  opacity: 0.7;
-  filter: grayscale(30%);
 }
 
 .card-badge {
