@@ -176,47 +176,66 @@ const Team = () => {
 
           {/* Level Benefits */}
           <div className="level-benefits-section">
-            <h2>Level Benefits</h2>
-            <div className="level-grid">
-              <div className="level-card">
-                <div className="level-header">Level 1</div>
-                <ul className="level-benefits">
-                  <li>Basic access to tasks</li>
-                  <li>5% affiliate commission</li>
-                </ul>
-              </div>
-              <div className="level-card">
-                <div className="level-header">Level 2</div>
-                <ul className="level-benefits">
-                  <li>Access to more tasks</li>
-                  <li>7% affiliate commission</li>
-                  <li>Weekly bonus tasks</li>
-                </ul>
-              </div>
-              <div className="level-card">
-                <div className="level-header">Level 3</div>
-                <ul className="level-benefits">
-                  <li>Premium tasks access</li>
-                  <li>10% affiliate commission</li>
-                  <li>Daily bonus tasks</li>
-                </ul>
-              </div>
-              <div className="level-card">
-                <div className="level-header">Level 4</div>
-                <ul className="level-benefits">
-                  <li>VIP tasks access</li>
-                  <li>12% affiliate commission</li>
-                  <li>Priority verification</li>
-                </ul>
-              </div>
-              <div className="level-card">
-                <div className="level-header">Level 5</div>
-                <ul className="level-benefits">
-                  <li>Elite tasks access</li>
-                  <li>15% affiliate commission</li>
-                  <li>Instant verification</li>
-                  <li>Monthly bonus rewards</li>
-                </ul>
+            <div className="team-commission-section">
+              <h2>Affiliate Commission Rates</h2>
+              <div className="commission-table-container">
+                <table className="commission-table">
+                  <thead>
+                    <tr>
+                      <th>Your Account Level</th>
+                      <th>Level 1 Referrals</th>
+                      <th>Level 2 Referrals</th>
+                      <th>Level 3 Referrals</th>
+                      <th>Level 4 Referrals</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <span className="level-badge-team level-1">
+                          Level 1
+                        </span>
+                      </td>
+                      <td>0.01$ daily</td>
+                      <td>0.10% daily</td>
+                      <td>0.50% daily</td>
+                      <td>1.00% daily</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <span className="level-badge-team level-2">
+                          Level 2
+                        </span>
+                      </td>
+                      <td>0.02$ daily</td>
+                      <td>0.20% daily</td>
+                      <td>1.00% daily</td>
+                      <td>1.50% daily</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <span className="level-badge-team level-3">
+                          Level 3
+                        </span>
+                      </td>
+                      <td>0.03$ daily</td>
+                      <td>0.30% daily</td>
+                      <td>1.50% daily</td>
+                      <td>2.00% daily</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <span className="level-badge-team level-4">
+                          Level 4
+                        </span>
+                      </td>
+                      <td>0.05$ daily</td>
+                      <td>0.50% daily</td>
+                      <td>2.00% daily</td>
+                      <td>3.00% daily</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>

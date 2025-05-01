@@ -3,13 +3,15 @@
 import axios from "axios";
 import { uploadImage } from "./cloudinary";
 
-export const getUserDeposits = async (token) => {
+export const getUserDeposits = async (authtoken) => {
   try {
-    const res = await axios.get("/api/user/deposits", {
+    const res = await axios.get(`${process.env.REACT_APP_API}/user/deposits`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        authtoken,
       },
     });
+
+    // Return the data directly - we'll handle the structure in the component
     return res.data;
   } catch (error) {
     console.error("Load deposits error:", error);
@@ -17,7 +19,7 @@ export const getUserDeposits = async (token) => {
   }
 };
 
-export const submitDeposit = async (depositData, token) => {
+export const submitDeposit = async (depositData, authtoken) => {
   try {
     // Upload screenshot first
     const screenshotUrl = await uploadImage(
@@ -31,7 +33,7 @@ export const submitDeposit = async (depositData, token) => {
 
     // Create deposit request
     const res = await axios.post(
-      "/api/deposit/create",
+      `${process.env.REACT_APP_API}/deposit/create`,
       {
         amount: parseFloat(depositData.amount),
         paymentMethod: depositData.paymentMethod,
@@ -40,7 +42,7 @@ export const submitDeposit = async (depositData, token) => {
       },
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          authtoken,
         },
       }
     );

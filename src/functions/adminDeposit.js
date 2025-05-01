@@ -2,16 +2,16 @@
 
 import axios from "axios";
 
-export const getDeposits = async (token, filter = "pending") => {
+export const getDeposits = async (authtoken, filter = "pending") => {
   try {
     const endpoint =
       filter === "pending"
-        ? "/api/admin/deposits/pending"
-        : "/api/admin/deposits";
+        ? `${process.env.REACT_APP_API}/admin/deposits/pending`
+        : `${process.env.REACT_APP_API}/admin/deposits`;
 
     const res = await axios.get(endpoint, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        authtoken,
       },
     });
 
@@ -22,13 +22,16 @@ export const getDeposits = async (token, filter = "pending") => {
   }
 };
 
-export const getInvestmentPlans = async (token) => {
+export const getInvestmentPlans = async (authtoken) => {
   try {
-    const res = await axios.get("/api/investment-plans", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const res = await axios.get(
+      `${process.env.REACT_APP_API}/investment-plans`,
+      {
+        headers: {
+          authtoken,
+        },
+      }
+    );
 
     return res.data;
   } catch (error) {

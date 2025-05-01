@@ -29,11 +29,24 @@ const Deposit = () => {
   const loadDeposits = async () => {
     try {
       setLoading(true);
-      const data = await getUserDeposits(user.token);
-      setDeposits(data);
+      const result = await getUserDeposits(user.token);
+
+      // Handle the response structure
+      if (result.deposits) {
+        setDeposits(result.deposits);
+        if (result.message) {
+          toast.error(result.message);
+        }
+      } else {
+        // If the response doesn't have the expected structure, use it directly
+        // (this is a fallback for compatibility)
+        setDeposits(result || []);
+      }
+
       setLoading(false);
     } catch (error) {
       toast.error(error.message || "Error loading deposit history");
+      setDeposits([]); // Initialize with empty array on error
       setLoading(false);
     }
   };

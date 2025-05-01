@@ -11,7 +11,7 @@ export const uploadImage = async (file, uploadPreset) => {
     formData.append("upload_preset", uploadPreset);
 
     const response = await axios.post(
-      "https://api.cloudinary.com/v1_1/your-cloud-name/image/upload", // Replace with your Cloudinary cloud name
+      `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/image/upload`,
       formData
     );
 

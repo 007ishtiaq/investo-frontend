@@ -3,6 +3,8 @@ import InvestmentCard from "../components/InvestmentCard/InvestmentCard";
 import FixedDepositPlan from "../components/FixedDepositPlan/FixedDepositPlan";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { getInvestmentPlans } from "../functions/investmentplans";
+import toast from "react-hot-toast";
 
 /**
  * Investment page component displaying available investment plans
@@ -11,6 +13,8 @@ const Plans = () => {
   const { user } = useSelector((state) => ({ ...state }));
   const [userLevel, setUserLevel] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [investmentPlans, setInvestmentPlans] = useState([]);
+  const [fixedDepositPlans, setFixedDepositPlans] = useState([]);
 
   // Fetch user level from backend
   useEffect(() => {
@@ -39,120 +43,50 @@ const Plans = () => {
     fetchUserLevel();
   }, [user]);
 
-  // Sample investment plan data
-  const [investmentPlans] = useState([
-    {
-      id: 1,
-      name: "Basic Plan",
-      level: 1,
-      dailyRoi: 0.5,
-      duration: "30 Days",
-      minAmount: 0.1,
-      featured: false,
-      additionalFeatures: [
-        "Daily profit distribution",
-        "No early withdrawal fee",
-        "Automatic reinvestment option",
-      ],
-    },
-    {
-      id: 2,
-      name: "Standard Plan",
-      level: 2,
-      dailyRoi: 0.8,
-      duration: "60 Days",
-      minAmount: 0.5,
-      featured: true,
-      additionalFeatures: [
-        "Daily profit distribution",
-        "Priority customer support",
-        "Automatic reinvestment option",
-        "Weekly performance reports",
-      ],
-    },
-    {
-      id: 3,
-      name: "Premium Plan",
-      level: 3,
-      dailyRoi: 1.2,
-      duration: "90 Days",
-      minAmount: 1.0,
-      featured: false,
-      additionalFeatures: [
-        "Daily profit distribution",
-        "Priority customer support",
-        "Automatic reinvestment option",
-        "Weekly performance reports",
-        "Access to exclusive investment pools",
-      ],
-    },
-    {
-      id: 4,
-      name: "Elite Plan",
-      level: 4,
-      dailyRoi: 1.5,
-      duration: "180 Days",
-      minAmount: 2.0,
-      featured: false,
-      additionalFeatures: [
-        "Guaranteed returns",
-        "Priority customer support",
-        "Automatic reinvestment option",
-        "Weekly performance reports",
-        "Access to exclusive investment pools",
-        "One-on-one investment consultation",
-      ],
-    },
-  ]);
+  // Fetch investment plans from backend
+  useEffect(() => {
+    const fetchPlans = async () => {
+      try {
+        setLoading(true);
+        const plans = await getInvestmentPlans(user?.token);
 
-  // Sample fixed deposit data
-  const [fixedDepositPlans] = useState([
-    {
-      id: 101,
-      name: "Silver Deposit",
-      roi: 8,
-      durationInMonths: 3,
-      minAmount: 0.5,
-      featured: false,
-      features: [
-        "Guaranteed fixed returns",
-        "One-time payout at maturity",
-        "Low minimum deposit",
-        "No maintenance fees",
-      ],
-    },
-    {
-      id: 102,
-      name: "Gold Deposit",
-      roi: 12,
-      durationInMonths: 6,
-      minAmount: 1.0,
-      featured: true,
-      features: [
-        "Guaranteed fixed returns",
-        "One-time payout at maturity",
-        "Early withdrawal option (with fee)",
-        "Priority customer support",
-        "Monthly performance report",
-      ],
-    },
-    {
-      id: 103,
-      name: "Platinum Deposit",
-      roi: 18,
-      durationInMonths: 12,
-      minAmount: 3.0,
-      featured: false,
-      features: [
-        "Guaranteed fixed returns",
-        "One-time payout at maturity",
-        "Early withdrawal option (with fee)",
-        "Priority customer support",
-        "Quarterly consultation calls",
-        "Access to exclusive investment opportunities",
-      ],
-    },
-  ]);
+        // Separate plans into daily income and fixed deposit
+        const dailyPlans = plans.filter((plan) => !plan.isFixedDeposit);
+        const depositPlans = plans.filter((plan) => plan.isFixedDeposit);
+
+        setInvestmentPlans(dailyPlans);
+        setFixedDepositPlans(depositPlans);
+      } catch (error) {
+        console.error("Error fetching investment plans:", error);
+        toast.error("Failed to load investment plans");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPlans();
+  }, [user]);
+
+  // Map database fields to component props for daily plans
+  const mapDailyPlanProps = (plan) => ({
+    id: plan._id,
+    name: plan.name,
+    level: plan.minLevel,
+    dailyRoi: plan.dailyIncome,
+    duration: `${plan.durationInDays} Days`,
+    minAmount: plan.minAmount,
+    featured: plan.featured,
+    additionalFeatures: plan.features,
+  });
+  // Map database fields to component props for fixed deposit plans
+  const mapFixedDepositProps = (plan) => ({
+    id: plan._id,
+    name: plan.name,
+    roi: plan.returnRate,
+    durationInMonths: Math.round(plan.durationInDays / 30), // Convert days to months
+    minAmount: plan.minAmount,
+    featured: plan.featured,
+    features: plan.features,
+  });
 
   return (
     <div className="investment-page">
@@ -193,13 +127,21 @@ const Plans = () => {
           </p>
         </div>
 
-        <div className="investment-grid">
-          {investmentPlans.map((plan) => (
-            <div key={plan.id} className="investment-grid-item">
-              <InvestmentCard plan={plan} userLevel={userLevel} user={user} />
-            </div>
-          ))}
-        </div>
+        {loading ? (
+          <div className="loading-spinner">Loading plans...</div>
+        ) : (
+          <div className="investment-grid">
+            {investmentPlans.map((plan) => (
+              <div key={plan._id} className="investment-grid-item">
+                <InvestmentCard
+                  plan={mapDailyPlanProps(plan)}
+                  userLevel={userLevel}
+                  user={user}
+                />
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className="section-header">
           <h2 className="section-title">Fixed Deposit Plans</h2>
@@ -209,13 +151,17 @@ const Plans = () => {
           </p>
         </div>
 
-        <div className="fixed-deposit-grid">
-          {fixedDepositPlans.map((plan) => (
-            <div key={plan.id} className="fixed-deposit-grid-item">
-              <FixedDepositPlan plan={plan} />
-            </div>
-          ))}
-        </div>
+        {loading ? (
+          <div className="loading-spinner">Loading plans...</div>
+        ) : (
+          <div className="fixed-deposit-grid">
+            {fixedDepositPlans.map((plan) => (
+              <div key={plan._id} className="fixed-deposit-grid-item">
+                <FixedDepositPlan plan={mapFixedDepositProps(plan)} />
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className="investment-faq">
           <h2 className="faq-title">Frequently Asked Questions</h2>

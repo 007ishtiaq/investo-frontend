@@ -203,7 +203,7 @@
 }
 
 .level-header {
-  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  background: linear-gradient(45deg, #627eea, #3d5afe);
   color: white;
   padding: 15px;
   text-align: center;
@@ -255,4 +255,412 @@
     margin-bottom: 10px;
     text-align: center;
   }
+}
+/* Team.css */
+
+.commission-table thead {
+  background: linear-gradient(45deg, #627eea, #3d5afe);
+  color: white;
+}
+
+.team-page {
+  padding: 3rem 0;
+}
+
+.team-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(#f8fafc);
+}
+
+.page-description {
+  font-size: 1.125rem;
+  color: var(#cbd5e1);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Referral section */
+.referral-section {
+  background-color: var(#1e293b);
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-bottom: 3rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid #4e5a6b;
+}
+
+.referral-content {
+  text-align: center;
+}
+
+.referral-content h2 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(#f8fafc);
+}
+
+.referral-content p {
+  margin-bottom: 2rem;
+  color: var(#cbd5e1);
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.referral-link-container {
+  display: flex;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.referral-link {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid #4e5a6b;
+  border-radius: 0.5rem 0 0 0.5rem;
+  font-size: 0.875rem;
+  background-color: rgba(var(--color-primary-rgb), 0.05);
+}
+
+.copy-button {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 0 0.5rem 0.5rem 0;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.copy-button:hover {
+  background-color: rgba(var(--color-primary-rgb), 0.9);
+}
+
+/* Stats section */
+.team-stats-section {
+  margin-bottom: 3rem;
+}
+
+.team-stats-section h2 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: var(#f8fafc);
+}
+
+.team-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .team-stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.stat-card {
+  padding: 2rem;
+  border-radius: 1rem;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.stat-value {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--color-primary);
+}
+
+.stat-label {
+  color: var(#cbd5e1);
+  font-size: 1rem;
+}
+
+/* Affiliate Commission Rates */
+.team-commission-section {
+  margin-bottom: 3rem;
+}
+
+.team-commission-section h2 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: var(#f8fafc);
+}
+
+.commission-table-container {
+  overflow-x: auto;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.commission-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(#1e293b);
+}
+
+.commission-table th,
+.commission-table td {
+  padding: 1rem;
+  text-align: center;
+  border-bottom: 1px solid #4e5a6b;
+}
+
+.commission-table th {
+  background-color: rgba(var(--color-primary-rgb), 0.1);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.commission-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* .commission-table td:first-child {
+  text-align: left;
+} */
+
+/* Team Members List */
+.team-members-section {
+  margin-bottom: 3rem;
+}
+
+.team-members-section h2 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: var(#f8fafc);
+}
+
+.members-table-container {
+  overflow-x: auto;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.members-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(#1e293b);
+}
+
+.members-table th,
+.members-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #4e5a6b;
+}
+
+.members-table th {
+  background-color: rgba(var(--color-primary-rgb), 0.1);
+  font-weight: 600;
+  color: var(#f8fafc);
+  white-space: nowrap;
+}
+
+.members-table tr:last-child td {
+  border-bottom: none;
+}
+
+.member-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.member-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.member-name {
+  font-weight: 500;
+}
+
+.level-badge-team {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: white;
+}
+
+.level-1 {
+  background-color: #4caf50;
+}
+
+.level-2 {
+  background-color: #2196f3;
+}
+
+.level-3 {
+  background-color: #ff9800;
+}
+
+.level-4 {
+  background-color: #9c27b0;
+}
+
+.tier-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: white;
+}
+
+.tier-1 {
+  background-color: #009688;
+}
+
+.tier-2 {
+  background-color: #3f51b5;
+}
+
+.tier-3 {
+  background-color: #e91e63;
+}
+
+.tier-4 {
+  background-color: #795548;
+}
+
+.empty-team {
+  text-align: center;
+  padding: 3rem;
+  background-color: var(#1e293b);
+  border-radius: 0.5rem;
+  border: 1px solid #4e5a6b;
+}
+
+.empty-team p {
+  color: var(#cbd5e1);
+  font-size: 1.125rem;
+}
+
+/* Level Requirements */
+.level-requirements-section {
+  margin-bottom: 3rem;
+}
+
+.level-requirements-section h2 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: var(#f8fafc);
+}
+
+.requirements-table-container {
+  overflow-x: auto;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.requirements-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(#1e293b);
+}
+
+.requirements-table th,
+.requirements-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #4e5a6b;
+}
+
+.requirements-table th {
+  background-color: rgba(var(--color-primary-rgb), 0.1);
+  font-weight: 600;
+  color: var(#f8fafc);
+  white-space: nowrap;
+}
+
+.requirements-table tr:last-child td {
+  border-bottom: none;
+}
+
+.benefits-list {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.benefits-list li {
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+/* FAQ Section */
+.faq-section {
+  max-width: 800px;
+  margin: 0 auto 3rem;
+}
+
+.faq-section h2 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  text-align: center;
+  color: var(#f8fafc);
+}
+
+.faq-item {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #4e5a6b;
+}
+
+.faq-item h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(#f8fafc);
+}
+
+.faq-item p {
+  color: var(#cbd5e1);
+  line-height: 1.6;
+}
+
+/* Loading spinner */
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 1.25rem;
+  color: var(#cbd5e1);
 }

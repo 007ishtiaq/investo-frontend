@@ -27,7 +27,7 @@ function App() {
     <Suspense>
       <Router>
         <Toaster
-          position="top-right"
+          position="top-center"
           toastOptions={{
             duration: 4000,
             style: {
