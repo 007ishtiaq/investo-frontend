@@ -6,12 +6,14 @@ import {
   getDeposits,
   getInvestmentPlans,
   reviewDeposit,
-  formatDate,
 } from "../../functions/adminDeposit";
 import "./AdminDeposits.css";
+import { useWallet } from "../../contexts/WalletContext";
 
 const AdminDeposits = () => {
   const { user } = useSelector((state) => ({ ...state }));
+  const { refreshWalletBalance } = useWallet();
+
   const [loading, setLoading] = useState(false);
   const [deposits, setDeposits] = useState([]);
   const [investmentPlans, setInvestmentPlans] = useState([]);
@@ -19,6 +21,7 @@ const AdminDeposits = () => {
   const [selectedPlanId, setSelectedPlanId] = useState("");
   const [adminNotes, setAdminNotes] = useState("");
   const [filter, setFilter] = useState("pending");
+  const [editedAmount, setEditedAmount] = useState(0);
 
   useEffect(() => {
     loadDeposits();
@@ -29,6 +32,7 @@ const AdminDeposits = () => {
     try {
       setLoading(true);
       const data = await getDeposits(user.token, filter);
+
       setDeposits(data);
       setLoading(false);
     } catch (error) {
@@ -50,6 +54,7 @@ const AdminDeposits = () => {
     setActiveDeposit(deposit);
     setSelectedPlanId("");
     setAdminNotes("");
+    setEditedAmount(deposit.amount);
   };
 
   const closeReviewModal = () => {
@@ -60,6 +65,12 @@ const AdminDeposits = () => {
     if (status === "approved" && !selectedPlanId) {
       return toast.error("Please select an investment plan");
     }
+
+    // Validate amount
+    if (editedAmount <= 0) {
+      return toast.error("Amount must be greater than zero");
+    }
+
     try {
       setLoading(true);
       await reviewDeposit(
@@ -68,11 +79,13 @@ const AdminDeposits = () => {
           status,
           planId: selectedPlanId,
           adminNotes,
+          amount: editedAmount,
         },
         user.token
       );
       toast.success(`Deposit ${status} successfully`);
       loadDeposits();
+      refreshWalletBalance();
       closeReviewModal();
       setLoading(false);
     } catch (error) {
@@ -190,9 +203,25 @@ const AdminDeposits = () => {
                   </div>
                   <div className="detail-row">
                     <span className="detail-label">Amount:</span>
-                    <span className="detail-value">
-                      ${activeDeposit.amount.toFixed(2)}
-                    </span>
+                    {activeDeposit.status === "pending" ? (
+                      <span className="detail-value">
+                        $
+                        <input
+                          type="number"
+                          step="0.01"
+                          min="0.01"
+                          value={editedAmount}
+                          onChange={(e) =>
+                            setEditedAmount(parseFloat(e.target.value))
+                          }
+                          className="amount-input"
+                        />
+                      </span>
+                    ) : (
+                      <span className="detail-value">
+                        ${activeDeposit.amount.toFixed(2)}
+                      </span>
+                    )}
                   </div>
                   <div className="detail-row">
                     <span className="detail-label">Payment Method:</span>

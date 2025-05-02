@@ -40,14 +40,14 @@ export const getInvestmentPlans = async (authtoken) => {
   }
 };
 
-export const reviewDeposit = async (depositId, reviewData, token) => {
+export const reviewDeposit = async (depositId, reviewData, authtoken) => {
   try {
     const res = await axios.post(
-      `/api/admin/deposit/${depositId}/review`,
+      `${process.env.REACT_APP_API}/admin/deposit/${depositId}/review`,
       reviewData,
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          authtoken,
         },
       }
     );
@@ -57,8 +57,4 @@ export const reviewDeposit = async (depositId, reviewData, token) => {
     console.error("Review deposit error:", error);
     throw new Error(`Failed to ${reviewData.status} deposit`);
   }
-};
-
-export const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleString();
 };

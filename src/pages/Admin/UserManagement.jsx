@@ -2,12 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import {
-  getUsers,
-  updateUserLevel,
-  getLevelBadgeClass,
-  formatDate,
-} from "../../functions/user";
+import { getUsers, updateUserLevel } from "../../functions/user";
 import "./UserManagement.css";
 
 const UserManagement = () => {
@@ -65,7 +60,7 @@ const UserManagement = () => {
     const searchLower = searchTerm.toLowerCase();
     return (
       user.email.toLowerCase().includes(searchLower) ||
-      (user.username && user.username.toLowerCase().includes(searchLower))
+      (user.name && user.name.toLowerCase().includes(searchLower))
     );
   });
 
@@ -94,7 +89,7 @@ const UserManagement = () => {
           <div className="search-container">
             <input
               type="text"
-              placeholder="Search by email or username..."
+              placeholder="Search by email or name..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="search-input"
@@ -113,7 +108,7 @@ const UserManagement = () => {
             <table className="users-table">
               <thead>
                 <tr>
-                  <th>Username</th>
+                  <th>Name</th>
                   <th>Email</th>
                   <th>Level</th>
                   <th>Joined</th>
@@ -123,11 +118,11 @@ const UserManagement = () => {
               <tbody>
                 {filteredUsers.map((u) => (
                   <tr key={u._id}>
-                    <td>{u.username || "-"}</td>
+                    <td>{u.name || "-"}</td>
                     <td>{u.email}</td>
                     <td>
                       <span
-                        className={`level-badge ${getLevelBadgeClass(
+                        className={`level-badge-user ${getLevelBadgeClass(
                           u.level || 1
                         )}`}
                       >
@@ -165,7 +160,7 @@ const UserManagement = () => {
                   <div className="detail-row">
                     <span className="detail-label">Username:</span>
                     <span className="detail-value">
-                      {activeUser.username || "-"}
+                      {activeUser.name || "-"}
                     </span>
                   </div>
                   <div className="detail-row">
@@ -175,7 +170,7 @@ const UserManagement = () => {
                   <div className="detail-row">
                     <span className="detail-label">Current Level:</span>
                     <span
-                      className={`level-badge ${getLevelBadgeClass(
+                      className={`level-badge-user ${getLevelBadgeClass(
                         activeUser.level || 1
                       )}`}
                     >

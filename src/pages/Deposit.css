@@ -285,3 +285,72 @@
 .screenshot-link:hover {
   text-decoration: underline;
 }
+/* Image Modal Styles */
+.image-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.image-modal-content {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
+  background-color: var(--color-card-bg, #ffffff);
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.modal-image {
+  display: block;
+  max-width: 100%;
+  max-height: 80vh;
+  margin: 0 auto;
+  border-radius: 4px;
+}
+
+.close-modal-button {
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: var(--color-primary, #6366f1);
+  color: white;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.close-modal-button:hover {
+  background-color: #4f46e5;
+}
+
+.view-image-button {
+  background-color: transparent;
+  color: var(--color-primary, #6366f1);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.875rem;
+  text-decoration: underline;
+}
+
+.view-image-button:hover {
+  color: #4f46e5;
+}

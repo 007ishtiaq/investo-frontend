@@ -316,3 +316,16 @@
   opacity: 0.7;
   cursor: not-allowed;
 }
+.amount-input {
+  width: 80px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1em;
+  margin-left: 4px;
+}
+.amount-input:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 3px rgba(74, 144, 226, 0.5);
+}

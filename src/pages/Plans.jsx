@@ -14,7 +14,6 @@ const Plans = () => {
   const [userLevel, setUserLevel] = useState(1);
   const [loading, setLoading] = useState(true);
   const [investmentPlans, setInvestmentPlans] = useState([]);
-  const [fixedDepositPlans, setFixedDepositPlans] = useState([]);
 
   // Fetch user level from backend
   useEffect(() => {
@@ -52,10 +51,8 @@ const Plans = () => {
 
         // Separate plans into daily income and fixed deposit
         const dailyPlans = plans.filter((plan) => !plan.isFixedDeposit);
-        const depositPlans = plans.filter((plan) => plan.isFixedDeposit);
 
         setInvestmentPlans(dailyPlans);
-        setFixedDepositPlans(depositPlans);
       } catch (error) {
         console.error("Error fetching investment plans:", error);
         toast.error("Failed to load investment plans");
@@ -76,16 +73,6 @@ const Plans = () => {
     minAmount: plan.minAmount,
     featured: plan.featured,
     additionalFeatures: plan.features,
-  });
-  // Map database fields to component props for fixed deposit plans
-  const mapFixedDepositProps = (plan) => ({
-    id: plan._id,
-    name: plan.name,
-    roi: plan.returnRate,
-    durationInMonths: Math.round(plan.durationInDays / 30), // Convert days to months
-    minAmount: plan.minAmount,
-    featured: plan.featured,
-    features: plan.features,
   });
 
   return (
@@ -150,18 +137,6 @@ const Plans = () => {
             for investors looking for predictable growth over time.
           </p>
         </div>
-
-        {loading ? (
-          <div className="loading-spinner">Loading plans...</div>
-        ) : (
-          <div className="fixed-deposit-grid">
-            {fixedDepositPlans.map((plan) => (
-              <div key={plan._id} className="fixed-deposit-grid-item">
-                <FixedDepositPlan plan={mapFixedDepositProps(plan)} />
-              </div>
-            ))}
-          </div>
-        )}
 
         <div className="investment-faq">
           <h2 className="faq-title">Frequently Asked Questions</h2>

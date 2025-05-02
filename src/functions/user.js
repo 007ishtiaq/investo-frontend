@@ -2,11 +2,11 @@
 
 import axios from "axios";
 
-export const getUsers = async (token) => {
+export const getUsers = async (authtoken) => {
   try {
-    const res = await axios.get("/api/admin/users", {
+    const res = await axios.get(`${process.env.REACT_APP_API}/admin/users`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        authtoken,
       },
     });
 
@@ -32,14 +32,14 @@ export const getUserLevel = async (token) => {
   }
 };
 
-export const updateUserLevel = async (userId, level, token) => {
+export const updateUserLevel = async (userId, level, authtoken) => {
   try {
     const res = await axios.put(
-      `/api/admin/user/${userId}/level`,
+      `${process.env.REACT_APP_API}/admin/user/${userId}/level`,
       { level },
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          authtoken,
         },
       }
     );
@@ -49,21 +49,4 @@ export const updateUserLevel = async (userId, level, token) => {
     console.error("Update user level error:", error);
     throw new Error("Failed to update user level");
   }
-};
-
-export const getLevelBadgeClass = (level) => {
-  switch (level) {
-    case 4:
-      return "level-4";
-    case 3:
-      return "level-3";
-    case 2:
-      return "level-2";
-    default:
-      return "level-1";
-  }
-};
-
-export const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleDateString();
 };

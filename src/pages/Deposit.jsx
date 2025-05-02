@@ -1,4 +1,3 @@
-// client/src/pages/Deposit.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import {
@@ -21,6 +20,10 @@ const Deposit = () => {
   const [previewUrl, setPreviewUrl] = useState("");
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef(null);
+
+  // For the image modal
+  const [showModal, setShowModal] = useState(false);
+  const [modalImage, setModalImage] = useState("");
 
   useEffect(() => {
     loadDeposits();
@@ -103,15 +106,16 @@ const Deposit = () => {
     }
   };
 
-  const getStatusBadgeClass = (status) => {
-    switch (status) {
-      case "approved":
-        return "badge-success";
-      case "rejected":
-        return "badge-danger";
-      default:
-        return "badge-warning";
-    }
+  // Function to open the image modal
+  const openImageModal = (imageUrl) => {
+    setModalImage(imageUrl);
+    setShowModal(true);
+  };
+
+  // Function to close the image modal
+  const closeImageModal = () => {
+    setShowModal(false);
+    setModalImage("");
   };
 
   return (
@@ -300,14 +304,12 @@ const Deposit = () => {
                       )}
                       <div className="detail-item">
                         <span className="detail-label">Screenshot:</span>
-                        <a
-                          href={deposit.screenshotUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="screenshot-link"
+                        <button
+                          className="view-image-button"
+                          onClick={() => openImageModal(deposit.screenshotUrl)}
                         >
                           View Screenshot
-                        </a>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -317,6 +319,21 @@ const Deposit = () => {
           </div>
         </div>
       </div>
+
+      {/* Image Modal */}
+      {showModal && (
+        <div className="image-modal-overlay" onClick={closeImageModal}>
+          <div
+            className="image-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button className="close-modal-button" onClick={closeImageModal}>
+              &times;
+            </button>
+            <img src={modalImage} alt="Payment proof" className="modal-image" />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
