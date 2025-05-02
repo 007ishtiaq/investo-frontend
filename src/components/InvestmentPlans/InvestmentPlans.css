@@ -1,0 +1,349 @@
+/* Investment Plans component styles */
+
+/* Card Header */
+.plans-header {
+  padding-bottom: 0.5rem;
+}
+
+.plans-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.plans-view-all {
+  color: var(--primary-500, #3b82f6);
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.plans-arrow-icon {
+  height: 1rem;
+  width: 1rem;
+  margin-left: 0.25rem;
+}
+
+/* Plans grid layout */
+.plans-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.plans-grid-full {
+  grid-template-columns: 1fr;
+}
+
+/* Plan Item */
+.plan-item {
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.plan-item-active {
+  border-color: var(--primary-300, #93c5fd);
+  background-color: var(--primary-50, #eff6ff);
+}
+
+/* Plan Header */
+.plan-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.plan-title {
+  font-weight: 500;
+}
+
+.plan-description {
+  font-size: 0.875rem;
+  color: var(--text-secondary, #6b7280);
+  margin-top: 0.25rem;
+}
+
+.plan-status {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  border-radius: 9999px;
+}
+
+.plan-status-active {
+  background-color: var(--primary-100, #dbeafe);
+  color: var(--primary-500, #3b82f6);
+}
+
+.plan-status-locked {
+  background-color: var(--gray-100, #f3f4f6);
+  color: var(--text-secondary, #6b7280);
+}
+
+/* Plan Stats Grid */
+.plan-stats-grid {
+  margin-top: 0.75rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.plan-stat-box {
+  background-color: var(--card-bg, white);
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid var(--border-color, #e5e7eb);
+}
+
+.plan-stat-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #6b7280);
+}
+
+.plan-stat-value {
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+/* Plan Progress */
+.plan-progress-container {
+  margin-top: 1rem;
+}
+
+.plan-progress-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+}
+
+.plan-min-amount {
+  font-weight: 500;
+}
+
+.plan-daily-rate {
+  font-weight: 500;
+  color: var(--primary-600, #2563eb);
+}
+
+.plan-progress-bar {
+  height: 0.5rem;
+  background-color: var(--progress-bg, #e5e7eb);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.plan-progress-fill {
+  height: 100%;
+}
+
+.plan-progress-fill-active {
+  background-color: var(--green-500, #22c55e);
+}
+
+.plan-progress-fill-locked {
+  background-color: var(--primary-500, #3b82f6);
+}
+
+.plan-balance-text {
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  color: var(--text-secondary, #6b7280);
+  text-align: right;
+}
+
+/* Upgrade Button */
+.plan-upgrade-button {
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.plan-upgrade-icon {
+  height: 1rem;
+  width: 1rem;
+  margin-right: 0.5rem;
+}
+
+/* Empty state */
+.plans-empty {
+  text-align: center;
+  padding: 1.5rem;
+  color: var(--text-secondary, #6b7280);
+}
+
+/* Loading states */
+.plans-loading {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.plan-loading-item {
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.plan-loading-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.plan-loading-title {
+  height: 1.25rem;
+  width: 8rem;
+  background-color: var(--skeleton-bg, #e5e7eb);
+  border-radius: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.plan-loading-description {
+  height: 1rem;
+  width: 10rem;
+  background-color: var(--skeleton-bg, #e5e7eb);
+  border-radius: 0.25rem;
+}
+
+.plan-loading-status {
+  height: 1.5rem;
+  width: 4rem;
+  background-color: var(--skeleton-bg, #e5e7eb);
+  border-radius: 0.25rem;
+}
+
+.plan-loading-stats {
+  margin-top: 0.75rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.plan-loading-stat {
+  height: 3.5rem;
+  background-color: var(--skeleton-bg, #e5e7eb);
+  border-radius: 0.25rem;
+}
+
+.plan-loading-progress {
+  margin-top: 1rem;
+}
+
+.plan-loading-progress-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.plan-loading-min,
+.plan-loading-rate {
+  height: 1rem;
+  width: 6rem;
+  background-color: var(--skeleton-bg, #e5e7eb);
+  border-radius: 0.25rem;
+}
+
+.plan-loading-bar {
+  height: 0.5rem;
+  background-color: var(--skeleton-bg, #e5e7eb);
+  border-radius: 9999px;
+}
+
+.plans-loading-view {
+  height: 1rem;
+  width: 4rem;
+  background-color: var(--skeleton-bg, #e5e7eb);
+  border-radius: 0.25rem;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .plan-item {
+    border-color: var(--border-color-dark, #374151);
+  }
+
+  .plan-item-active {
+    border-color: var(--primary-700, #1d4ed8);
+    background-color: var(--primary-900-10, rgba(30, 58, 138, 0.1));
+  }
+
+  .plan-description {
+    color: var(--text-secondary-dark, #9ca3af);
+  }
+
+  .plan-status-active {
+    background-color: var(--primary-900-30, rgba(30, 58, 138, 0.3));
+  }
+
+  .plan-status-locked {
+    background-color: var(--gray-700, #374151);
+    color: var(--text-secondary-dark, #9ca3af);
+  }
+
+  .plan-stat-box {
+    background-color: var(--card-bg-dark, #1f2937);
+    border-color: var(--border-color-dark, #374151);
+  }
+
+  .plan-stat-label {
+    color: var(--text-secondary-dark, #9ca3af);
+  }
+
+  .plan-daily-rate {
+    color: var(--primary-400, #60a5fa);
+  }
+
+  .plan-progress-bar {
+    background-color: var(--progress-bg-dark, #374151);
+  }
+
+  .plan-balance-text {
+    color: var(--text-secondary-dark, #9ca3af);
+  }
+
+  .plans-empty {
+    color: var(--text-secondary-dark, #9ca3af);
+  }
+
+  .plan-loading-item {
+    border-color: var(--border-color-dark, #374151);
+  }
+
+  .plan-loading-title,
+  .plan-loading-description,
+  .plan-loading-status,
+  .plan-loading-stat,
+  .plan-loading-min,
+  .plan-loading-rate,
+  .plan-loading-bar,
+  .plans-loading-view {
+    background-color: var(--skeleton-bg-dark, #374151);
+  }
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+  .plans-grid-full {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .plans-grid-full {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Animation for loading skeletons */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

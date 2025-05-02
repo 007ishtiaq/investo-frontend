@@ -21,6 +21,7 @@ import Deposit from "./pages/Deposit";
 import AdminDeposits from "./pages/Admin/AdminDeposits";
 import UserManagement from "./pages/Admin/UserManagement";
 import { Toaster } from "react-hot-toast";
+import Dashboard from "./pages/User/Dashboard";
 
 function App() {
   return (
@@ -58,6 +59,9 @@ function App() {
           <Route exact path="/wallet" component={Wallet} />
           <Route path="/team" component={Team} />
           <Route path="/plans" component={Plans} />
+
+          {/* User routes */}
+          <Route path="/Dashboard" component={Dashboard} />
 
           {/* Admin routes */}
           <Route path="/admin" exact component={AdminDashboard} />

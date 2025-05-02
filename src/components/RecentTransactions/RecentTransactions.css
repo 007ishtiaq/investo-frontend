@@ -1,0 +1,245 @@
+/* Recent Transactions component styles */
+
+/* Card Header */
+.transactions-header {
+  padding-bottom: 0.5rem;
+}
+
+.transactions-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.transactions-view-all {
+  color: var(--primary-500, #3b82f6);
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.transactions-arrow-icon {
+  height: 1rem;
+  width: 1rem;
+  margin-left: 0.25rem;
+}
+
+.transactions-content-padding-none {
+  padding: 0;
+}
+
+/* Transaction Items */
+.transaction-item {
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+}
+
+.transaction-item:last-child {
+  border-bottom: none;
+}
+
+.transaction-icon {
+  flex-shrink: 0;
+  height: 2.5rem;
+  width: 2.5rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deposit-icon {
+  background-color: var(--primary-100, #dbeafe);
+  color: var(--primary-500, #3b82f6);
+}
+
+.withdraw-icon {
+  background-color: var(--red-100, #fee2e2);
+  color: var(--red-500, #ef4444);
+}
+
+.referral-icon {
+  background-color: var(--purple-100, #f3e8ff);
+  color: var(--purple-500, #a855f7);
+}
+
+.earning-icon {
+  background-color: var(--green-100, #dcfce7);
+  color: var(--green-500, #22c55e);
+}
+
+.icon-inner {
+  height: 1.25rem;
+  width: 1.25rem;
+}
+
+.transaction-content {
+  margin-left: 1rem;
+  flex: 1;
+}
+
+.transaction-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.transaction-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.transaction-description {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #6b7280);
+}
+
+.transaction-description-text {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+.transaction-amount {
+  font-weight: 500;
+}
+
+.amount-positive {
+  color: var(--green-500, #22c55e);
+}
+
+.amount-negative {
+  color: var(--red-500, #ef4444);
+}
+
+/* Empty state */
+.transactions-empty {
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--text-secondary, #6b7280);
+}
+
+/* Loading states */
+.transactions-loading {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.transaction-loading-item {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+}
+
+.transaction-loading-item:last-child {
+  border-bottom: none;
+}
+
+.transaction-loading-content {
+  display: flex;
+  align-items: center;
+}
+
+.transaction-loading-icon {
+  height: 2.5rem;
+  width: 2.5rem;
+  border-radius: 9999px;
+  background-color: var(--skeleton-bg, #e5e7eb);
+}
+
+.transaction-loading-details {
+  margin-left: 1rem;
+  flex: 1;
+}
+
+.transaction-loading-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.transaction-loading-title {
+  height: 1rem;
+  width: 5rem;
+  background-color: var(--skeleton-bg, #e5e7eb);
+  border-radius: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.transaction-loading-description {
+  height: 0.75rem;
+  width: 8rem;
+  background-color: var(--skeleton-bg, #e5e7eb);
+  border-radius: 0.25rem;
+}
+
+.transaction-loading-amount {
+  height: 1rem;
+  width: 4rem;
+  background-color: var(--skeleton-bg, #e5e7eb);
+  border-radius: 0.25rem;
+}
+
+.transactions-loading-view {
+  height: 1rem;
+  width: 4rem;
+  background-color: var(--skeleton-bg, #e5e7eb);
+  border-radius: 0.25rem;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .transaction-item {
+    border-color: var(--border-color-dark, #374151);
+  }
+
+  .transaction-loading-item {
+    border-color: var(--border-color-dark, #374151);
+  }
+
+  .transaction-description {
+    color: var(--text-secondary-dark, #9ca3af);
+  }
+
+  .transactions-empty {
+    color: var(--text-secondary-dark, #9ca3af);
+  }
+
+  .deposit-icon {
+    background-color: var(--primary-900-30, rgba(29, 78, 216, 0.3));
+  }
+
+  .withdraw-icon {
+    background-color: var(--red-900-30, rgba(185, 28, 28, 0.3));
+  }
+
+  .referral-icon {
+    background-color: var(--purple-900-30, rgba(126, 34, 206, 0.3));
+  }
+
+  .earning-icon {
+    background-color: var(--green-900-30, rgba(20, 83, 45, 0.3));
+  }
+
+  .transaction-loading-icon,
+  .transaction-loading-title,
+  .transaction-loading-description,
+  .transaction-loading-amount,
+  .transactions-loading-view {
+    background-color: var(--skeleton-bg-dark, #374151);
+  }
+}
+
+/* Animation for loading skeletons */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

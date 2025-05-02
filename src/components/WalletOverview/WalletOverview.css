@@ -1,0 +1,216 @@
+/* Wallet Overview component styles */
+
+/* Layout */
+.wallet-overview-grid {
+  margin-top: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+.wallet-card {
+  overflow: hidden;
+}
+
+.wallet-card-content {
+  padding: 1.5rem;
+}
+
+/* Card Header */
+.wallet-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.wallet-card-title {
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+.wallet-card-icon {
+  height: 1.25rem;
+  width: 1.25rem;
+}
+
+.primary-icon {
+  color: var(--primary-500, #3b82f6);
+}
+
+.yellow-icon {
+  color: var(--yellow-500, #eab308);
+}
+
+.green-icon {
+  color: var(--green-500, #22c55e);
+}
+
+/* Amount display */
+.wallet-amount-container {
+  display: flex;
+  align-items: baseline;
+}
+
+.wallet-amount {
+  font-size: 1.875rem;
+  font-weight: 700;
+}
+
+.wallet-percent {
+  margin-left: 0.5rem;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+}
+
+.wallet-percent.positive {
+  color: var(--green-500, #22c55e);
+}
+
+.wallet-arrow-icon {
+  height: 0.75rem;
+  width: 0.75rem;
+  margin-right: 0.25rem;
+}
+
+.wallet-rate {
+  margin-left: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary, #6b7280);
+}
+
+/* Progress bars */
+.wallet-progress-container {
+  margin-top: 1rem;
+}
+
+.wallet-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+}
+
+.wallet-progress-bar {
+  height: 0.5rem;
+  background-color: var(--progress-bg, #e5e7eb);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.wallet-progress-fill {
+  height: 100%;
+}
+
+.primary-gradient {
+  background-image: linear-gradient(
+    to right,
+    var(--primary-500, #3b82f6),
+    var(--primary-400, #60a5fa)
+  );
+}
+
+.yellow-green-gradient {
+  background-image: linear-gradient(
+    to right,
+    var(--yellow-500, #eab308),
+    var(--green-500, #22c55e)
+  );
+}
+
+.green-primary-gradient {
+  background-image: linear-gradient(
+    to right,
+    var(--green-500, #22c55e),
+    var(--primary-500, #3b82f6)
+  );
+}
+
+.wallet-progress-text {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary, #6b7280);
+}
+
+/* Loading skeleton styles */
+.wallet-skeleton {
+  height: 6rem;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.wallet-skeleton-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.wallet-skeleton-title {
+  height: 1.25rem;
+  background-color: var(--skeleton-bg, #e5e7eb);
+  border-radius: 0.25rem;
+  width: 33.333%;
+}
+
+.wallet-skeleton-icon {
+  height: 1.25rem;
+  width: 1.25rem;
+  background-color: var(--skeleton-bg, #e5e7eb);
+  border-radius: 9999px;
+}
+
+.wallet-skeleton-amount {
+  height: 2rem;
+  background-color: var(--skeleton-bg, #e5e7eb);
+  border-radius: 0.25rem;
+  width: 50%;
+}
+
+.wallet-skeleton-bar {
+  height: 0.5rem;
+  background-color: var(--skeleton-bg, #e5e7eb);
+  border-radius: 9999px;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .wallet-rate,
+  .wallet-progress-text {
+    color: var(--text-secondary-dark, #9ca3af);
+  }
+
+  .wallet-progress-bar {
+    background-color: var(--progress-bg-dark, #374151);
+  }
+
+  .wallet-skeleton-title,
+  .wallet-skeleton-icon,
+  .wallet-skeleton-amount,
+  .wallet-skeleton-bar {
+    background-color: var(--skeleton-bg-dark, #374151);
+  }
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+  .wallet-overview-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Animation for loading skeletons */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
