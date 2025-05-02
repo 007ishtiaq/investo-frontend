@@ -77,6 +77,7 @@ const Tasks = () => {
     try {
       const res = await getUserWallet(user.token);
       setWalletBalance(res.data.balance || 0);
+      console.log("res.data.level", res.data.level);
 
       // Set user level from the response
       if (res.data.level) {

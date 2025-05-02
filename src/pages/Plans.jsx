@@ -4,6 +4,7 @@ import FixedDepositPlan from "../components/FixedDepositPlan/FixedDepositPlan";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { getInvestmentPlans } from "../functions/investmentplans";
+import { getUserLevel } from "../functions/user"; // Import the getUserLevel function
 import toast from "react-hot-toast";
 
 /**
@@ -15,27 +16,18 @@ const Plans = () => {
   const [loading, setLoading] = useState(true);
   const [investmentPlans, setInvestmentPlans] = useState([]);
 
-  // Fetch user level from backend
+  // Fetch user level from backend using the getUserLevel function
   useEffect(() => {
     const fetchUserLevel = async () => {
       if (user && user.token) {
         try {
-          const res = await axios.get("/api/user/level", {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-          });
-
-          setUserLevel(res.data.level || 2);
+          const level = await getUserLevel(user.token);
+          setUserLevel(level);
         } catch (error) {
           console.error("Error fetching user level:", error);
-          // Default to level 1 if there's an error
-          setUserLevel(2);
-        } finally {
-          setLoading(false);
+          // Default to level 1 if there's an error (not 2 as it was before)
+          setUserLevel(1);
         }
-      } else {
-        setLoading(false);
       }
     };
 
@@ -60,7 +52,12 @@ const Plans = () => {
         setLoading(false);
       }
     };
-    fetchPlans();
+
+    if (user && user.token) {
+      fetchPlans();
+    } else {
+      setLoading(false);
+    }
   }, [user]);
 
   // Map database fields to component props for daily plans

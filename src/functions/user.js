@@ -17,11 +17,11 @@ export const getUsers = async (authtoken) => {
   }
 };
 
-export const getUserLevel = async (token) => {
+export const getUserLevel = async (authtoken) => {
   try {
-    const res = await axios.get("/api/user/level", {
+    const res = await axios.get(`${process.env.REACT_APP_API}/user/level`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        authtoken,
       },
     });
 

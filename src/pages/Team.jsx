@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import { getTeamMembers, getAffiliateCode } from "../functions/team";
 import { formatBalance } from "../functions/wallet";
+import { getUserLevel } from "../functions/user";
 import "./Team.css";
 
 const Team = () => {
@@ -17,10 +18,12 @@ const Team = () => {
   const [affiliateCode, setAffiliateCode] = useState("");
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [userLevel, setUserLevel] = useState(1); // New state for user level
 
   useEffect(() => {
     if (user && user.token) {
       loadTeamData();
+      loadUserLevel(); // New function to load user level
     }
   }, [user]);
 
@@ -51,6 +54,17 @@ const Team = () => {
       toast.error("Failed to load team data");
     } finally {
       setLoading(false);
+    }
+  };
+
+  // New function to fetch user level
+  const loadUserLevel = async () => {
+    try {
+      const level = await getUserLevel(user.token);
+      setUserLevel(level);
+    } catch (error) {
+      console.error("Error loading user level:", error);
+      // We'll keep the default level 1 if there's an error
     }
   };
 
@@ -104,11 +118,13 @@ const Team = () => {
               <span className="stat-label">Earnings By team</span>
             </div>
             <div className="stat-card">
-              <span className="stat-value">{user.level || 1}</span>
+              {/* Updated to use the fetched userLevel */}
+              <span className="stat-value">{userLevel}</span>
               <span className="stat-label">Your Account Level</span>
             </div>
           </div>
 
+          {/* Rest of the component remains the same */}
           {/* Affiliate Link Section */}
           <div className="affiliate-section">
             <h2>Share Your Affiliate Link</h2>
