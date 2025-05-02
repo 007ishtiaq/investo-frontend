@@ -315,8 +315,8 @@ const AdminDeposits = () => {
                         <option value="">-- Select Plan --</option>
                         {investmentPlans.map((plan) => (
                           <option key={plan._id} value={plan._id}>
-                            {plan.name} - {plan.returnRate}% (
-                            {plan.durationInDays} days)
+                            {plan.name} - {plan.returnRate}% (Level{" "}
+                            {plan.minLevel})
                           </option>
                         ))}
                       </select>
