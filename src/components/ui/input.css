@@ -1,0 +1,65 @@
+/* Input component styles */
+
+.input {
+  display: flex;
+  height: 2.5rem; /* h-10 */
+  width: 100%; /* w-full */
+  border-radius: 0.375rem; /* rounded-md */
+  border: 1px solid var(--input-border, #e2e8f0); /* border border-input */
+  background-color: var(--input-bg, white); /* bg-background */
+  padding: 0.5rem 0.75rem; /* px-3 py-2 */
+  font-size: 0.875rem; /* text-sm */
+}
+
+.input:focus {
+  outline: none; /* focus-visible:outline-none */
+  box-shadow: 0 0 0 2px var(--background-color, white),
+    0 0 0 4px var(--ring-color, #a1a1aa); /* focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 */
+}
+
+.input::placeholder {
+  color: var(--text-muted, #71717a); /* placeholder:text-muted-foreground */
+}
+
+.input:disabled {
+  cursor: not-allowed; /* disabled:cursor-not-allowed */
+  opacity: 0.5; /* disabled:opacity-50 */
+}
+
+/* File input specific styling */
+.input[type="file"] {
+  border: 0; /* file:border-0 */
+  background-color: transparent; /* file:bg-transparent */
+  font-size: 0.875rem; /* file:text-sm */
+  font-weight: 500; /* file:font-medium */
+}
+
+.input[type="file"]::file-selector-button {
+  border: 0; /* file:border-0 */
+  background-color: transparent; /* file:bg-transparent */
+  color: var(--text-color, #000000); /* file:text-foreground */
+  font-size: 0.875rem; /* file:text-sm */
+  font-weight: 500; /* file:font-medium */
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .input {
+    background-color: var(--input-bg-dark, #1f2937); /* dark mode background */
+    border-color: var(--input-border-dark, #374151); /* dark mode border */
+    color: var(--text-color-dark, #f9fafb);
+  }
+
+  .input::placeholder {
+    color: var(--text-muted-dark, #9ca3af); /* dark mode placeholder */
+  }
+
+  .input[type="file"]::file-selector-button {
+    color: var(--text-color-dark, #f9fafb); /* dark mode file selector text */
+  }
+
+  .input:focus {
+    box-shadow: 0 0 0 2px var(--background-color-dark, #111827),
+      0 0 0 4px var(--ring-color-dark, #a1a1aa);
+  }
+}

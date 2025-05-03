@@ -21,7 +21,10 @@ import Deposit from "./pages/Deposit";
 import AdminDeposits from "./pages/Admin/AdminDeposits";
 import UserManagement from "./pages/Admin/UserManagement";
 import { Toaster } from "react-hot-toast";
+import Layout from "./components/Layout/Layout";
 import Dashboard from "./pages/User/Dashboard";
+import Invest from "./pages/User/Invest";
+import History from "./pages/User/History";
 
 function App() {
   return (
@@ -56,12 +59,37 @@ function App() {
           <Route exact path="/register" component={Registration} />
           <Route exact path="/otpVerification" component={OTPVerification} />
           <Route exact path="/register/complete" component={RegisterComplete} />
-          <Route exact path="/wallet" component={Wallet} />
+
           <Route path="/team" component={Team} />
           <Route path="/plans" component={Plans} />
 
-          {/* User routes */}
-          <Route path="/Dashboard" component={Dashboard} />
+          {/* Dashboard route with Layout */}
+          <Route path="/dashboard">
+            <Layout>
+              <Dashboard />
+            </Layout>
+          </Route>
+
+          {/* Wallet route with Layout */}
+          <Route exact path="/wallet">
+            <Layout>
+              <Wallet />
+            </Layout>
+          </Route>
+
+          {/* Invest route with Layout */}
+          <Route exact path="/invest">
+            <Layout>
+              <Invest />
+            </Layout>
+          </Route>
+
+          {/* History route with Layout */}
+          <Route exact path="/history">
+            <Layout>
+              <History />
+            </Layout>
+          </Route>
 
           {/* Admin routes */}
           <Route path="/admin" exact component={AdminDashboard} />

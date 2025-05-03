@@ -1,0 +1,117 @@
+/* Invest page styles */
+
+/* Header card */
+.invest-header-card {
+  margin-bottom: 1.5rem;
+}
+
+.invest-header-content {
+  padding: 1.5rem;
+}
+
+/* Title section */
+.invest-title-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.invest-title-icon {
+  height: 1.5rem;
+  width: 1.5rem;
+  color: var(--primary-color, #3b82f6);
+  margin-right: 0.5rem;
+}
+
+.invest-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.invest-description {
+  color: var(--text-secondary, #4b5563);
+}
+
+/* Alert box */
+.invest-alert {
+  margin-top: 1rem;
+  background-color: var(--warning-bg, #fffbeb);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--warning-border, #fef3c7);
+}
+
+.invest-alert-content {
+  display: flex;
+}
+
+.invest-alert-icon {
+  height: 1.25rem;
+  width: 1.25rem;
+  color: var(--warning-color, #f59e0b);
+  margin-right: 0.5rem;
+  margin-top: 0.125rem;
+  flex-shrink: 0;
+}
+
+.invest-alert-title {
+  font-weight: 500;
+  color: var(--warning-title, #92400e);
+}
+
+.invest-alert-message {
+  font-size: 0.875rem;
+  color: var(--warning-text, #b45309);
+  margin-top: 0.25rem;
+}
+
+/* Action container */
+.invest-action-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.invest-deposit-button {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .invest-description {
+    color: var(--text-secondary-dark, #9ca3af);
+  }
+
+  .invest-alert {
+    background-color: var(--warning-bg-dark, rgba(146, 64, 14, 0.2));
+    border-color: var(--warning-border-dark, #78350f);
+  }
+
+  .invest-alert-title {
+    color: var(--warning-title-dark, #fcd34d);
+  }
+
+  .invest-alert-message {
+    color: var(--warning-text-dark, #fbbf24);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .invest-title {
+    font-size: 1.25rem;
+  }
+
+  .invest-header-content {
+    padding: 1rem;
+  }
+
+  .invest-action-container {
+    justify-content: center;
+  }
+
+  .invest-deposit-button {
+    width: 100%;
+  }
+}
