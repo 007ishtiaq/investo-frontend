@@ -25,6 +25,7 @@ import Layout from "./components/Layout/Layout";
 import Dashboard from "./pages/User/Dashboard";
 import Invest from "./pages/User/Invest";
 import History from "./pages/User/History";
+import Profile from "./pages/User/Profilepage";
 
 function App() {
   return (
@@ -88,6 +89,13 @@ function App() {
           <Route exact path="/history">
             <Layout>
               <History />
+            </Layout>
+          </Route>
+
+          {/* Profile route with Layout */}
+          <Route exact path="/profile">
+            <Layout>
+              <Profile />
             </Layout>
           </Route>
 
