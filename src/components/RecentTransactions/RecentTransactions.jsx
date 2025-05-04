@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -13,23 +13,25 @@ import {
   DollarSign,
   Users,
 } from "lucide-react";
-
+import { useSelector } from "react-redux";
+import { getTransactionHistory } from "../../functions/wallet";
+import toast from "react-hot-toast";
 import "./RecentTransactions.css";
 
-const TransactionIcon = ({ type }) => {
-  if (type === "deposit") {
+const TransactionIcon = ({ type, source }) => {
+  if (type === "credit" && source === "deposit") {
     return (
       <div className="transaction-icon deposit-icon">
         <ArrowDown className="icon-inner" />
       </div>
     );
-  } else if (type === "withdraw") {
+  } else if (type === "debit") {
     return (
       <div className="transaction-icon withdraw-icon">
         <ArrowUp className="icon-inner" />
       </div>
     );
-  } else if (type === "referral") {
+  } else if (source === "referral") {
     return (
       <div className="transaction-icon referral-icon">
         <Users className="icon-inner" />
@@ -58,22 +60,24 @@ const formatDate = (dateString) => {
 
 const TransactionItem = ({ transaction }) => {
   const amount = parseFloat(transaction.amount);
-  const isPositive = amount > 0;
+  const isPositive = transaction.type === "credit";
 
   let title = "Transaction";
-  if (transaction.type === "deposit") {
+  if (transaction.source === "deposit") {
     title = "Deposit";
-  } else if (transaction.type === "withdraw") {
+  } else if (transaction.type === "debit") {
     title = "Withdrawal";
-  } else if (transaction.type === "earning") {
-    title = "Daily Earnings";
-  } else if (transaction.type === "referral") {
+  } else if (transaction.source === "task_reward") {
+    title = "Task Reward";
+  } else if (transaction.source === "referral") {
     title = "Referral Bonus";
+  } else if (transaction.source === "bonus") {
+    title = "Bonus";
   }
 
   return (
     <div className="transaction-item">
-      <TransactionIcon type={transaction.type} />
+      <TransactionIcon type={transaction.type} source={transaction.source} />
       <div className="transaction-content">
         <div className="transaction-details">
           <div>
@@ -95,8 +99,8 @@ const TransactionItem = ({ transaction }) => {
               isPositive ? "amount-positive" : "amount-negative"
             }`}
           >
-            {isPositive ? "+" : ""}
-            {amount.toFixed(2)}
+            {isPositive ? "+" : "-"}
+            {Math.abs(amount).toFixed(3)}
           </span>
         </div>
       </div>
@@ -104,93 +108,31 @@ const TransactionItem = ({ transaction }) => {
   );
 };
 
-// demo data
-const defaultWallet = {
-  id: 1,
-  userId: 1,
-  balance: "5280.00",
-  createdAt: new Date(),
-};
-
-const transactions = [
-  {
-    id: 1,
-    walletId: "abc123",
-    type: "deposit",
-    amount: "1000.00",
-    description: "Initial deposit - Standard Plan",
-    createdAt: "2025-01-13T00:00:00.000Z",
-  },
-  {
-    id: 2,
-    walletId: "abc123",
-    type: "earning",
-    amount: "5.00",
-    description: "Daily earnings - Standard Plan",
-    createdAt: "2025-01-14T00:00:00.000Z",
-  },
-  {
-    id: 3,
-    walletId: "abc123",
-    type: "earning",
-    amount: "5.03",
-    description: "Daily earnings - Standard Plan",
-    createdAt: "2025-01-15T00:00:00.000Z",
-  },
-  {
-    id: 17,
-    walletId: "abc123",
-    type: "deposit",
-    amount: "2500.00",
-    description: "Additional investment - Premium Plan upgrade",
-    createdAt: "2025-01-29T00:00:00.000Z",
-  },
-  {
-    id: 18,
-    walletId: "abc123",
-    type: "earning",
-    amount: "28.00",
-    description: "Daily earnings - Premium Plan",
-    createdAt: "2025-01-30T00:00:00.000Z",
-  },
-  {
-    id: 38,
-    walletId: "abc123",
-    type: "withdraw",
-    amount: "-500.00",
-    description: "Partial withdrawal - Premium Plan",
-    createdAt: "2025-02-19T00:00:00.000Z",
-  },
-  {
-    id: 63,
-    walletId: "abc123",
-    type: "deposit",
-    amount: "5000.00",
-    description: "Additional investment - Gold Plan upgrade",
-    createdAt: "2025-03-01T00:00:00.000Z",
-  },
-  {
-    id: 79,
-    walletId: "abc123",
-    type: "referral",
-    amount: "250.00",
-    description: "Referral bonus - Jane Smith joined",
-    createdAt: "2025-03-17T00:00:00.000Z",
-  },
-  {
-    id: 92,
-    walletId: "abc123",
-    type: "earning",
-    amount: "95.48",
-    description: "Daily earnings - Gold Plan",
-    createdAt: "2025-04-12T00:00:00.000Z",
-  },
-];
-
 const RecentTransactions = () => {
-  // here will be correct statement
-  // const transactions = transactions || [];
-  const loading = !defaultWallet ? true : false;
+  const { user } = useSelector((state) => ({ ...state }));
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      if (user && user.token) {
+        try {
+          setLoading(true);
+          const res = await getTransactionHistory(user.token, 1, 6);
+          setTransactions(res.data.transactions);
+          setLoading(false);
+        } catch (err) {
+          console.error("Error loading transactions:", err);
+          toast.error("Failed to load recent transactions");
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
+      }
+    };
+
+    fetchTransactions();
+  }, [user]);
 
   if (loading) {
     return (
@@ -242,11 +184,9 @@ const RecentTransactions = () => {
         {transactions.length === 0 ? (
           <div className="transactions-empty">No transactions yet</div>
         ) : (
-          transactions
-            .slice(0, 5)
-            .map((transaction) => (
-              <TransactionItem key={transaction.id} transaction={transaction} />
-            ))
+          transactions.map((transaction) => (
+            <TransactionItem key={transaction._id} transaction={transaction} />
+          ))
         )}
       </CardContent>
     </Card>
