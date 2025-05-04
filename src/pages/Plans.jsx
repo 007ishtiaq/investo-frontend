@@ -38,7 +38,6 @@ const Plans = () => {
       try {
         setLoading(true);
         const plans = await getInvestmentPlans(user?.token);
-        console.log("plans", plans);
 
         // Separate plans into daily income and fixed deposit
         const dailyPlans = plans.filter((plan) => !plan.isFixedDeposit);

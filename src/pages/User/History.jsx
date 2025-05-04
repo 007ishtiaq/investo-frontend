@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -15,108 +15,19 @@ import {
 } from "../../components/ui/select";
 import { Input } from "../../components/ui/input";
 import { Button } from "../../components/ui/button";
+import { useSelector } from "react-redux";
+import { getTransactionHistory } from "../../functions/wallet";
+import toast from "react-hot-toast";
 import "./History.css";
 
-// Sample transaction data for demonstration purposes
-const SAMPLE_TRANSACTIONS = [
-  {
-    id: 1,
-    type: "deposit",
-    amount: 5000.0,
-    description: "Initial deposit",
-    createdAt: "2025-01-15T10:30:00Z",
-    walletId: 1,
-  },
-  {
-    id: 2,
-    type: "earning",
-    amount: 15.0,
-    description: "Daily return - Starter Plan",
-    createdAt: "2025-01-16T00:00:00Z",
-    walletId: 1,
-  },
-  {
-    id: 3,
-    type: "earning",
-    amount: 15.0,
-    description: "Daily return - Starter Plan",
-    createdAt: "2025-01-17T00:00:00Z",
-    walletId: 1,
-  },
-  {
-    id: 4,
-    type: "deposit",
-    amount: 2500.0,
-    description: "Additional investment",
-    createdAt: "2025-01-20T14:25:00Z",
-    walletId: 1,
-  },
-  {
-    id: 5,
-    type: "earning",
-    amount: 22.5,
-    description: "Daily return - Standard Plan",
-    createdAt: "2025-01-21T00:00:00Z",
-    walletId: 1,
-  },
-  {
-    id: 6,
-    type: "withdraw",
-    amount: -1000.0,
-    description: "Partial withdrawal",
-    createdAt: "2025-02-01T09:45:00Z",
-    walletId: 1,
-  },
-  {
-    id: 7,
-    type: "earning",
-    amount: 19.5,
-    description: "Daily return - Standard Plan",
-    createdAt: "2025-02-02T00:00:00Z",
-    walletId: 1,
-  },
-  {
-    id: 8,
-    type: "deposit",
-    amount: 10000.0,
-    description: "Premium plan upgrade",
-    createdAt: "2025-02-15T11:20:00Z",
-    walletId: 1,
-  },
-  {
-    id: 9,
-    type: "earning",
-    amount: 131.25,
-    description: "Daily return - Premium Plan",
-    createdAt: "2025-02-16T00:00:00Z",
-    walletId: 1,
-  },
-  {
-    id: 10,
-    type: "earning",
-    amount: 131.25,
-    description: "Daily return - Premium Plan",
-    createdAt: "2025-02-17T00:00:00Z",
-    walletId: 1,
-  },
-  {
-    id: 11,
-    type: "withdraw",
-    amount: -2500.0,
-    description: "Monthly profit withdrawal",
-    createdAt: "2025-03-01T10:15:00Z",
-    walletId: 1,
-  },
-];
-
-const TransactionTypeIcon = ({ type }) => {
-  if (type === "deposit") {
+const TransactionTypeIcon = ({ type, source }) => {
+  if (type === "credit" && source === "deposit") {
     return (
       <div className="transaction-icon transaction-icon-deposit">
         <ArrowDown className="transaction-icon-svg" />
       </div>
     );
-  } else if (type === "withdraw") {
+  } else if (type === "debit") {
     return (
       <div className="transaction-icon transaction-icon-withdraw">
         <ArrowUp className="transaction-icon-svg" />
@@ -143,19 +54,68 @@ const formatDate = (dateString) => {
 };
 
 const History = () => {
-  // Use the sample data or data from wallet context
-  const transactions = SAMPLE_TRANSACTIONS;
-  const loading = false;
+  const { user } = useSelector((state) => ({ ...state }));
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 10;
 
+  useEffect(() => {
+    if (user && user.token) {
+      loadTransactions(currentPage);
+    }
+  }, [user, currentPage]);
+
+  const loadTransactions = async (page) => {
+    try {
+      setLoading(true);
+      const res = await getTransactionHistory(user.token, page, itemsPerPage);
+      setTransactions(res.data.transactions);
+      setCurrentPage(res.data.pagination.currentPage);
+      setTotalPages(res.data.pagination.totalPages);
+      setLoading(false);
+    } catch (err) {
+      console.error("Error loading transactions:", err);
+      toast.error("Failed to load transaction history");
+      setLoading(false);
+    }
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  // Filter transactions based on type and search term
   const filteredTransactions = transactions.filter((transaction) => {
     // Filter by type
-    if (filter !== "all" && transaction.type !== filter) {
+    if (filter === "deposit" && transaction.source !== "deposit") {
       return false;
     }
+    if (filter === "withdraw" && transaction.type !== "debit") {
+      return false;
+    }
+    if (
+      filter === "earning" &&
+      transaction.source !== "task_reward" &&
+      transaction.source !== "referral" &&
+      transaction.source !== "bonus"
+    ) {
+      return false;
+    }
+    if (
+      filter !== "all" &&
+      filter !== "deposit" &&
+      filter !== "withdraw" &&
+      filter !== "earning"
+    ) {
+      // If filter is not one of the predefined ones, don't filter
+      return true;
+    }
 
-    // Filter by search term
+    // Filter by search term in description
     if (
       search &&
       !transaction.description?.toLowerCase().includes(search.toLowerCase())
@@ -165,6 +125,18 @@ const History = () => {
 
     return true;
   });
+
+  if (!user || !user.token) {
+    return (
+      <div className="auth-message">
+        <h2>Please Login</h2>
+        <p>You need to be logged in to view your transaction history.</p>
+        <a href="/login" className="auth-button">
+          Login
+        </a>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -261,40 +233,88 @@ const History = () => {
                 <tbody>
                   {filteredTransactions.map((transaction) => {
                     const amount = parseFloat(transaction.amount);
-                    const isPositive = amount > 0;
+                    const isPositive = transaction.type === "credit";
 
                     let type = "Transaction";
-                    if (transaction.type === "deposit") {
+                    if (transaction.source === "deposit") {
                       type = "Deposit";
-                    } else if (transaction.type === "withdraw") {
+                    } else if (transaction.type === "debit") {
                       type = "Withdrawal";
-                    } else if (transaction.type === "earning") {
+                    } else if (
+                      transaction.source === "task_reward" ||
+                      transaction.source === "referral" ||
+                      transaction.source === "bonus"
+                    ) {
                       type = "Earnings";
                     }
 
                     return (
-                      <tr key={transaction.id}>
+                      <tr key={transaction._id}>
                         <td>
                           <div className="transaction-type">
-                            <TransactionTypeIcon type={transaction.type} />
-                            <span>{type}</span>
+                            <TransactionTypeIcon
+                              type={transaction.type}
+                              source={transaction.source}
+                            />
+                            <span className="transaction-type-text">
+                              {type}
+                            </span>
                           </div>
                         </td>
-                        <td>{transaction.description || type}</td>
-                        <td>{formatDate(transaction.createdAt)}</td>
+                        <td>
+                          <div className="transaction-info">
+                            <div className="transaction-description">
+                              {transaction.description || type}
+                            </div>
+                            <span className="transaction-source">
+                              {transaction.source
+                                .replace(/_/g, " ")
+                                .replace(/\b\w/g, (c) => c.toUpperCase())}
+                            </span>
+                          </div>
+                        </td>
+                        <td>
+                          <div className="transaction-meta">
+                            <span className="transaction-date">
+                              {formatDate(transaction.createdAt)}
+                            </span>
+                          </div>
+                        </td>
                         <td
                           className={`amount-cell ${
                             isPositive ? "amount-positive" : "amount-negative"
                           }`}
                         >
-                          {isPositive ? "+" : ""}
-                          {Math.abs(amount).toFixed(2)}
+                          {isPositive ? "+" : "-"}
+                          {amount.toFixed(3)}
                         </td>
                       </tr>
                     );
                   })}
                 </tbody>
               </table>
+            </div>
+          )}
+
+          {totalPages > 1 && (
+            <div className="pagination">
+              <button
+                className="page-button"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                &lt; Previous
+              </button>
+              <div className="page-info">
+                Page {currentPage} of {totalPages}
+              </div>
+              <button
+                className="page-button"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              >
+                Next &gt;
+              </button>
             </div>
           )}
         </CardContent>
