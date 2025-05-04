@@ -46,7 +46,7 @@ const WalletOverview = () => {
   return (
     <div className="wallet-overview-grid">
       {/* Wallet Balance */}
-      <Card className="wallet-card">
+      <Card className="wallet-card wallet-card-dashboard">
         <CardContent className="wallet-card-content">
           <div className="wallet-card-header">
             <h2 className="wallet-card-title">Wallet Balance</h2>
@@ -74,7 +74,7 @@ const WalletOverview = () => {
       </Card>
 
       {/* Daily Earnings */}
-      <Card className="wallet-card">
+      <Card className="wallet-card wallet-card-dashboard">
         <CardContent className="wallet-card-content">
           <div className="wallet-card-header">
             <h2 className="wallet-card-title">Daily Earnings</h2>
@@ -106,7 +106,7 @@ const WalletOverview = () => {
       </Card>
 
       {/* Total Earnings */}
-      <Card className="wallet-card">
+      <Card className="wallet-card wallet-card-dashboard">
         <CardContent className="wallet-card-content">
           <div className="wallet-card-header">
             <h2 className="wallet-card-title">Total Earnings</h2>

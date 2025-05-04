@@ -384,6 +384,114 @@
 .button-to-hide {
   display: flex;
 }
+/* Mobile menu dropdown styling */
+.mobile-menu-container {
+  position: relative;
+}
+
+.mobile-menu-dropdown {
+  position: absolute;
+  right: 0;
+  margin-top: 0.5rem;
+  width: 12rem;
+  background-color: var(--dropdown-bg, white);
+  border-radius: 0.375rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  z-index: 10;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.profile-dropdown-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-color, #f3f4f6);
+}
+
+.dropdown-info-text {
+  font-size: 0.875rem;
+  color: var(--text-muted, #6b7280);
+}
+
+.dropdown-user-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdown-section {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.dropdown-section-border {
+  border-top: 1px solid var(--border-color, #f3f4f6);
+}
+
+.dropdown-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  color: var(--text-primary, #111827);
+}
+
+.dropdown-item:hover {
+  background-color: var(--hover-bg, #f3f4f6);
+}
+
+.dropdown-button {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.dropdown-button-danger {
+  color: var(--danger-color, #ef4444);
+}
+
+.menu-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+}
+
+.menu-button:hover {
+  background-color: var(--hover-bg, #f3f4f6);
+}
+.dropdown-icon {
+  margin-right: 0.75rem;
+  height: 1rem;
+  width: 1rem;
+  color: var(--text-muted, #6b7280);
+}
+
+/* Ensure the dropdown doesn't overflow on small screens */
+@media (max-width: 640px) {
+  .mobile-menu-dropdown {
+    right: -0.5rem;
+  }
+}
 @media (max-width: 768px) {
   .mobile-nav {
     display: flex;
