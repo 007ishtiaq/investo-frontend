@@ -6,7 +6,6 @@ import {
   BarChart3,
   History,
   User,
-  Plus,
   Users,
   LogOut,
   ClipboardList,

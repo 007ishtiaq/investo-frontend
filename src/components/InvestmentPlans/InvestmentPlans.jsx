@@ -1,4 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { getInvestmentPlans } from "../../functions/investmentplans";
+import { getUserLevel } from "../../functions/user";
+import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
+import "./InvestmentPlans.css";
 import {
   Card,
   CardContent,
@@ -8,11 +13,11 @@ import {
 import { Button } from "../../components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, ArrowUp } from "lucide-react";
-import "./InvestmentPlans.css";
+import { useWallet } from "../../contexts/WalletContext";
 
 const PlanItem = ({ plan, walletBalance, detailed = false }) => {
   const minAmount = parseFloat(plan.minAmount);
-  const dailyRate = parseFloat(plan.dailyRate);
+  const dailyRate = parseFloat(plan.dailyIncome); // Changed from dailyRate to dailyIncome
   const isActive = parseFloat(walletBalance || 0) >= minAmount;
   const percentComplete = Math.min(
     100,
@@ -85,68 +90,62 @@ const PlanItem = ({ plan, walletBalance, detailed = false }) => {
   );
 };
 
-// demo data
-const defaultWallet = {
-  id: 1,
-  userId: 1,
-  balance: "5280.00",
-  createdAt: new Date(),
-};
-const plans = [
-  {
-    id: 1,
-    name: "Starter Plan",
-    description: "0.3% daily returns for new investors",
-    dailyRate: "0.3",
-    minAmount: "500.00",
-    active: true,
-  },
-  {
-    id: 2,
-    name: "Standard Plan",
-    description: "0.5% daily returns with moderate risk",
-    dailyRate: "0.5",
-    minAmount: "1000.00",
-    active: true,
-  },
-  {
-    id: 3,
-    name: "Premium Plan",
-    description: "0.8% daily returns with balanced portfolio",
-    dailyRate: "0.8",
-    minAmount: "10000.00",
-    active: true,
-  },
-  {
-    id: 4,
-    name: "Gold Plan",
-    description: "1.2% daily returns for serious investors",
-    dailyRate: "1.2",
-    minAmount: "25000.00",
-    active: true,
-  },
-  {
-    id: 5,
-    name: "Platinum Plan",
-    description: "1.5% daily returns with premium benefits",
-    dailyRate: "1.5",
-    minAmount: "50000.00",
-    active: true,
-  },
-];
-
 const InvestmentPlans = ({
   showAll = false,
   showDetailed = false,
   maxItems = 3,
   title = "Investment Plans",
 }) => {
-  // this to be correct according to context
-  // const plans = walletCtx?.plans || [];
-  const wallet = defaultWallet || null;
-  const loading = !defaultWallet ? true : false;
+  const { user } = useSelector((state) => ({ ...state }));
+  const { walletBalance } = useWallet();
+  const [userLevel, setUserLevel] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [plans, setPlans] = useState([]);
 
-  // Sort plans by minimum amount (ascending or descending based on your preference)
+  // Fetch user level from backend
+  useEffect(() => {
+    const fetchUserLevel = async () => {
+      if (user && user.token) {
+        try {
+          const level = await getUserLevel(user.token);
+          setUserLevel(level);
+        } catch (error) {
+          console.error("Error fetching user level:", error);
+          setUserLevel(1);
+        }
+      }
+    };
+
+    fetchUserLevel();
+  }, [user]);
+
+  // Fetch investment plans from backend
+  useEffect(() => {
+    const fetchPlans = async () => {
+      try {
+        setLoading(true);
+        const plansData = await getInvestmentPlans(user?.token);
+
+        // Separate plans into daily income and fixed deposit
+        const dailyPlans = plansData.filter((plan) => !plan.isFixedDeposit);
+
+        setPlans(dailyPlans);
+      } catch (error) {
+        console.error("Error fetching investment plans:", error);
+        toast.error("Failed to load investment plans");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user && user.token) {
+      fetchPlans();
+    } else {
+      setLoading(false);
+    }
+  }, [user]);
+
+  // Sort plans by minimum amount (ascending)
   const sortedPlans = [...plans].sort(
     (a, b) => parseFloat(a.minAmount) - parseFloat(b.minAmount)
   );
@@ -217,9 +216,9 @@ const InvestmentPlans = ({
         <div className={`plans-grid ${showAll ? "plans-grid-full" : ""}`}>
           {displayedPlans.map((plan) => (
             <PlanItem
-              key={plan.id}
+              key={plan._id} // Changed from id to _id to match backend data
               plan={plan}
-              walletBalance={wallet?.balance || "0"}
+              walletBalance={walletBalance || "0"}
               detailed={showDetailed}
             />
           ))}

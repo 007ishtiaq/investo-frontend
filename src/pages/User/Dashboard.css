@@ -51,12 +51,6 @@
   height: 6rem;
 }
 
-.wallet-card.wallet-card-dashboard {
-  padding: 0;
-  background: white;
-  margin-bottom: 0;
-}
-
 .loading-chart {
   height: 16rem;
   background-color: var(--loading-bg, #e5e7eb);

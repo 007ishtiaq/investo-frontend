@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import InvestmentCard from "../components/InvestmentCard/InvestmentCard";
-import FixedDepositPlan from "../components/FixedDepositPlan/FixedDepositPlan";
-import axios from "axios";
 import { useSelector } from "react-redux";
 import { getInvestmentPlans } from "../functions/investmentplans";
 import { getUserLevel } from "../functions/user"; // Import the getUserLevel function
@@ -40,6 +38,7 @@ const Plans = () => {
       try {
         setLoading(true);
         const plans = await getInvestmentPlans(user?.token);
+        console.log("plans", plans);
 
         // Separate plans into daily income and fixed deposit
         const dailyPlans = plans.filter((plan) => !plan.isFixedDeposit);

@@ -115,7 +115,7 @@ const WalletOverview = () => {
       <div className="wallet-card wallet-card-dashboard">
         <div className="wallet-card-content">
           <div className="wallet-card-header">
-            <h3 className="wallet-card-title">Wallet Balance</h3>
+            <h3 className="wallet-card-title">Available Balance</h3>
             <Wallet2 className="wallet-card-icon primary-icon" />
           </div>
           <div className="wallet-amount-container">
