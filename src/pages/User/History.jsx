@@ -5,7 +5,14 @@ import {
   CardHeader,
   CardTitle,
 } from "../../components/ui/card";
-import { ArrowDown, ArrowUp, DollarSign, Search, FilterX } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  DollarSign,
+  Search,
+  FilterX,
+  Users,
+} from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -31,6 +38,12 @@ const TransactionTypeIcon = ({ type, source }) => {
     return (
       <div className="transaction-icon transaction-icon-withdraw">
         <ArrowUp className="transaction-icon-svg" />
+      </div>
+    );
+  } else if (source === "referral") {
+    return (
+      <div className="transaction-icon transaction-icon-referral">
+        <Users className="transaction-icon-svg" />
       </div>
     );
   } else {
@@ -214,85 +227,143 @@ const History = () => {
             </div>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="history-content">
           {filteredTransactions.length === 0 ? (
             <div className="empty-message">
               No transactions found matching your criteria
             </div>
           ) : (
-            <div className="table-container">
-              <table className="transaction-table">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                    <th>Date</th>
-                    <th className="amount-column">Amount</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredTransactions.map((transaction) => {
-                    const amount = parseFloat(transaction.amount);
-                    const isPositive = transaction.type === "credit";
+            <div className="transactions-container">
+              {/* Desktop view - Table */}
+              <div className="desktop-view">
+                <table className="transaction-table">
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Description</th>
+                      <th>Date</th>
+                      <th className="amount-column">Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredTransactions.map((transaction) => {
+                      const amount = parseFloat(transaction.amount);
+                      const isPositive = transaction.type === "credit";
 
-                    let type = "Transaction";
-                    if (transaction.source === "deposit") {
-                      type = "Deposit";
-                    } else if (transaction.type === "debit") {
-                      type = "Withdrawal";
-                    } else if (
-                      transaction.source === "task_reward" ||
-                      transaction.source === "referral" ||
-                      transaction.source === "bonus"
-                    ) {
-                      type = "Earnings";
-                    }
+                      let type = "Transaction";
+                      if (transaction.source === "deposit") {
+                        type = "Deposit";
+                      } else if (transaction.type === "debit") {
+                        type = "Withdrawal";
+                      } else if (
+                        transaction.source === "task_reward" ||
+                        transaction.source === "referral" ||
+                        transaction.source === "bonus"
+                      ) {
+                        type = "Earnings";
+                      }
 
-                    return (
-                      <tr key={transaction._id}>
-                        <td>
-                          <div className="transaction-type">
-                            <TransactionTypeIcon
-                              type={transaction.type}
-                              source={transaction.source}
-                            />
-                            <span className="transaction-type-text">
-                              {type}
-                            </span>
-                          </div>
-                        </td>
-                        <td>
-                          <div className="transaction-info">
-                            <div className="transaction-description">
-                              {transaction.description || type}
+                      return (
+                        <tr key={transaction._id}>
+                          <td>
+                            <div className="transaction-type">
+                              <TransactionTypeIcon
+                                type={transaction.type}
+                                source={transaction.source}
+                              />
+                              <span className="transaction-type-text">
+                                {type}
+                              </span>
                             </div>
-                            <span className="transaction-source">
+                          </td>
+                          <td>
+                            <div className="transaction-info">
+                              <div className="transaction-description">
+                                {transaction.description || type}
+                              </div>
+                              <span className="transaction-source">
+                                {transaction.source
+                                  .replace(/_/g, " ")
+                                  .replace(/\b\w/g, (c) => c.toUpperCase())}
+                              </span>
+                            </div>
+                          </td>
+                          <td>{formatDate(transaction.createdAt)}</td>
+                          <td
+                            className={`amount-cell ${
+                              isPositive ? "amount-positive" : "amount-negative"
+                            }`}
+                          >
+                            {isPositive ? "+" : "-"}
+                            {Math.abs(amount).toFixed(3)}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile view - Transaction Items like RecentTransactions */}
+              <div className="mobile-view">
+                {filteredTransactions.map((transaction) => {
+                  const amount = parseFloat(transaction.amount);
+                  const isPositive = transaction.type === "credit";
+
+                  let title = "Transaction";
+                  if (transaction.source === "deposit") {
+                    title = "Deposit";
+                  } else if (transaction.type === "debit") {
+                    title = "Withdrawal";
+                  } else if (transaction.source === "task_reward") {
+                    title = "Task Reward";
+                  } else if (transaction.source === "referral") {
+                    title = "Referral Bonus";
+                  } else if (transaction.source === "bonus") {
+                    title = "Bonus";
+                  }
+
+                  return (
+                    <div key={transaction._id} className="transaction-item">
+                      <TransactionTypeIcon
+                        type={transaction.type}
+                        source={transaction.source}
+                      />
+                      <div className="transaction-content">
+                        <div className="transaction-details">
+                          <div>
+                            <p className="transaction-title">{title}</p>
+                            <p className="transaction-description">
+                              {transaction.description ? (
+                                <span
+                                  className="transaction-description-text"
+                                  title={transaction.description}
+                                >
+                                  {transaction.description}
+                                </span>
+                              ) : null}
+                              <span>{formatDate(transaction.createdAt)}</span>
+                            </p>
+                            <span className="transaction-source mobile-source">
                               {transaction.source
                                 .replace(/_/g, " ")
                                 .replace(/\b\w/g, (c) => c.toUpperCase())}
                             </span>
                           </div>
-                        </td>
-                        <td>
-                          <div className="transaction-meta">
-                            <span className="transaction-date">
-                              {formatDate(transaction.createdAt)}
-                            </span>
-                          </div>
-                        </td>
-                        <td
-                          className={`amount-cell ${
-                            isPositive ? "amount-positive" : "amount-negative"
-                          }`}
-                        >
-                          {isPositive ? "+" : "-"}
-                          {amount.toFixed(3)}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                          <span
+                            className={`transaction-amount ${
+                              isPositive ? "amount-positive" : "amount-negative"
+                            }`}
+                          >
+                            {isPositive ? "+" : "-"}
+                            {Math.abs(amount).toFixed(3)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
 
