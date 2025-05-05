@@ -13,7 +13,7 @@ import { User, Mail, Key, Shield, Bell } from "lucide-react";
 import TwoFactorAuth from "../../components/TwoFactorAuth/TwoFactorAuth";
 import { useSelector } from "react-redux";
 import { getCurrentUser, updateUserProfile } from "../../functions/user";
-import { auth } from "../../firebase";
+import firebase, { auth } from "../../firebase";
 import toast from "react-hot-toast";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -103,31 +103,31 @@ const Profile = () => {
 
         // Get current user
         const currentUser = auth.currentUser;
-        const credential = auth.EmailAuthProvider.credential(
-          currentUser.email,
-          values.currentPassword
-        );
 
         if (currentUser) {
-          // First reauthenticate with current password
-          await currentUser
-            .reauthenticateWithCredential(credential)
-            .then(async () => {
-              // If reauthentication successful, update password
-              await currentUser.updatePassword(values.password);
-              toast.success("Password updated successfully");
-              action.resetForm();
-              setUpdatingPassword(false);
-            })
-            .catch((error) => {
-              console.error("Reauthentication failed:", error);
-              if (error.code === "auth/wrong-password") {
-                toast.error("Current password is incorrect");
-              } else {
-                toast.error("Authentication failed. Please try again.");
-              }
-              setUpdatingPassword(false);
-            });
+          // For Firebase v8
+          const credential = firebase.auth.EmailAuthProvider.credential(
+            currentUser.email,
+            values.currentPassword
+          );
+
+          try {
+            // First reauthenticate with current password
+            await currentUser.reauthenticateWithCredential(credential);
+
+            // If reauthentication successful, update password
+            await currentUser.updatePassword(values.password);
+
+            toast.success("Password updated successfully");
+            action.resetForm();
+          } catch (error) {
+            console.error("Reauthentication failed:", error);
+            if (error.code === "auth/wrong-password") {
+              toast.error("Current password is incorrect");
+            } else {
+              toast.error("Authentication failed. Please try again.");
+            }
+          }
         } else {
           throw new Error("User not authenticated");
         }
@@ -142,7 +142,7 @@ const Profile = () => {
         } else {
           toast.error(err.message || "Failed to update password");
         }
-
+      } finally {
         setUpdatingPassword(false);
       }
     },
