@@ -72,3 +72,16 @@ export const updateUserProfile = async (authtoken, userData) => {
     }
   );
 };
+
+// Update notification preferences
+export const updateNotificationPreferences = async (authtoken, preferences) => {
+  return await axios.put(
+    `${process.env.REACT_APP_API}/user/notifications`,
+    preferences,
+    {
+      headers: {
+        authtoken,
+      },
+    }
+  );
+};

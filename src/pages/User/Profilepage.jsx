@@ -12,7 +12,11 @@ import { Input } from "../../components/ui/input";
 import { User, Mail, Key, Shield, Bell } from "lucide-react";
 import TwoFactorAuth from "../../components/TwoFactorAuth/TwoFactorAuth";
 import { useSelector } from "react-redux";
-import { getCurrentUser, updateUserProfile } from "../../functions/user";
+import {
+  getCurrentUser,
+  updateUserProfile,
+  updateNotificationPreferences,
+} from "../../functions/user";
 import firebase, { auth } from "../../firebase";
 import toast from "react-hot-toast";
 import { useFormik } from "formik";
@@ -49,6 +53,13 @@ const Profile = () => {
   const [activeTab, setActiveTab] = useState("profile");
   const [saving, setSaving] = useState(false);
   const [updatingPassword, setUpdatingPassword] = useState(false);
+  const [savingPreferences, setSavingPreferences] = useState(false);
+
+  // Email notification preferences
+  const [notifDeposits, setNotifDeposits] = useState(true);
+  const [notifEarnings, setNotifEarnings] = useState(true);
+  const [notifPromotions, setNotifPromotions] = useState(false);
+  const [notifSecurity, setNotifSecurity] = useState(true);
 
   useEffect(() => {
     if (user && user.token) {
@@ -63,6 +74,15 @@ const Profile = () => {
       setProfileData(res.data);
       setName(res.data.name);
       setPhone(res.data.contact || "");
+
+      // Set notification preferences if available
+      if (res.data.notifications) {
+        setNotifDeposits(res.data.notifications.deposits !== false);
+        setNotifEarnings(res.data.notifications.earnings !== false);
+        setNotifPromotions(res.data.notifications.promotions === true);
+        setNotifSecurity(res.data.notifications.security !== false);
+      }
+
       setLoading(false);
     } catch (err) {
       console.error("Failed to load profile:", err);
@@ -86,6 +106,39 @@ const Profile = () => {
       console.error("Failed to update profile:", err);
       toast.error("Failed to update profile");
       setSaving(false);
+    }
+  };
+
+  const handleNotificationSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setSavingPreferences(true);
+
+      const notificationPreferences = {
+        deposits: notifDeposits,
+        earnings: notifEarnings,
+        promotions: notifPromotions,
+        security: notifSecurity,
+      };
+
+      const res = await updateNotificationPreferences(
+        user.token,
+        notificationPreferences
+      );
+
+      if (res.data) {
+        setProfileData({
+          ...profileData,
+          notifications: notificationPreferences,
+        });
+        toast.success("Notification preferences updated successfully");
+      }
+
+      setSavingPreferences(false);
+    } catch (err) {
+      console.error("Failed to update notification preferences:", err);
+      toast.error("Failed to update notification preferences");
+      setSavingPreferences(false);
     }
   };
 
@@ -459,116 +512,71 @@ const Profile = () => {
                 Manage how and when we notify you.
               </CardDescription>
             </CardHeader>
-            <CardContent className="notification-settings">
-              <div className="feature-section">
-                <Bell className="feature-icon" />
-                <div className="notification-options">
-                  <h3 className="section-title">Email Notifications</h3>
-                  <div className="option-grid">
-                    <div className="checkbox-option">
-                      <input
-                        type="checkbox"
-                        id="email-deposits"
-                        className="checkbox-input"
-                        defaultChecked
-                      />
-                      <FormLabel htmlFor="email-deposits">
-                        Deposits and withdrawals
-                      </FormLabel>
-                    </div>
-                    <div className="checkbox-option">
-                      <input
-                        type="checkbox"
-                        id="email-earnings"
-                        className="checkbox-input"
-                        defaultChecked
-                      />
-                      <FormLabel htmlFor="email-earnings">
-                        Daily earnings updates
-                      </FormLabel>
-                    </div>
-                    <div className="checkbox-option">
-                      <input
-                        type="checkbox"
-                        id="email-promotions"
-                        className="checkbox-input"
-                      />
-                      <FormLabel htmlFor="email-promotions">
-                        Promotions and news
-                      </FormLabel>
-                    </div>
-                    <div className="checkbox-option">
-                      <input
-                        type="checkbox"
-                        id="email-security"
-                        className="checkbox-input"
-                        defaultChecked
-                      />
-                      <FormLabel htmlFor="email-security">
-                        Security alerts
-                      </FormLabel>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="notification-divider"></div>
-
-              <div className="feature-section">
-                <span className="feature-emoji">📱</span>
-                <div className="notification-options">
-                  <h3 className="section-title">Push Notifications</h3>
-                  <div className="option-grid">
-                    <div className="checkbox-option">
-                      <input
-                        type="checkbox"
-                        id="push-deposits"
-                        className="checkbox-input"
-                        defaultChecked
-                      />
-                      <FormLabel htmlFor="push-deposits">
-                        Deposits and withdrawals
-                      </FormLabel>
-                    </div>
-                    <div className="checkbox-option">
-                      <input
-                        type="checkbox"
-                        id="push-earnings"
-                        className="checkbox-input"
-                        defaultChecked
-                      />
-                      <FormLabel htmlFor="push-earnings">
-                        Daily earnings updates
-                      </FormLabel>
-                    </div>
-                    <div className="checkbox-option">
-                      <input
-                        type="checkbox"
-                        id="push-promotions"
-                        className="checkbox-input"
-                      />
-                      <FormLabel htmlFor="push-promotions">
-                        Promotions and news
-                      </FormLabel>
-                    </div>
-                    <div className="checkbox-option">
-                      <input
-                        type="checkbox"
-                        id="push-security"
-                        className="checkbox-input"
-                        defaultChecked
-                      />
-                      <FormLabel htmlFor="push-security">
-                        Security alerts
-                      </FormLabel>
+            <form onSubmit={handleNotificationSubmit}>
+              <CardContent className="notification-settings">
+                <div className="feature-section">
+                  <Bell className="feature-icon" />
+                  <div className="notification-options">
+                    <h3 className="section-title">Email Notifications</h3>
+                    <div className="option-grid">
+                      <div className="checkbox-option">
+                        <input
+                          type="checkbox"
+                          id="email-deposits"
+                          className="checkbox-input"
+                          checked={notifDeposits}
+                          onChange={(e) => setNotifDeposits(e.target.checked)}
+                        />
+                        <FormLabel htmlFor="email-deposits">
+                          Deposits and withdrawals
+                        </FormLabel>
+                      </div>
+                      <div className="checkbox-option">
+                        <input
+                          type="checkbox"
+                          id="email-earnings"
+                          className="checkbox-input"
+                          checked={notifEarnings}
+                          onChange={(e) => setNotifEarnings(e.target.checked)}
+                        />
+                        <FormLabel htmlFor="email-earnings">
+                          Daily earnings updates
+                        </FormLabel>
+                      </div>
+                      <div className="checkbox-option">
+                        <input
+                          type="checkbox"
+                          id="email-promotions"
+                          className="checkbox-input"
+                          checked={notifPromotions}
+                          onChange={(e) => setNotifPromotions(e.target.checked)}
+                        />
+                        <FormLabel htmlFor="email-promotions">
+                          Promotions and news
+                        </FormLabel>
+                      </div>
+                      <div className="checkbox-option">
+                        <input
+                          type="checkbox"
+                          id="email-security"
+                          className="checkbox-input"
+                          checked={notifSecurity}
+                          onChange={(e) => setNotifSecurity(e.target.checked)}
+                        />
+                        <FormLabel htmlFor="email-security">
+                          Security alerts
+                        </FormLabel>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </CardContent>
-            <CardFooter className="card-footer">
-              <Button>Save Preferences</Button>
-            </CardFooter>
+              </CardContent>
+              <CardFooter className="card-footer">
+                <Button type="submit" disabled={savingPreferences}>
+                  {savingPreferences ? "Saving..." : "Save Preferences"}
+                </Button>
+              </CardFooter>
+            </form>
           </Card>
         )}
       </div>

@@ -142,12 +142,14 @@ const Layout = ({ children }) => {
                   <h2 className="actions-title">Quick Actions</h2>
                 </div>
                 <div className="actions-content">
-                  <button
-                    className="deposit-button"
-                    onClick={() => setShowDepositModal(true)}
-                  >
-                    <Plus className="action-icon" /> Deposit
-                  </button>
+                  <Link to="/deposit">
+                    <button
+                      className="deposit-button"
+                      onClick={() => setShowDepositModal(true)}
+                    >
+                      <Plus className="action-icon" /> Deposit
+                    </button>
+                  </Link>
                   <button
                     className="withdraw-button"
                     onClick={() => setShowWithdrawModal(true)}
