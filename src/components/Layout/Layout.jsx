@@ -8,19 +8,31 @@ import {
   User,
   Plus,
   ArrowUpRight,
-  LogOut,
-  ChevronDown,
-  Settings,
 } from "lucide-react";
+import DepositModal from "../../components/DepositModal/DepositModal";
+import WithdrawModal from "../../components/WithdrawModal/WithdrawModal"; // Import the WithdrawModal
 import "./Layout.css";
 
 const Layout = ({ children }) => {
-  // Fix: useLocation returns an object, not an array
   const location = useLocation();
-  const user = { name: "User", profileImage: null }; // Provide fallback for user
   const [showDepositModal, setShowDepositModal] = useState(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
-  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+
+  const handleOpenDepositModal = () => {
+    setShowDepositModal(true);
+  };
+
+  const handleCloseDepositModal = () => {
+    setShowDepositModal(false);
+  };
+
+  const handleOpenWithdrawModal = () => {
+    setShowWithdrawModal(true);
+  };
+
+  const handleCloseWithdrawModal = () => {
+    setShowWithdrawModal(false);
+  };
 
   return (
     <div className="layout">
@@ -142,17 +154,15 @@ const Layout = ({ children }) => {
                   <h2 className="actions-title">Quick Actions</h2>
                 </div>
                 <div className="actions-content">
-                  <Link to="/deposit">
-                    <button
-                      className="deposit-button"
-                      onClick={() => setShowDepositModal(true)}
-                    >
-                      <Plus className="action-icon" /> Deposit
-                    </button>
-                  </Link>
+                  <button
+                    className="deposit-button"
+                    onClick={handleOpenDepositModal}
+                  >
+                    <Plus className="action-icon" /> Deposit
+                  </button>
                   <button
                     className="withdraw-button"
-                    onClick={() => setShowWithdrawModal(true)}
+                    onClick={handleOpenWithdrawModal}
                   >
                     <ArrowUpRight className="action-icon" /> Withdraw
                   </button>
@@ -172,13 +182,13 @@ const Layout = ({ children }) => {
             <div className="mobile-actions-grid">
               <button
                 className="mobile-deposit-button"
-                onClick={() => setShowDepositModal(true)}
+                onClick={handleOpenDepositModal}
               >
                 <Plus className="mobile-action-icon" /> Deposit
               </button>
               <button
                 className="mobile-withdraw-button"
-                onClick={() => setShowWithdrawModal(true)}
+                onClick={handleOpenWithdrawModal}
               >
                 <ArrowUpRight className="mobile-action-icon" /> Withdraw
               </button>
@@ -186,6 +196,18 @@ const Layout = ({ children }) => {
           </div>
         </div>
       </main>
+
+      {/* Deposit Modal */}
+      <DepositModal
+        isOpen={showDepositModal}
+        onClose={handleCloseDepositModal}
+      />
+
+      {/* Withdraw Modal */}
+      <WithdrawModal
+        isOpen={showWithdrawModal}
+        onClose={handleCloseWithdrawModal}
+      />
     </div>
   );
 };

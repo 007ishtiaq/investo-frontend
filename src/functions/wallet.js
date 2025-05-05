@@ -24,6 +24,19 @@ export const getTransactionHistory = async (
   );
 };
 
+// Submit withdrawal request
+export const submitWithdrawal = async (withdrawalData, authtoken) => {
+  return await axios.post(
+    `${process.env.REACT_APP_API}/wallet/withdraw`,
+    withdrawalData,
+    {
+      headers: {
+        authtoken,
+      },
+    }
+  );
+};
+
 // Format wallet balance for display
 export const formatBalance = (balance, currency = "USD", decimals = 3) => {
   if (balance === undefined || balance === null) return "0.000";
