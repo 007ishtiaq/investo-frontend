@@ -352,6 +352,32 @@
   margin-left: 0.5rem;
   font-weight: 400;
 }
+/* Add this to your Profile.css file */
+
+/* Form error messages */
+.form-error-message {
+  color: #ef4444;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+/* Password form section */
+.password-form-section {
+  margin-bottom: 1.5rem;
+}
+
+.section-description {
+  color: var(--text-secondary, #6b7280);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .section-description {
+    color: var(--text-secondary-dark, #9ca3af);
+  }
+}
 
 /* Dark mode adjustment */
 @media (prefers-color-scheme: dark) {

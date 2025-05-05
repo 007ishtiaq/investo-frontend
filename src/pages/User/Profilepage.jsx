@@ -9,11 +9,14 @@ import {
 } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
-import { User, Mail, Key, Shield, Bell, LogOut } from "lucide-react";
+import { User, Mail, Key, Shield, Bell } from "lucide-react";
 import TwoFactorAuth from "../../components/TwoFactorAuth/TwoFactorAuth";
 import { useSelector } from "react-redux";
 import { getCurrentUser, updateUserProfile } from "../../functions/user";
+import { auth } from "../../firebase";
 import toast from "react-hot-toast";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import "./Profile.css";
 
 // Custom FormLabel component instead of using the UI Label
@@ -25,6 +28,17 @@ const FormLabel = ({ htmlFor, children }) => {
   );
 };
 
+// Password change validation schema
+const passwordSchema = Yup.object({
+  currentPassword: Yup.string().required("Current password is required"),
+  password: Yup.string()
+    .required("New password is required")
+    .min(6, "Password must be at least 6 characters"),
+  confirm_password: Yup.string()
+    .required("Please confirm your password")
+    .oneOf([Yup.ref("password"), null], "Passwords must match"),
+});
+
 const Profile = () => {
   const { user } = useSelector((state) => ({ ...state }));
   const [loading, setLoading] = useState(true);
@@ -34,6 +48,7 @@ const Profile = () => {
   const [showTwoFactorAuth, setShowTwoFactorAuth] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
   const [saving, setSaving] = useState(false);
+  const [updatingPassword, setUpdatingPassword] = useState(false);
 
   useEffect(() => {
     if (user && user.token) {
@@ -73,6 +88,65 @@ const Profile = () => {
       setSaving(false);
     }
   };
+
+  // Password formik setup
+  const passwordFormik = useFormik({
+    initialValues: {
+      currentPassword: "",
+      password: "",
+      confirm_password: "",
+    },
+    validationSchema: passwordSchema,
+    onSubmit: async (values, action) => {
+      try {
+        setUpdatingPassword(true);
+
+        // Get current user
+        const currentUser = auth.currentUser;
+        const credential = auth.EmailAuthProvider.credential(
+          currentUser.email,
+          values.currentPassword
+        );
+
+        if (currentUser) {
+          // First reauthenticate with current password
+          await currentUser
+            .reauthenticateWithCredential(credential)
+            .then(async () => {
+              // If reauthentication successful, update password
+              await currentUser.updatePassword(values.password);
+              toast.success("Password updated successfully");
+              action.resetForm();
+              setUpdatingPassword(false);
+            })
+            .catch((error) => {
+              console.error("Reauthentication failed:", error);
+              if (error.code === "auth/wrong-password") {
+                toast.error("Current password is incorrect");
+              } else {
+                toast.error("Authentication failed. Please try again.");
+              }
+              setUpdatingPassword(false);
+            });
+        } else {
+          throw new Error("User not authenticated");
+        }
+      } catch (err) {
+        console.error("Failed to update password:", err);
+
+        // Handle specific errors
+        if (err.code === "auth/requires-recent-login") {
+          toast.error(
+            "For security reasons, please log in again before changing your password"
+          );
+        } else {
+          toast.error(err.message || "Failed to update password");
+        }
+
+        setUpdatingPassword(false);
+      }
+    },
+  });
 
   if (loading || !profileData) {
     return (
@@ -242,84 +316,138 @@ const Profile = () => {
                 Update your password and security preferences.
               </CardDescription>
             </CardHeader>
-            <CardContent className="profile-form">
-              <div className="form-group">
-                <FormLabel htmlFor="current-password">
-                  Current Password
-                </FormLabel>
-                <div className="input-with-icon">
-                  <div className="input-icon-wrapper">
-                    <Key className="input-icon" />
-                  </div>
-                  <Input
-                    id="current-password"
-                    type="password"
-                    className="input-with-prefix"
-                  />
-                </div>
-              </div>
-
-              <div className="profile-form-grid">
-                <div className="form-group">
-                  <FormLabel htmlFor="new-password">New Password</FormLabel>
-                  <div className="input-with-icon">
-                    <div className="input-icon-wrapper">
-                      <Key className="input-icon" />
-                    </div>
-                    <Input
-                      id="new-password"
-                      type="password"
-                      className="input-with-prefix"
-                    />
-                  </div>
+            <form onSubmit={passwordFormik.handleSubmit}>
+              <CardContent className="profile-form">
+                <div className="form-group password-form-section">
+                  <h3 className="section-title">Password Update</h3>
+                  <p className="section-description">
+                    Choose a strong password that is at least 6 characters long
+                    and contains a mix of letters, numbers, and symbols.
+                  </p>
                 </div>
 
                 <div className="form-group">
-                  <FormLabel htmlFor="confirm-password">
-                    Confirm New Password
+                  <FormLabel htmlFor="currentPassword">
+                    Current Password
                   </FormLabel>
                   <div className="input-with-icon">
                     <div className="input-icon-wrapper">
                       <Key className="input-icon" />
                     </div>
                     <Input
-                      id="confirm-password"
+                      id="currentPassword"
+                      name="currentPassword"
                       type="password"
                       className="input-with-prefix"
+                      placeholder="Enter your current password"
+                      value={passwordFormik.values.currentPassword}
+                      onChange={passwordFormik.handleChange}
+                      onBlur={passwordFormik.handleBlur}
                     />
                   </div>
-                </div>
-              </div>
-
-              <div className="security-section">
-                <h3 className="section-title">Two-Factor Authentication</h3>
-
-                {showTwoFactorAuth ? (
-                  <TwoFactorAuth />
-                ) : (
-                  <div className="feature-section">
-                    <Shield className="feature-icon" />
-                    <div>
-                      <p className="feature-description">
-                        Two-factor authentication adds an extra layer of
-                        security to your account by requiring more than just a
-                        password to sign in.
-                      </p>
-                      <Button
-                        variant="outline"
-                        className="feature-button"
-                        onClick={() => setShowTwoFactorAuth(true)}
-                      >
-                        Enable 2FA
-                      </Button>
+                  {passwordFormik.touched.currentPassword &&
+                  passwordFormik.errors.currentPassword ? (
+                    <div className="form-error-message">
+                      {passwordFormik.errors.currentPassword}
                     </div>
+                  ) : null}
+                </div>
+
+                <div className="profile-form-grid">
+                  <div className="form-group">
+                    <FormLabel htmlFor="password">New Password</FormLabel>
+                    <div className="input-with-icon">
+                      <div className="input-icon-wrapper">
+                        <Key className="input-icon" />
+                      </div>
+                      <Input
+                        id="password"
+                        name="password"
+                        type="password"
+                        className="input-with-prefix"
+                        placeholder="Enter new password"
+                        value={passwordFormik.values.password}
+                        onChange={passwordFormik.handleChange}
+                        onBlur={passwordFormik.handleBlur}
+                      />
+                    </div>
+                    {passwordFormik.touched.password &&
+                    passwordFormik.errors.password ? (
+                      <div className="form-error-message">
+                        {passwordFormik.errors.password}
+                      </div>
+                    ) : null}
                   </div>
-                )}
-              </div>
-            </CardContent>
-            <CardFooter className="card-footer">
-              <Button>Update Password</Button>
-            </CardFooter>
+
+                  <div className="form-group">
+                    <FormLabel htmlFor="confirm_password">
+                      Confirm New Password
+                    </FormLabel>
+                    <div className="input-with-icon">
+                      <div className="input-icon-wrapper">
+                        <Key className="input-icon" />
+                      </div>
+                      <Input
+                        id="confirm_password"
+                        name="confirm_password"
+                        type="password"
+                        className="input-with-prefix"
+                        placeholder="Confirm your new password"
+                        value={passwordFormik.values.confirm_password}
+                        onChange={passwordFormik.handleChange}
+                        onBlur={passwordFormik.handleBlur}
+                      />
+                    </div>
+                    {passwordFormik.touched.confirm_password &&
+                    passwordFormik.errors.confirm_password ? (
+                      <div className="form-error-message">
+                        {passwordFormik.errors.confirm_password}
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+
+                <div className="security-section">
+                  <h3 className="section-title">Two-Factor Authentication</h3>
+
+                  {showTwoFactorAuth ? (
+                    <TwoFactorAuth />
+                  ) : (
+                    <div className="feature-section">
+                      <Shield className="feature-icon" />
+                      <div>
+                        <p className="feature-description">
+                          Two-factor authentication adds an extra layer of
+                          security to your account by requiring more than just a
+                          password to sign in.
+                        </p>
+                        <Button
+                          variant="outline"
+                          className="feature-button"
+                          onClick={() => setShowTwoFactorAuth(true)}
+                        >
+                          Enable 2FA
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+              <CardFooter className="card-footer">
+                <Button
+                  type="submit"
+                  disabled={
+                    updatingPassword ||
+                    !passwordFormik.values.currentPassword ||
+                    !passwordFormik.values.password ||
+                    !passwordFormik.values.confirm_password ||
+                    passwordFormik.isSubmitting
+                  }
+                >
+                  {updatingPassword ? "Updating..." : "Update Password"}
+                </Button>
+              </CardFooter>
+            </form>
           </Card>
         )}
 
@@ -377,6 +505,60 @@ const Profile = () => {
                         defaultChecked
                       />
                       <FormLabel htmlFor="email-security">
+                        Security alerts
+                      </FormLabel>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="notification-divider"></div>
+
+              <div className="feature-section">
+                <span className="feature-emoji">📱</span>
+                <div className="notification-options">
+                  <h3 className="section-title">Push Notifications</h3>
+                  <div className="option-grid">
+                    <div className="checkbox-option">
+                      <input
+                        type="checkbox"
+                        id="push-deposits"
+                        className="checkbox-input"
+                        defaultChecked
+                      />
+                      <FormLabel htmlFor="push-deposits">
+                        Deposits and withdrawals
+                      </FormLabel>
+                    </div>
+                    <div className="checkbox-option">
+                      <input
+                        type="checkbox"
+                        id="push-earnings"
+                        className="checkbox-input"
+                        defaultChecked
+                      />
+                      <FormLabel htmlFor="push-earnings">
+                        Daily earnings updates
+                      </FormLabel>
+                    </div>
+                    <div className="checkbox-option">
+                      <input
+                        type="checkbox"
+                        id="push-promotions"
+                        className="checkbox-input"
+                      />
+                      <FormLabel htmlFor="push-promotions">
+                        Promotions and news
+                      </FormLabel>
+                    </div>
+                    <div className="checkbox-option">
+                      <input
+                        type="checkbox"
+                        id="push-security"
+                        className="checkbox-input"
+                        defaultChecked
+                      />
+                      <FormLabel htmlFor="push-security">
                         Security alerts
                       </FormLabel>
                     </div>
