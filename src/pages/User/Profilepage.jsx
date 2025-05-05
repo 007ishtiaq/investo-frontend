@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -11,6 +11,9 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { User, Mail, Key, Shield, Bell, LogOut } from "lucide-react";
 import TwoFactorAuth from "../../components/TwoFactorAuth/TwoFactorAuth";
+import { useSelector } from "react-redux";
+import { getCurrentUser, updateUserProfile } from "../../functions/user";
+import toast from "react-hot-toast";
 import "./Profile.css";
 
 // Custom FormLabel component instead of using the UI Label
@@ -23,19 +26,55 @@ const FormLabel = ({ htmlFor, children }) => {
 };
 
 const Profile = () => {
-  const user = {
-    id: 1,
-    name: "John Doe",
-    email: "john@example.com",
-    username: "johndoe",
-    profileImage: "https://i.pravatar.cc/300?img=68",
-    createdAt: new Date(),
-  };
-  const loading = false;
+  const { user } = useSelector((state) => ({ ...state }));
+  const [loading, setLoading] = useState(true);
+  const [profileData, setProfileData] = useState(null);
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [showTwoFactorAuth, setShowTwoFactorAuth] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
+  const [saving, setSaving] = useState(false);
 
-  if (loading) {
+  useEffect(() => {
+    if (user && user.token) {
+      loadUserProfile();
+    }
+  }, [user]);
+
+  const loadUserProfile = async () => {
+    try {
+      setLoading(true);
+      const res = await getCurrentUser(user.token);
+      setProfileData(res.data);
+      setName(res.data.name);
+      setPhone(res.data.contact || "");
+      setLoading(false);
+    } catch (err) {
+      console.error("Failed to load profile:", err);
+      toast.error("Failed to load user profile");
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setSaving(true);
+      const res = await updateUserProfile(user.token, {
+        name,
+        contact: phone,
+      });
+      setProfileData(res.data);
+      toast.success("Profile updated successfully");
+      setSaving(false);
+    } catch (err) {
+      console.error("Failed to update profile:", err);
+      toast.error("Failed to update profile");
+      setSaving(false);
+    }
+  };
+
+  if (loading || !profileData) {
     return (
       <div className="skeleton-container">
         <Card className="skeleton-header-card">
@@ -64,14 +103,14 @@ const Profile = () => {
           <div className="profile-header">
             <div className="profile-avatar">
               <div className="profile-avatar-fallback">
-                {user.name
+                {profileData.name
                   .split(" ")
                   .map((n) => n[0])
                   .join("")}
               </div>
             </div>
             <div className="profile-header-info">
-              <h1 className="profile-title">{user.name}</h1>
+              <h1 className="profile-title">{profileData.name}</h1>
               <p className="profile-description">
                 Manage your account settings and preferences
               </p>
@@ -116,73 +155,82 @@ const Profile = () => {
                 Update your personal information and contact details.
               </CardDescription>
             </CardHeader>
-            <CardContent className="profile-form">
-              <div className="profile-form-grid">
-                <div className="form-group">
-                  <FormLabel htmlFor="name">Full Name</FormLabel>
-                  <div className="input-with-icon">
-                    <div className="input-icon-wrapper">
-                      <User className="input-icon" />
+            <form onSubmit={handleSubmit}>
+              <CardContent className="profile-form">
+                <div className="profile-form-grid">
+                  <div className="form-group">
+                    <FormLabel htmlFor="name">Full Name</FormLabel>
+                    <div className="input-with-icon">
+                      <div className="input-icon-wrapper">
+                        <User className="input-icon" />
+                      </div>
+                      <Input
+                        id="name"
+                        className="input-with-prefix"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        required
+                      />
                     </div>
-                    <Input
-                      id="name"
-                      className="input-with-prefix"
-                      defaultValue={user.name}
-                      readOnly
-                    />
                   </div>
-                </div>
 
-                <div className="form-group">
-                  <FormLabel htmlFor="username">Username</FormLabel>
-                  <div className="input-with-icon">
-                    <div className="input-icon-wrapper">
-                      <User className="input-icon" />
+                  <div className="form-group">
+                    <FormLabel htmlFor="affiliateCode">
+                      Affiliate Code
+                    </FormLabel>
+                    <div className="input-with-icon">
+                      <div className="input-icon-wrapper">
+                        <User className="input-icon" />
+                      </div>
+                      <Input
+                        id="affiliateCode"
+                        className="input-with-prefix"
+                        value={profileData.affiliateCode}
+                        readOnly
+                      />
                     </div>
-                    <Input
-                      id="username"
-                      className="input-with-prefix"
-                      defaultValue={user.username}
-                      readOnly
-                    />
                   </div>
-                </div>
 
-                <div className="form-group">
-                  <FormLabel htmlFor="email">Email Address</FormLabel>
-                  <div className="input-with-icon">
-                    <div className="input-icon-wrapper">
-                      <Mail className="input-icon" />
+                  <div className="form-group">
+                    <FormLabel htmlFor="email">Email Address</FormLabel>
+                    <div className="input-with-icon">
+                      <div className="input-icon-wrapper">
+                        <Mail className="input-icon" />
+                      </div>
+                      <Input
+                        id="email"
+                        type="email"
+                        className="input-with-prefix"
+                        value={profileData.email}
+                        readOnly
+                      />
                     </div>
-                    <Input
-                      id="email"
-                      type="email"
-                      className="input-with-prefix"
-                      defaultValue={user.email}
-                      readOnly
-                    />
                   </div>
-                </div>
 
-                <div className="form-group">
-                  <FormLabel htmlFor="phone">Phone Number</FormLabel>
-                  <div className="input-with-icon">
-                    <div className="input-icon-wrapper">
-                      <span className="input-emoji">📱</span>
+                  <div className="form-group">
+                    <FormLabel htmlFor="phone">Phone Number</FormLabel>
+                    <div className="input-with-icon">
+                      <div className="input-icon-wrapper">
+                        <span className="input-emoji">📱</span>
+                      </div>
+                      <Input
+                        id="phone"
+                        type="tel"
+                        className="input-with-prefix"
+                        placeholder="+1 (555) 123-4567"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                      />
                     </div>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      className="input-with-prefix"
-                      placeholder="+1 (555) 123-4567"
-                    />
                   </div>
                 </div>
-              </div>
-            </CardContent>
-            <CardFooter className="card-footer">
-              <Button>Save Changes</Button>
-            </CardFooter>
+              </CardContent>
+              <CardFooter className="card-footer">
+                <Button type="submit" disabled={saving}>
+                  {saving ? "Saving..." : "Save Changes"}
+                </Button>
+              </CardFooter>
+            </form>
           </Card>
         )}
 
@@ -335,59 +383,6 @@ const Profile = () => {
                   </div>
                 </div>
               </div>
-
-              <div className="notification-divider"></div>
-
-              <div className="feature-section">
-                <span className="feature-emoji">📱</span>
-                <div className="notification-options">
-                  <h3 className="section-title">Push Notifications</h3>
-                  <div className="option-grid">
-                    <div className="checkbox-option">
-                      <input
-                        type="checkbox"
-                        id="push-deposits"
-                        className="checkbox-input"
-                        defaultChecked
-                      />
-                      <FormLabel htmlFor="push-deposits">
-                        Deposits and withdrawals
-                      </FormLabel>
-                    </div>
-                    <div className="checkbox-option">
-                      <input
-                        type="checkbox"
-                        id="push-earnings"
-                        className="checkbox-input"
-                      />
-                      <FormLabel htmlFor="push-earnings">
-                        Daily earnings updates
-                      </FormLabel>
-                    </div>
-                    <div className="checkbox-option">
-                      <input
-                        type="checkbox"
-                        id="push-promotions"
-                        className="checkbox-input"
-                      />
-                      <FormLabel htmlFor="push-promotions">
-                        Promotions and news
-                      </FormLabel>
-                    </div>
-                    <div className="checkbox-option">
-                      <input
-                        type="checkbox"
-                        id="push-security"
-                        className="checkbox-input"
-                        defaultChecked
-                      />
-                      <FormLabel htmlFor="push-security">
-                        Security alerts
-                      </FormLabel>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </CardContent>
             <CardFooter className="card-footer">
               <Button>Save Preferences</Button>
@@ -395,30 +390,6 @@ const Profile = () => {
           </Card>
         )}
       </div>
-
-      <Card className="danger-zone-card">
-        <CardHeader>
-          <CardTitle className="danger-title">Danger Zone</CardTitle>
-          <CardDescription>
-            These actions are irreversible. Please proceed with caution.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="feature-section">
-            <LogOut className="danger-icon" />
-            <div>
-              <h3 className="danger-section-title">Log Out from All Devices</h3>
-              <p className="danger-description">
-                Log out from all devices where you're currently signed in,
-                including this one.
-              </p>
-              <Button variant="outline" className="danger-button">
-                Log Out Everywhere
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </>
   );
 };

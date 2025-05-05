@@ -68,6 +68,38 @@
   color: var(--text-secondary, #6b7280);
 }
 
+/* Affiliate code badge */
+.affiliate-code-badge {
+  display: inline-block;
+  background-color: var(--primary-50, #f0f9ff);
+  color: var(--primary-700, #0369a1);
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  margin-left: 0.75rem;
+  border: 1px solid var(--primary-200, #bae6fd);
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+  .affiliate-code-badge {
+    background-color: var(--primary-900, #0c4a6e);
+    color: var(--primary-300, #7dd3fc);
+    border-color: var(--primary-800, #075985);
+  }
+}
+
+/* Make affiliate code responsively display on its own line on small screens */
+@media (max-width: 640px) {
+  .affiliate-code-badge {
+    display: block;
+    margin-left: 0;
+    margin-top: 0.5rem;
+    width: fit-content;
+  }
+}
+
 /* Dark mode adjustments */
 @media (prefers-color-scheme: dark) {
   .dashboard-subtitle {

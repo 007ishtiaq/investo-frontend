@@ -50,3 +50,25 @@ export const updateUserLevel = async (userId, level, authtoken) => {
     throw new Error("Failed to update user level");
   }
 };
+
+// Get current user profile info
+export const getCurrentUser = async (authtoken) => {
+  return await axios.get(`${process.env.REACT_APP_API}/current-user`, {
+    headers: {
+      authtoken,
+    },
+  });
+};
+
+// Update user profile (name, contact, etc.)
+export const updateUserProfile = async (authtoken, userData) => {
+  return await axios.put(
+    `${process.env.REACT_APP_API}/user/profile`,
+    userData,
+    {
+      headers: {
+        authtoken,
+      },
+    }
+  );
+};
