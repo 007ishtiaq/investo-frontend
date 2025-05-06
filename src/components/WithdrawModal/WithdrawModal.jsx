@@ -8,7 +8,7 @@ import "./WithdrawModal.css";
 
 const WithdrawModal = ({ isOpen, onClose }) => {
   const { user } = useSelector((state) => ({ ...state }));
-  const { walletBalance, refreshWallet } = useWallet();
+  const { walletBalance } = useWallet();
   const [amount, setAmount] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
   const [walletAddress, setWalletAddress] = useState("");
@@ -102,9 +102,6 @@ const WithdrawModal = ({ isOpen, onClose }) => {
       setPaymentMethod("");
       setWalletAddress("");
       setBankDetails("");
-
-      // Refresh wallet balance after successful withdrawal request
-      refreshWallet();
 
       toast.success("Withdrawal request submitted successfully");
       setLoading(false);

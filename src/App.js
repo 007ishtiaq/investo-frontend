@@ -19,6 +19,7 @@ import Team from "./pages/Team";
 import Plans from "./pages/Plans";
 import Deposit from "./pages/Deposit";
 import AdminDeposits from "./pages/Admin/AdminDeposits";
+import AdminWithdrawals from "./pages/Admin/AdminWithdrawals";
 import UserManagement from "./pages/Admin/UserManagement";
 import { Toaster } from "react-hot-toast";
 import Layout from "./components/Layout/Layout";
@@ -105,6 +106,7 @@ function App() {
           <Route path="/admin/taskverification" component={TaskVerification} />
           <Route path="/deposit" component={Deposit} />
           <Route path="/admin/deposits" component={AdminDeposits} />
+          <Route exact path="/admin/withdrawals" component={AdminWithdrawals} />
           <Route path="/admin/users" component={UserManagement} />
 
           {/* <Route exact path="*" component={NotFound} /> */}
