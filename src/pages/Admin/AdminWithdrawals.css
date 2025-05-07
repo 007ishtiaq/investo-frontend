@@ -107,7 +107,7 @@
 
 .screenshot-button {
   padding: 6px 12px;
-  background-color: var(--secondary-color);
+  background-color: var(--color-secondary);
   color: white;
   text-decoration: none;
   border-radius: 4px;
@@ -118,7 +118,7 @@
 }
 
 .screenshot-button:hover {
-  background-color: var(--secondary-hover);
+  background-color: var(--hover-secondary);
 }
 
 /* Modal styles */

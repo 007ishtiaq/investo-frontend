@@ -8,16 +8,17 @@ import {
   DollarSign,
   Users,
   Award,
-  Percent,
   Activity,
-  Wallet2,
+  Clock,
+  AlertCircle,
+  FileText,
 } from "lucide-react";
 import { getAdminAnalytics } from "../../functions/admin";
 import { formatBalance } from "../../functions/wallet";
 import toast from "react-hot-toast";
 import "./AdminAnalytics.css";
 
-const StatCard = ({ title, value, icon, color, change }) => {
+const StatCard = ({ title, value, icon, color, change, linkTo }) => {
   const Icon = icon;
   return (
     <div className="analytics-stat-card">
@@ -40,6 +41,11 @@ const StatCard = ({ title, value, icon, color, change }) => {
           )}
         </div>
       </div>
+      {linkTo && (
+        <Link to={linkTo} className="analytics-stat-card-link">
+          View all
+        </Link>
+      )}
     </div>
   );
 };
@@ -209,7 +215,7 @@ const AdminAnalytics = () => {
       </div>
 
       <div className="analytics-section">
-        <h2 className="analytics-section-title">User Statistics</h2>
+        <h2 className="analytics-section-title">Admin Tasks</h2>
         <div className="analytics-stat-grid">
           <StatCard
             title="Total Users"
@@ -219,24 +225,25 @@ const AdminAnalytics = () => {
             change={analytics.users.userChange}
           />
           <StatCard
-            title="Active Investors"
-            value={analytics.users.activeInvestors}
-            icon={Percent}
-            color="teal"
-            change={analytics.users.investorChange}
+            title="Pending Deposits"
+            value={analytics.pendingDeposits}
+            icon={Clock}
+            color="amber"
+            linkTo="/admin/deposits"
           />
           <StatCard
-            title="Total Teams"
-            value={analytics.users.totalTeams}
-            icon={Users}
-            color="orange"
-            change={analytics.users.teamChange}
+            title="Pending Withdrawals"
+            value={analytics.pendingWithdrawals}
+            icon={AlertCircle}
+            color="red"
+            linkTo="/admin/withdrawals"
           />
           <StatCard
-            title="Average User Balance"
-            value={formatBalance(analytics.users.avgBalance, "USD")}
-            icon={Wallet2}
-            color="rose"
+            title="Pending Verification Tasks"
+            value={analytics.pendingTasks}
+            icon={FileText}
+            color="emerald"
+            linkTo="/admin/tasks"
           />
         </div>
       </div>
@@ -266,13 +273,6 @@ const AdminAnalytics = () => {
               { label: "Level 3", value: analytics.userLevels.level3 },
               { label: "Level 4", value: analytics.userLevels.level4 },
             ]}
-          />
-          <MetricCard
-            title="Investment Plans Distribution"
-            metrics={analytics.investmentPlans.map((plan) => ({
-              label: plan.name,
-              value: plan.userCount,
-            }))}
           />
         </div>
       </div>
