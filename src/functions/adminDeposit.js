@@ -58,3 +58,27 @@ export const reviewDeposit = async (depositId, reviewData, authtoken) => {
     throw new Error(`Failed to ${reviewData.status} deposit`);
   }
 };
+
+// Add these functions to your adminDeposit.js file
+export const searchUserByEmail = async (authtoken, email) => {
+  return await axios.get(
+    `${process.env.REACT_APP_API}/admin/user/search/${email}`,
+    {
+      headers: {
+        authtoken,
+      },
+    }
+  );
+};
+
+export const createManualDeposit = async (authtoken, depositData) => {
+  return await axios.post(
+    `${process.env.REACT_APP_API}/admin/deposit/manual`,
+    depositData,
+    {
+      headers: {
+        authtoken,
+      },
+    }
+  );
+};

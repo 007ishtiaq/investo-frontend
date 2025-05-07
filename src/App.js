@@ -12,6 +12,7 @@ import Registration from "./pages/Registration/Registration";
 import OTPVerification from "./pages/OtpVerification/OtpVerification";
 import RegisterComplete from "./pages/RegisterComplete/RegisterComplete";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
+import AdminAnalytics from "./pages/Admin/AdminAnalytics";
 import AdminTasks from "./pages/Admin/AdminTasks";
 import TaskVerification from "./pages/Admin/TaskVerification";
 import Wallet from "./pages/Wallet";
@@ -108,6 +109,7 @@ function App() {
           <Route path="/admin/deposits" component={AdminDeposits} />
           <Route exact path="/admin/withdrawals" component={AdminWithdrawals} />
           <Route path="/admin/users" component={UserManagement} />
+          <Route path="/admin/analytics" component={AdminAnalytics} />
 
           {/* <Route exact path="*" component={NotFound} /> */}
           <Route path="*" component={NotFound} />

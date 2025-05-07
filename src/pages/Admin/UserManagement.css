@@ -342,3 +342,98 @@
   position: relative;
   background-color: #f1f8e9;
 }
+.balance-zero {
+  color: #6b7280;
+}
+
+.balance-positive {
+  color: #0ea5e9;
+}
+
+.balance-high {
+  color: #16a34a;
+  font-weight: 600;
+}
+.user-balance.user-balance-manage {
+  border: 0;
+}
+/* Team cell styling */
+.team-cell {
+  /* display: flex; */
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.team-count {
+  font-weight: 500;
+  margin-right: 6px;
+}
+
+.team-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #3b82f6;
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 0.75rem;
+}
+
+/* Team members list in modal */
+.team-members-list {
+  margin-top: 16px;
+  background-color: #f9fafb;
+  border-radius: 6px;
+  padding: 10px;
+}
+
+.team-members-list h4 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+.team-members-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.team-member {
+  display: flex;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.team-member:last-child {
+  border-bottom: none;
+}
+
+.member-name {
+  font-weight: 500;
+  margin-right: 10px;
+  min-width: 100px;
+}
+
+.member-email {
+  font-size: 0.8125rem;
+  color: #6b7280;
+  flex-grow: 1;
+}
+
+.member-level {
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 9999px;
+}
+
+.more-members {
+  font-size: 0.8125rem;
+  color: #6b7280;
+  font-style: italic;
+  padding: 6px 0;
+}

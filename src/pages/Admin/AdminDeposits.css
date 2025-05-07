@@ -329,3 +329,149 @@
   border-color: #4a90e2;
   box-shadow: 0 0 3px rgba(74, 144, 226, 0.5);
 }
+/* Add this to your AdminDeposits.css file */
+
+.manual-deposit-button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  margin-left: 10px;
+  transition: background-color 0.3s;
+}
+
+.manual-deposit-button:hover {
+  background-color: #388e3c;
+}
+
+.manual-deposit-form-container {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.manual-deposit-form-container h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.user-search-section {
+  margin-bottom: 20px;
+}
+
+.search-input-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.search-input-group input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.search-button {
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  padding: 0 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.search-button:hover {
+  background-color: #1976d2;
+}
+
+.search-button:disabled {
+  background-color: #b0bec5;
+  cursor: not-allowed;
+}
+
+.searched-user-info {
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.searched-user-info h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.user-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+@media (max-width: 600px) {
+  .user-info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.info-label {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.info-value {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.manual-deposit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.submit-button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+  background-color: #388e3c;
+}
+
+.submit-button:disabled {
+  background-color: #a5d6a7;
+  cursor: not-allowed;
+}

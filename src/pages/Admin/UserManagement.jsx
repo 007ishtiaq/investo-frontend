@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { getUsers, updateUserLevel } from "../../functions/user";
+import { formatBalance } from "../../functions/wallet";
 import "./UserManagement.css";
 
 const UserManagement = () => {
@@ -81,6 +82,12 @@ const UserManagement = () => {
     }
   };
 
+  const getBalanceClass = (balance) => {
+    if (balance === 0) return "balance-zero";
+    if (balance >= 1000) return "balance-high";
+    return "balance-positive";
+  };
+
   return (
     <div className="user-management-page">
       <div className="container">
@@ -111,6 +118,8 @@ const UserManagement = () => {
                   <th>Name</th>
                   <th>Email</th>
                   <th>Level</th>
+                  <th>Balance</th>
+                  <th>Team</th>
                   <th>Joined</th>
                   <th>Actions</th>
                 </tr>
@@ -128,6 +137,16 @@ const UserManagement = () => {
                       >
                         Level {u.level || 1}
                       </span>
+                    </td>
+                    <td
+                      className={`user-balance-manage ${getBalanceClass(
+                        u.wallet?.balance || 0
+                      )}`}
+                    >
+                      {formatBalance(u.wallet?.balance || 0, "USD")}
+                    </td>
+                    <td className="team-cell">
+                      <span className="team-count">{u.team?.count || 0}</span>
                     </td>
                     <td>{formatDate(u.createdAt)}</td>
                     <td className="actions-cell">
@@ -177,6 +196,54 @@ const UserManagement = () => {
                       Level {activeUser.level || 1}
                     </span>
                   </div>
+                  <div className="detail-row">
+                    <span className="detail-label">Wallet Balance:</span>
+                    <span
+                      className={`detail-value ${getBalanceClass(
+                        activeUser.wallet?.balance || 0
+                      )}`}
+                    >
+                      {formatBalance(activeUser.wallet?.balance || 0, "USD")}
+                    </span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="detail-label">Team Members:</span>
+                    <span className="detail-value">
+                      {activeUser.team?.count || 0}
+                    </span>
+                  </div>
+                  {activeUser.team?.members &&
+                    activeUser.team.members.length > 0 && (
+                      <div className="team-members-list">
+                        <h4>Team Members</h4>
+                        <ul>
+                          {activeUser.team.members.map((member) => (
+                            <li key={member._id} className="team-member">
+                              <span className="member-name">{member.name}</span>
+                              <span className="member-email">
+                                {member.email}
+                              </span>
+                              <span
+                                className={`member-level ${getLevelBadgeClass(
+                                  member.level
+                                )}`}
+                              >
+                                Level {member.level}
+                              </span>
+                            </li>
+                          ))}
+                          {activeUser.team.count >
+                            activeUser.team.members.length && (
+                            <li className="more-members">
+                              +
+                              {activeUser.team.count -
+                                activeUser.team.members.length}{" "}
+                              more members
+                            </li>
+                          )}
+                        </ul>
+                      </div>
+                    )}
                 </div>
 
                 <div className="level-selection">

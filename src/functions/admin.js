@@ -84,3 +84,12 @@ export const rejectTask = async (userTaskId, data, authToken) => {
     }
   );
 };
+
+// Get analytics data for admin dashboard
+export const getAdminAnalytics = async (authtoken) => {
+  return await axios.get(`${process.env.REACT_APP_API}/admin/analytics`, {
+    headers: {
+      authtoken,
+    },
+  });
+};
