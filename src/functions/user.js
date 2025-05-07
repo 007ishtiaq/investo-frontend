@@ -85,3 +85,40 @@ export const updateNotificationPreferences = async (authtoken, preferences) => {
     }
   );
 };
+
+// Get total deposits for a user
+export const getTotalDeposits = async (authtoken) => {
+  return await axios.get(`${process.env.REACT_APP_API}/wallet/total-deposits`, {
+    headers: {
+      authtoken,
+    },
+  });
+};
+// Get total withdrawals for a user
+export const getTotalWithdrawals = async (authtoken) => {
+  return await axios.get(
+    `${process.env.REACT_APP_API}/wallet/total-withdrawals`,
+    {
+      headers: {
+        authtoken,
+      },
+    }
+  );
+};
+// Get total team/referral earnings for a user
+export const getTeamEarnings = async (authtoken) => {
+  return await axios.get(`${process.env.REACT_APP_API}/wallet/team-earnings`, {
+    headers: {
+      authtoken,
+    },
+  });
+};
+
+// Get total earnings for a user (includes all types of earnings)
+export const getTotalEarnings = async (authtoken) => {
+  return await axios.get(`${process.env.REACT_APP_API}/wallet/total-earnings`, {
+    headers: {
+      authtoken,
+    },
+  });
+};

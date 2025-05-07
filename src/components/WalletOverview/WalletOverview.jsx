@@ -17,7 +17,8 @@ import {
   getTotalDeposits,
   getTotalWithdrawals,
   getTeamEarnings,
-} from "../../functions/wallet"; // Add these functions
+  getTotalEarnings,
+} from "../../functions/user"; // Add these functions
 import toast from "react-hot-toast";
 import "./WalletOverview.css";
 
@@ -60,6 +61,10 @@ const WalletOverview = () => {
           // Fetch financial metrics
           const depositsResponse = await getTotalDeposits(user.token);
           setTotalDeposits(depositsResponse.data.total || 0);
+          console.log(
+            "depositsResponse.data.total",
+            depositsResponse.data.total
+          );
 
           const withdrawalsResponse = await getTotalWithdrawals(user.token);
           setTotalWithdrawals(withdrawalsResponse.data.total || 0);
@@ -67,9 +72,9 @@ const WalletOverview = () => {
           const teamResponse = await getTeamEarnings(user.token);
           setTeamEarnings(teamResponse.data.total || 0);
 
-          // In a real application, you would fetch the total earnings from your backend
-          // This is a placeholder - replace with actual API call
-          setTotalEarnings(750.5); // Should be replaced with actual data
+          // Replace the hardcoded total earnings with actual API call
+          const earningsResponse = await getTotalEarnings(user.token);
+          setTotalEarnings(earningsResponse.data.total || 0);
         } catch (error) {
           console.error("Error fetching user data:", error);
           toast.error("Failed to load investment data");
