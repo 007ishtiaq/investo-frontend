@@ -12,6 +12,8 @@ import {
   Search,
   FilterX,
   Users,
+  XCircle,
+  AlertTriangle,
 } from "lucide-react";
 import {
   Select,
@@ -27,7 +29,25 @@ import { getTransactionHistory } from "../../functions/wallet";
 import toast from "react-hot-toast";
 import "./History.css";
 
-const TransactionTypeIcon = ({ type, source }) => {
+const TransactionTypeIcon = ({ type, source, status }) => {
+  // For rejected transactions
+  if (status === "failed" || status === "rejected") {
+    if (source === "deposit") {
+      return (
+        <div className="transaction-icon transaction-icon-rejected-deposit">
+          <XCircle className="transaction-icon-svg" />
+        </div>
+      );
+    } else if (source === "withdrawal") {
+      return (
+        <div className="transaction-icon transaction-icon-rejected-withdrawal">
+          <AlertTriangle className="transaction-icon-svg" />
+        </div>
+      );
+    }
+  }
+
+  // For normal transactions
   if (type === "credit" && source === "deposit") {
     return (
       <div className="transaction-icon transaction-icon-deposit">
@@ -101,9 +121,9 @@ const History = () => {
     setCurrentPage(page);
   };
 
-  // Filter transactions based on type and search term
+  // Filter transactions based on type, status, and search term
   const filteredTransactions = transactions.filter((transaction) => {
-    // Filter by type
+    // Filter by type and status
     if (filter === "deposit" && transaction.source !== "deposit") {
       return false;
     }
@@ -118,11 +138,42 @@ const History = () => {
     ) {
       return false;
     }
+
+    // New filter options for rejected transactions
+    if (
+      filter === "rejected" &&
+      transaction.status !== "failed" &&
+      transaction.status !== "rejected"
+    ) {
+      return false;
+    }
+    if (
+      filter === "rejected_deposit" &&
+      !(
+        transaction.source === "deposit" &&
+        (transaction.status === "failed" || transaction.status === "rejected")
+      )
+    ) {
+      return false;
+    }
+    if (
+      filter === "rejected_withdraw" &&
+      !(
+        transaction.source === "withdrawal" &&
+        (transaction.status === "failed" || transaction.status === "rejected")
+      )
+    ) {
+      return false;
+    }
+
     if (
       filter !== "all" &&
       filter !== "deposit" &&
       filter !== "withdraw" &&
-      filter !== "earning"
+      filter !== "earning" &&
+      filter !== "rejected" &&
+      filter !== "rejected_deposit" &&
+      filter !== "rejected_withdraw"
     ) {
       // If filter is not one of the predefined ones, don't filter
       return true;
@@ -199,6 +250,15 @@ const History = () => {
                     <SelectItem value="deposit">Deposits</SelectItem>
                     <SelectItem value="withdraw">Withdrawals</SelectItem>
                     <SelectItem value="earning">Earnings</SelectItem>
+                    <SelectItem value="rejected">
+                      Rejected Transactions
+                    </SelectItem>
+                    <SelectItem value="rejected_deposit">
+                      Rejected Deposits
+                    </SelectItem>
+                    <SelectItem value="rejected_withdraw">
+                      Rejected Withdrawals
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 <Button
@@ -252,9 +312,17 @@ const History = () => {
 
                       let type = "Transaction";
                       if (transaction.source === "deposit") {
-                        type = "Deposit";
+                        type =
+                          transaction.status === "failed" ||
+                          transaction.status === "rejected"
+                            ? "Rejected Deposit"
+                            : "Deposit";
                       } else if (transaction.type === "debit") {
-                        type = "Withdrawal";
+                        type =
+                          transaction.status === "failed" ||
+                          transaction.status === "rejected"
+                            ? "Rejected Withdrawal"
+                            : "Withdrawal";
                       } else if (
                         transaction.source === "task_reward" ||
                         transaction.source === "referral" ||
@@ -270,6 +338,7 @@ const History = () => {
                               <TransactionTypeIcon
                                 type={transaction.type}
                                 source={transaction.source}
+                                status={transaction.status}
                               />
                               <span className="transaction-type-text">
                                 {type}
@@ -312,9 +381,17 @@ const History = () => {
 
                   let title = "Transaction";
                   if (transaction.source === "deposit") {
-                    title = "Deposit";
+                    title =
+                      transaction.status === "failed" ||
+                      transaction.status === "rejected"
+                        ? "Rejected Deposit"
+                        : "Deposit";
                   } else if (transaction.type === "debit") {
-                    title = "Withdrawal";
+                    title =
+                      transaction.status === "failed" ||
+                      transaction.status === "rejected"
+                        ? "Rejected Withdrawal"
+                        : "Withdrawal";
                   } else if (transaction.source === "task_reward") {
                     title = "Task Reward";
                   } else if (transaction.source === "referral") {
@@ -328,6 +405,7 @@ const History = () => {
                       <TransactionTypeIcon
                         type={transaction.type}
                         source={transaction.source}
+                        status={transaction.status}
                       />
                       <div className="transaction-content">
                         <div className="transaction-details">
@@ -356,7 +434,7 @@ const History = () => {
                             }`}
                           >
                             {isPositive ? "+" : "-"}
-                            {Math.abs(amount).toFixed(3)}
+                            {Math.abs(amount).toFixed(2)}
                           </span>
                         </div>
                       </div>
@@ -367,24 +445,25 @@ const History = () => {
             </div>
           )}
 
+          {/* Pagination */}
           {totalPages > 1 && (
             <div className="pagination">
               <button
-                className="page-button"
+                className="pagination-button"
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
               >
-                &lt; Previous
+                Previous
               </button>
-              <div className="page-info">
+              <div className="pagination-info">
                 Page {currentPage} of {totalPages}
               </div>
               <button
-                className="page-button"
+                className="pagination-button"
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
               >
-                Next &gt;
+                Next
               </button>
             </div>
           )}

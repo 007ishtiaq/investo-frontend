@@ -23,7 +23,7 @@
 
 .filter-button {
   padding: 8px 16px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--color-border);
   background-color: var(--background-secondary);
   border-radius: 6px;
   cursor: pointer;
@@ -32,9 +32,9 @@
 }
 
 .filter-button.active {
-  background-color: var(--primary-color);
+  background-color: var(--color-primary);
   color: white;
-  border-color: var(--primary-color);
+  border-color: var(--color-primary);
 }
 
 .withdrawals-table-container {
@@ -60,7 +60,7 @@
 
 .withdrawals-table td {
   padding: 15px;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--color-border);
 }
 
 .status-badge {
@@ -93,7 +93,7 @@
 
 .view-button {
   padding: 6px 12px;
-  /* background-color: var(--primary-color); */
+  /* background-color: var(--color-primary); */
   /* color: white; */
   border: none;
   border-radius: 4px;
@@ -152,7 +152,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .modal-header h2 {
@@ -245,7 +245,7 @@
 .form-group textarea {
   width: 100%;
   padding: 10px 12px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   font-size: 1rem;
   background-color: var(--background-card);
@@ -255,7 +255,7 @@
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: var(--primary-color);
+  border-color: var(--color-primary);
 }
 
 .review-actions {

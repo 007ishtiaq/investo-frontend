@@ -345,6 +345,17 @@
   display: block;
 }
 
+/* Add these to your History.css file */
+.transaction-icon-rejected-deposit {
+  background-color: #fff1f2; /* Light red */
+  color: #ef4444; /* Red */
+}
+
+.transaction-icon-rejected-withdrawal {
+  background-color: #fef9c3; /* Light yellow */
+  color: #f59e0b; /* Amber */
+}
+
 /* Responsive styles */
 @media (max-width: 640px) {
   .desktop-view {

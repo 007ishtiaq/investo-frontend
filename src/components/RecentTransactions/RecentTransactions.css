@@ -233,6 +233,12 @@
   }
 }
 
+/* Add to your RecentTransactions.css file */
+.rejected-icon {
+  background-color: #fff1f2; /* Light red background */
+  color: #ef4444; /* Red icon color */
+}
+
 /* Animation for loading skeletons */
 @keyframes pulse {
   0%,

@@ -12,13 +12,24 @@ import {
   ArrowUp,
   DollarSign,
   Users,
+  XCircle,
 } from "lucide-react";
 import { useSelector } from "react-redux";
 import { getTransactionHistory } from "../../functions/wallet";
 import toast from "react-hot-toast";
 import "./RecentTransactions.css";
 
-const TransactionIcon = ({ type, source }) => {
+const TransactionIcon = ({ type, source, status }) => {
+  // For rejected transactions (both deposit and withdrawal)
+  if (status === "failed" || status === "rejected") {
+    return (
+      <div className="transaction-icon rejected-icon">
+        <XCircle className="icon-inner" />
+      </div>
+    );
+  }
+
+  // For normal transactions (existing logic)
   if (type === "credit" && source === "deposit") {
     return (
       <div className="transaction-icon deposit-icon">
@@ -64,9 +75,15 @@ const TransactionItem = ({ transaction }) => {
 
   let title = "Transaction";
   if (transaction.source === "deposit") {
-    title = "Deposit";
+    title =
+      transaction.status === "failed" || transaction.status === "rejected"
+        ? "Rejected Deposit"
+        : "Deposit";
   } else if (transaction.type === "debit") {
-    title = "Withdrawal";
+    title =
+      transaction.status === "failed" || transaction.status === "rejected"
+        ? "Rejected Withdrawal"
+        : "Withdrawal";
   } else if (transaction.source === "task_reward") {
     title = "Task Reward";
   } else if (transaction.source === "referral") {
@@ -77,7 +94,11 @@ const TransactionItem = ({ transaction }) => {
 
   return (
     <div className="transaction-item">
-      <TransactionIcon type={transaction.type} source={transaction.source} />
+      <TransactionIcon
+        type={transaction.type}
+        source={transaction.source}
+        status={transaction.status}
+      />
       <div className="transaction-content">
         <div className="transaction-details">
           <div>

@@ -221,6 +221,53 @@
   align-items: center;
 }
 
+/* Add these to your WalletOverview.css file */
+.blue-icon {
+  /* background-color: #e0f2fe; */
+  color: #0ea5e9;
+}
+
+.purple-icon {
+  /* background-color: #f3e8ff; */
+  color: #a855f7;
+}
+
+.orange-icon {
+  /* background-color: #ffedd5; */
+  color: #f97316;
+}
+
+.blue-gradient {
+  background: linear-gradient(to right, #0ea5e9, #38bdf8);
+}
+
+.purple-gradient {
+  background: linear-gradient(to right, #a855f7, #d946ef);
+}
+
+.orange-gradient {
+  background: linear-gradient(to right, #f97316, #fb923c);
+}
+
+/* Update the grid to support 6 cards */
+.wallet-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 1200px) {
+  .wallet-overview-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .wallet-overview-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Dark mode adjustments */
 @media (prefers-color-scheme: dark) {
   .user-level-badge {
