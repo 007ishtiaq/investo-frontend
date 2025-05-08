@@ -1,6 +1,7 @@
 // client/src/functions/user.js
 
 import axios from "axios";
+import { uploadImage } from "./cloudinary";
 
 export const getUsers = async (authtoken) => {
   try {
@@ -121,4 +122,45 @@ export const getTotalEarnings = async (authtoken) => {
       authtoken,
     },
   });
+};
+
+// Function specifically for contact attachments
+export const uploadContactAttachment = async (file) => {
+  return await uploadImage(file, "upload_preset");
+};
+
+export const sendContactMessage = async (formData, authtoken) => {
+  try {
+    // Upload attachment first if exists
+    let attachmentUrl = null;
+    if (formData.attachment) {
+      attachmentUrl = await uploadContactAttachment(formData.attachment);
+
+      if (!attachmentUrl) {
+        throw new Error("Failed to upload attachment");
+      }
+    }
+
+    // Create contact request with attachment URL
+    const res = await axios.post(
+      `${process.env.REACT_APP_API}/contact`,
+      {
+        name: formData.name,
+        email: formData.email,
+        subject: formData.subject,
+        message: formData.message,
+        attachmentUrl: attachmentUrl,
+        attachmentName: formData.fileName || null,
+      },
+      {
+        headers: {
+          authtoken,
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error("Submit contact error:", error);
+    throw error;
+  }
 };

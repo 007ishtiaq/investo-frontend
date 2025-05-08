@@ -28,6 +28,7 @@ import Dashboard from "./pages/User/Dashboard";
 import Invest from "./pages/User/Invest";
 import History from "./pages/User/History";
 import Profile from "./pages/User/Profilepage";
+import Contact from "./pages/Contact";
 
 function App() {
   return (
@@ -65,6 +66,7 @@ function App() {
 
           <Route path="/team" component={Team} />
           <Route path="/plans" component={Plans} />
+          <Route path="/contact" component={Contact} />
 
           {/* Dashboard route with Layout */}
           <Route path="/dashboard">
