@@ -351,12 +351,19 @@ const AdminDashboard = () => {
             <h2 className="admin-section-title">Platform Overview</h2>
             <div className="admin-stats-grid">
               <StatCard
+                title="Platform Balance"
+                value={formatBalance(
+                  analytics.financial.platformBalance,
+                  "USD"
+                )}
+                icon={DollarSign}
+                color="green"
+              />
+              <StatCard
                 title="Total Deposits"
                 value={formatBalance(analytics.financial.totalDeposits, "USD")}
                 icon={ArrowDown}
                 color="blue"
-                change={analytics.financial.depositChange}
-                linkTo="/admin/deposits"
               />
               <StatCard
                 title="Total Withdrawals"
@@ -366,25 +373,12 @@ const AdminDashboard = () => {
                 )}
                 icon={ArrowUp}
                 color="purple"
-                change={analytics.financial.withdrawalChange}
-                linkTo="/admin/withdrawals"
               />
               <StatCard
                 title="Total Rewards"
                 value={formatBalance(analytics.financial.totalRewards, "USD")}
                 icon={Award}
                 color="gold"
-                change={analytics.financial.rewardChange}
-              />
-              <StatCard
-                title="Platform Balance"
-                value={formatBalance(
-                  analytics.financial.platformBalance,
-                  "USD"
-                )}
-                icon={DollarSign}
-                color="green"
-                change={analytics.financial.balanceChange}
               />
             </div>
           </div>
@@ -510,26 +504,6 @@ const AdminDashboard = () => {
               <p>Create and manage tasks for users</p>
             </Link>
 
-            <Link to="/admin/taskverification" className="admin-menu-item">
-              <div className="admin-menu-icon">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
-                  <path d="M22 4L12 14.01l-3-3"></path>
-                </svg>
-              </div>
-              <h3>Task Verification</h3>
-              <p>Review and verify user task submissions</p>
-            </Link>
-
             <Link to="/admin/users" className="admin-menu-item">
               <div className="admin-menu-icon">
                 <svg
@@ -550,46 +524,6 @@ const AdminDashboard = () => {
               </div>
               <h3>User Management</h3>
               <p>View and manage platform users</p>
-            </Link>
-
-            <Link to="/admin/deposits" className="admin-menu-item">
-              <div className="admin-menu-icon">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M12 2v20M2 12h20"></path>
-                </svg>
-              </div>
-              <h3>Deposits</h3>
-              <p>View and process user deposits</p>
-            </Link>
-
-            <Link to="/admin/withdrawals" className="admin-menu-item">
-              <div className="admin-menu-icon">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M12 2v20M2 12h20"></path>
-                  <path d="M17 7l-5-5-5 5"></path>
-                  <path d="M17 17l-5 5-5-5"></path>
-                </svg>
-              </div>
-              <h3>Withdrawals</h3>
-              <p>Review and process withdrawal requests</p>
             </Link>
 
             <Link to="/admin/analytics" className="admin-menu-item">
@@ -631,6 +565,65 @@ const AdminDashboard = () => {
               </div>
               <h3>System Settings</h3>
               <p>Configure platform settings</p>
+            </Link>
+
+            <Link to="/admin/deposits" className="admin-menu-item">
+              <div className="admin-menu-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M12 2v20M2 12h20"></path>
+                </svg>
+              </div>
+              <h3>Deposits</h3>
+              <p>View and process user deposits</p>
+            </Link>
+
+            <Link to="/admin/withdrawals" className="admin-menu-item">
+              <div className="admin-menu-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M12 2v20M2 12h20"></path>
+                  <path d="M17 7l-5-5-5 5"></path>
+                  <path d="M17 17l-5 5-5-5"></path>
+                </svg>
+              </div>
+              <h3>Withdrawals</h3>
+              <p>Review and process withdrawal requests</p>
+            </Link>
+            <Link to="/admin/taskverification" className="admin-menu-item">
+              <div className="admin-menu-icon">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
+                  <path d="M22 4L12 14.01l-3-3"></path>
+                </svg>
+              </div>
+              <h3>Task Verification</h3>
+              <p>Review and verify user task submissions</p>
             </Link>
           </div>
         </div>
