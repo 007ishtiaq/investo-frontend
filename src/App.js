@@ -29,6 +29,7 @@ import Invest from "./pages/User/Invest";
 import History from "./pages/User/History";
 import Profile from "./pages/User/Profilepage";
 import Contact from "./pages/Contact";
+import ContactMessages from "./pages/Admin/ContactMessages";
 
 function App() {
   return (
@@ -112,6 +113,7 @@ function App() {
           <Route exact path="/admin/withdrawals" component={AdminWithdrawals} />
           <Route path="/admin/users" component={UserManagement} />
           <Route path="/admin/analytics" component={AdminAnalytics} />
+          <Route path="/admin/contact-messages" component={ContactMessages} />
 
           {/* <Route exact path="*" component={NotFound} /> */}
           <Route path="*" component={NotFound} />

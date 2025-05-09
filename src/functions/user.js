@@ -126,11 +126,13 @@ export const getTotalEarnings = async (authtoken) => {
 
 // Function specifically for contact attachments
 export const uploadContactAttachment = async (file) => {
-  return await uploadImage(file, "upload_preset");
+  return await uploadImage(file, "contact_attachments");
 };
 
 export const sendContactMessage = async (formData, authtoken) => {
   try {
+    console.log("formData", formData);
+
     // Upload attachment first if exists
     let attachmentUrl = null;
     if (formData.attachment) {

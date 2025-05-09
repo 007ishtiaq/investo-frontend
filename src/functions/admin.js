@@ -93,3 +93,44 @@ export const getAdminAnalytics = async (authtoken) => {
     },
   });
 };
+
+// Get all contact messages
+export const getAllContactMessages = async (authtoken) => {
+  return await axios.get(`${process.env.REACT_APP_API}/admin/contacts`, {
+    headers: {
+      authtoken,
+    },
+  });
+};
+// Get single contact message
+export const getSingleContactMessage = async (id, authtoken) => {
+  return await axios.get(`${process.env.REACT_APP_API}/admin/contact/${id}`, {
+    headers: {
+      authtoken,
+    },
+  });
+};
+// Update contact status
+export const updateContactStatus = async (id, status, authtoken) => {
+  return await axios.put(
+    `${process.env.REACT_APP_API}/admin/contact/${id}/status`,
+    { status },
+    {
+      headers: {
+        authtoken,
+      },
+    }
+  );
+};
+// Add note to contact
+export const addContactNote = async (id, text, authtoken) => {
+  return await axios.post(
+    `${process.env.REACT_APP_API}/admin/contact/${id}/note`,
+    { text },
+    {
+      headers: {
+        authtoken,
+      },
+    }
+  );
+};
