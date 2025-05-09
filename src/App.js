@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React, { Suspense, lazy } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Header from "./components/Header/Header";
 import Home from "./pages/Home";
@@ -11,29 +11,39 @@ import Login from "./pages/Login/Login";
 import Registration from "./pages/Registration/Registration";
 import OTPVerification from "./pages/OtpVerification/OtpVerification";
 import RegisterComplete from "./pages/RegisterComplete/RegisterComplete";
-import AdminDashboard from "./pages/Admin/AdminDashboard";
-import AdminAnalytics from "./pages/Admin/AdminAnalytics";
-import AdminTasks from "./pages/Admin/AdminTasks";
-import TaskVerification from "./pages/Admin/TaskVerification";
-import Wallet from "./pages/Wallet";
-import Team from "./pages/Team";
-import Plans from "./pages/Plans";
-import Deposit from "./pages/Deposit";
-import AdminDeposits from "./pages/Admin/AdminDeposits";
-import AdminWithdrawals from "./pages/Admin/AdminWithdrawals";
-import UserManagement from "./pages/Admin/UserManagement";
 import { Toaster } from "react-hot-toast";
 import Layout from "./components/Layout/Layout";
-import Dashboard from "./pages/User/Dashboard";
-import Invest from "./pages/User/Invest";
-import History from "./pages/User/History";
-import Profile from "./pages/User/Profilepage";
 import Contact from "./pages/Contact";
-import ContactMessages from "./pages/Admin/ContactMessages";
+
+// Lazy loaded components
+const UserRoute = lazy(() => import("./components/routes/UserRoute"));
+const AdminRoute = lazy(() => import("./components/routes/AdminRoute"));
+
+// User pages
+const Dashboard = lazy(() => import("./pages/User/Dashboard"));
+const Wallet = lazy(() => import("./pages/Wallet"));
+const Invest = lazy(() => import("./pages/User/Invest"));
+const History = lazy(() => import("./pages/User/History"));
+const Profile = lazy(() => import("./pages/User/Profilepage"));
+const Deposit = lazy(() => import("./pages/Deposit"));
+const Team = lazy(() => import("./pages/Team"));
+const Plans = lazy(() => import("./pages/Plans"));
+
+// Admin pages
+const AdminDashboard = lazy(() => import("./pages/Admin/AdminDashboard"));
+const AdminAnalytics = lazy(() => import("./pages/Admin/AdminAnalytics"));
+const AdminTasks = lazy(() => import("./pages/Admin/AdminTasks"));
+const TaskVerification = lazy(() => import("./pages/Admin/TaskVerification"));
+const AdminDeposits = lazy(() => import("./pages/Admin/AdminDeposits"));
+const AdminWithdrawals = lazy(() => import("./pages/Admin/AdminWithdrawals"));
+const UserManagement = lazy(() => import("./pages/Admin/UserManagement"));
+const ContactMessages = lazy(() => import("./pages/Admin/ContactMessages"));
 
 function App() {
   return (
-    <Suspense>
+    <Suspense
+      fallback={<div className="container text-center p-5">Loading...</div>}
+    >
       <Router>
         <Toaster
           position="top-center"
@@ -57,65 +67,91 @@ function App() {
         />
         <Header />
         <Switch>
-          {/* common unprotected Routes */}
+          {/* Public Routes (Unprotected) */}
           <Route exact path="/" component={Home} />
           <Route exact path="/tasks" component={Tasks} />
           <Route exact path="/login" component={Login} />
           <Route exact path="/register" component={Registration} />
           <Route exact path="/otpVerification" component={OTPVerification} />
           <Route exact path="/register/complete" component={RegisterComplete} />
+          <Route exact path="/contact" component={Contact} />
 
-          <Route path="/team" component={Team} />
-          <Route path="/plans" component={Plans} />
-          <Route path="/contact" component={Contact} />
+          {/* Semi-protected routes (accessible to all, but require login for full functionality) */}
+          <Route exact path="/plans" component={Plans} />
 
-          {/* Dashboard route with Layout */}
-          <Route path="/dashboard">
+          {/* User Protected Routes */}
+          <UserRoute exact path="/dashboard">
             <Layout>
               <Dashboard />
             </Layout>
-          </Route>
+          </UserRoute>
 
-          {/* Wallet route with Layout */}
-          <Route exact path="/wallet">
+          <UserRoute exact path="/wallet">
             <Layout>
               <Wallet />
             </Layout>
-          </Route>
+          </UserRoute>
 
-          {/* Invest route with Layout */}
-          <Route exact path="/invest">
+          <UserRoute exact path="/invest">
             <Layout>
               <Invest />
             </Layout>
-          </Route>
+          </UserRoute>
 
-          {/* History route with Layout */}
-          <Route exact path="/history">
+          <UserRoute exact path="/history">
             <Layout>
               <History />
             </Layout>
-          </Route>
+          </UserRoute>
 
-          {/* Profile route with Layout */}
-          <Route exact path="/profile">
+          <UserRoute exact path="/profile">
             <Layout>
               <Profile />
             </Layout>
-          </Route>
+          </UserRoute>
 
-          {/* Admin routes */}
-          <Route path="/admin" exact component={AdminDashboard} />
-          <Route path="/admin/tasks" component={AdminTasks} />
-          <Route path="/admin/taskverification" component={TaskVerification} />
-          <Route path="/deposit" component={Deposit} />
-          <Route path="/admin/deposits" component={AdminDeposits} />
-          <Route exact path="/admin/withdrawals" component={AdminWithdrawals} />
-          <Route path="/admin/users" component={UserManagement} />
-          <Route path="/admin/analytics" component={AdminAnalytics} />
-          <Route path="/admin/contact-messages" component={ContactMessages} />
+          <UserRoute exact path="/deposit">
+            <Deposit />
+          </UserRoute>
 
-          {/* <Route exact path="*" component={NotFound} /> */}
+          <UserRoute exact path="/team">
+            <Team />
+          </UserRoute>
+
+          {/* Admin Protected Routes */}
+          <AdminRoute exact path="/admin">
+            <AdminDashboard />
+          </AdminRoute>
+
+          <AdminRoute exact path="/admin/analytics">
+            <AdminAnalytics />
+          </AdminRoute>
+
+          <AdminRoute exact path="/admin/tasks">
+            <AdminTasks />
+          </AdminRoute>
+
+          <AdminRoute exact path="/admin/taskverification">
+            <TaskVerification />
+          </AdminRoute>
+
+          <AdminRoute exact path="/admin/deposits">
+            <AdminDeposits />
+          </AdminRoute>
+
+          <AdminRoute exact path="/admin/withdrawals">
+            <AdminWithdrawals />
+          </AdminRoute>
+
+          <AdminRoute exact path="/admin/users">
+            <UserManagement />
+          </AdminRoute>
+
+          <AdminRoute exact path="/admin/contact-messages">
+            <ContactMessages />
+          </AdminRoute>
+
+          {/* 404 Page */}
           <Route path="*" component={NotFound} />
         </Switch>
         <Headerbottom />
