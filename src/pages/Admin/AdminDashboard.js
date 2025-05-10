@@ -12,6 +12,7 @@ import {
   AlertCircle,
   FileText,
   Activity,
+  MessageSquare,
 } from "lucide-react";
 import { getAdminAnalytics } from "../../functions/admin";
 import { formatBalance } from "../../functions/wallet";
@@ -418,6 +419,13 @@ const AdminDashboard = () => {
                 color="emerald"
                 linkTo="/admin/taskverification"
               />
+              <StatCard
+                title="New Contact Messages"
+                value={analytics.newContactMessages}
+                icon={MessageSquare}
+                color="blue"
+                linkTo="/admin/contact-messages"
+              />
             </div>
           </div>
         ) : null}
@@ -443,208 +451,24 @@ const AdminDashboard = () => {
           </div>
         ) : null}
 
-        {/* User Levels Section */}
-        {loading ? null : analytics ? (
-          <div className="admin-users-section">
-            <h2 className="admin-section-title">User Distribution</h2>
-            <div className="admin-levels-grid">
-              {[1, 2, 3, 4].map((level) => (
-                <div key={level} className={`admin-level-card level-${level}`}>
-                  <h3>Level {level}</h3>
-                  <p className="level-count">
-                    {analytics.userLevels[`level${level}`] || 0}
-                  </p>
-                  <div className={`level-icon level-${level}`}>{level}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : null}
-
-        {/* Top Users Tables */}
+        {/* Top Users Section */}
         {loading ? null : analytics && analytics.topUsers ? (
           <div className="admin-tables-section">
-            <h2 className="admin-section-title">Top Users</h2>
+            <h2 className="admin-section-title">Top Performers</h2>
             <div className="admin-tables-grid">
               <TableCard
-                title="Top 5 Users by Balance"
-                data={analytics.topUsers.byBalance || []}
-                columns={["Email", "Name", "Balance", "Level"]}
+                title="Top Users by Balance"
+                data={analytics.topUsers.byBalance}
+                columns={["Name", "Email", "Balance", "Level"]}
               />
               <TableCard
-                title="Top 5 Users by Referrals"
-                data={analytics.topUsers.byReferrals || []}
-                columns={["Email", "Name", "Referrals", "Earnings"]}
+                title="Top Referrers"
+                data={analytics.topUsers.byReferrals}
+                columns={["Name", "Email", "Referrals", "Earnings"]}
               />
             </div>
           </div>
         ) : null}
-
-        {/* Navigation menu */}
-        <div className="admin-menu-section">
-          <h2 className="admin-section-title">Admin Menu</h2>
-          <div className="admin-menu-grid">
-            <Link to="/admin/tasks" className="admin-menu-item">
-              <div className="admin-menu-icon">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M9 11l3 3L22 4"></path>
-                  <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path>
-                </svg>
-              </div>
-              <h3>Tasks Management</h3>
-              <p>Create and manage tasks for users</p>
-            </Link>
-
-            <Link to="/admin/users" className="admin-menu-item">
-              <div className="admin-menu-icon">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path>
-                  <circle cx="9" cy="7" r="4"></circle>
-                  <path d="M23 21v-2a4 4 0 00-3-3.87"></path>
-                  <path d="M16 3.13a4 4 0 010 7.75"></path>
-                </svg>
-              </div>
-              <h3>User Management</h3>
-              <p>View and manage platform users</p>
-            </Link>
-
-            <Link to="/admin/analytics" className="admin-menu-item">
-              <div className="admin-menu-icon">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M18 20V10"></path>
-                  <path d="M12 20V4"></path>
-                  <path d="M6 20v-6"></path>
-                </svg>
-              </div>
-              <h3>Analytics</h3>
-              <p>View detailed platform statistics</p>
-            </Link>
-
-            <Link to="/admin/settings" className="admin-menu-item">
-              <div className="admin-menu-icon">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <circle cx="12" cy="12" r="3"></circle>
-                  <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"></path>
-                </svg>
-              </div>
-              <h3>System Settings</h3>
-              <p>Configure platform settings</p>
-            </Link>
-
-            <Link to="/admin/deposits" className="admin-menu-item">
-              <div className="admin-menu-icon">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M12 2v20M2 12h20"></path>
-                </svg>
-              </div>
-              <h3>Deposits</h3>
-              <p>View and process user deposits</p>
-            </Link>
-
-            <Link to="/admin/withdrawals" className="admin-menu-item">
-              <div className="admin-menu-icon">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M12 2v20M2 12h20"></path>
-                  <path d="M17 7l-5-5-5 5"></path>
-                  <path d="M17 17l-5 5-5-5"></path>
-                </svg>
-              </div>
-              <h3>Withdrawals</h3>
-              <p>Review and process withdrawal requests</p>
-            </Link>
-            <Link to="/admin/taskverification" className="admin-menu-item">
-              <div className="admin-menu-icon">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
-                  <path d="M22 4L12 14.01l-3-3"></path>
-                </svg>
-              </div>
-              <h3>Task Verification</h3>
-              <p>Review and verify user task submissions</p>
-            </Link>
-            <Link to="/admin/contact-messages" className="admin-menu-item">
-              <div className="admin-menu-icon">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
-                </svg>
-              </div>
-              <h3>Contacts</h3>
-              <p>View user submitted contact forms</p>
-            </Link>
-          </div>
-        </div>
       </div>
     </div>
   );
