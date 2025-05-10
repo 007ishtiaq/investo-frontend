@@ -44,17 +44,10 @@ const UserManagement = lazy(() => import("./pages/Admin/UserManagement"));
 const ContactMessages = lazy(() => import("./pages/Admin/ContactMessages"));
 
 function App() {
-  const dispatch = useDispatch();
   const { user } = useSelector((state) => ({ ...state }));
-  // Use the token refresh hook
-  useTokenRefresh();
 
-  useEffect(() => {
-    if (user && user.token) {
-      // Setup token refresh system
-      setupTokenRefresh(user, dispatch);
-    }
-  }, [user, dispatch]);
+  // Use the token refresh hook (only one token refresh mechanism)
+  useTokenRefresh();
 
   return (
     <Suspense

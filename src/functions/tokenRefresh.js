@@ -1,6 +1,10 @@
 import firebase from "../firebase";
 import axios from "axios";
 
+// Track interceptors to avoid duplicates
+let requestInterceptor = null;
+let responseInterceptor = null;
+
 // Get fresh token function
 export const getFreshToken = async () => {
   const currentUser = firebase.auth().currentUser;
@@ -19,8 +23,17 @@ export const getFreshToken = async () => {
 
 // Setup axios interceptors for token refreshing
 export const setupTokenRefresh = (user, dispatch) => {
+  // Remove existing interceptors if they exist
+  if (requestInterceptor !== null) {
+    axios.interceptors.request.eject(requestInterceptor);
+  }
+
+  if (responseInterceptor !== null) {
+    axios.interceptors.response.eject(responseInterceptor);
+  }
+
   // Set up axios interceptor for request
-  axios.interceptors.request.use(
+  requestInterceptor = axios.interceptors.request.use(
     async (config) => {
       // Make sure we don't add token to calls that don't need it
       if (
@@ -36,7 +49,7 @@ export const setupTokenRefresh = (user, dispatch) => {
   );
 
   // Set up axios interceptor for response
-  axios.interceptors.response.use(
+  responseInterceptor = axios.interceptors.response.use(
     (response) => response,
     async (error) => {
       const originalRequest = error.config;
