@@ -1,0 +1,127 @@
+/* LoadingSpinner.css - Updated version */
+.loading-spinner-wrapper {
+  width: 100%;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.loading-spinner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.loading-spinner {
+  display: inline-block;
+  position: relative;
+  width: 64px;
+  height: 64px;
+}
+
+.loading-spinner div {
+  position: absolute;
+  top: 27px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #3b82f6;
+  animation-timing-function: cubic-bezier(0, 1, 1, 0);
+}
+
+.loading-spinner div:nth-child(1) {
+  left: 6px;
+  animation: loading-spinner1 0.6s infinite;
+}
+
+.loading-spinner div:nth-child(2) {
+  left: 6px;
+  animation: loading-spinner2 0.6s infinite;
+}
+
+.loading-spinner div:nth-child(3) {
+  left: 26px;
+  animation: loading-spinner2 0.6s infinite;
+}
+
+.loading-spinner div:nth-child(4) {
+  left: 45px;
+  animation: loading-spinner3 0.6s infinite;
+}
+
+@keyframes loading-spinner1 {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes loading-spinner3 {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0);
+  }
+}
+
+@keyframes loading-spinner2 {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(19px, 0);
+  }
+}
+
+.loading-text {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .loading-spinner {
+    width: 50px;
+    height: 50px;
+  }
+
+  .loading-spinner div {
+    width: 8px;
+    height: 8px;
+    top: 21px;
+  }
+
+  .loading-spinner div:nth-child(1) {
+    left: 5px;
+  }
+
+  .loading-spinner div:nth-child(2) {
+    left: 5px;
+  }
+
+  .loading-spinner div:nth-child(3) {
+    left: 20px;
+  }
+
+  .loading-spinner div:nth-child(4) {
+    left: 35px;
+  }
+
+  @keyframes loading-spinner2 {
+    0% {
+      transform: translate(0, 0);
+    }
+    100% {
+      transform: translate(15px, 0);
+    }
+  }
+}

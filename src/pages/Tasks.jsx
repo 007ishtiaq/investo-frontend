@@ -25,6 +25,7 @@ import { getUserWallet } from "../functions/wallet";
 import "./Tasks.css";
 import { Camera, Upload, AlertTriangle } from "lucide-react";
 import { useWallet } from "../contexts/WalletContext";
+import LoadingSpinner from "../hooks/LoadingSpinner";
 
 /**
  * EmptyState component for displaying when no tasks match criteria
@@ -713,7 +714,9 @@ const Tasks = () => {
         {error && <div className="error-message">{error}</div>}
 
         {loading ? (
-          <div className="loading-indicator">Loading tasks...</div>
+          <div className="loading-indicator">
+            <LoadingSpinner />
+          </div>
         ) : filteredTasks.length === 0 ? (
           <EmptyState
             message={
@@ -729,7 +732,9 @@ const Tasks = () => {
             {loading ? (
               <div className="loading-container">
                 <div className="loading-spinner"></div>
-                <p>Loading tasks...</p>
+                <p>
+                  <LoadingSpinner />
+                </p>
               </div>
             ) : filteredTasks.length === 0 ? (
               <EmptyState
