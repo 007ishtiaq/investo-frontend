@@ -30,3 +30,23 @@ export const getUserLevelPlans = async (token) => {
     throw new Error("Error loading available investment plans");
   }
 };
+
+// Function to upgrade user's plan
+export const upgradePlan = async (authtoken, { planId, investmentAmount }) => {
+  try {
+    const response = await axios.post(
+      `${process.env.REACT_APP_API}/user/upgrade-plan`,
+      { planId, investmentAmount },
+      {
+        headers: {
+          authtoken,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Plan upgrade error:", error);
+    throw error;
+  }
+};

@@ -14,79 +14,132 @@ import { Button } from "../../components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, ArrowUp } from "lucide-react";
 import { useWallet } from "../../contexts/WalletContext";
+import PlanUpgradeModal from "../../components/PlanUpgradeModal/PlanUpgradeModal";
 
-const PlanItem = ({ plan, walletBalance, detailed = false }) => {
+const PlanItem = ({ plan, walletBalance, userLevel, detailed = false }) => {
+  const { user } = useSelector((state) => ({ ...state }));
+  const { walletCurrency } = useWallet();
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
   const minAmount = parseFloat(plan.minAmount);
-  const dailyRate = parseFloat(plan.dailyIncome); // Changed from dailyRate to dailyIncome
-  const isActive = parseFloat(walletBalance || 0) >= minAmount;
+  const dailyRate = parseFloat(plan.dailyIncome);
+  const parsedWalletBalance = parseFloat(walletBalance || 0);
+
+  // Check if user has enough balance for this plan
+  const hasEnoughBalance = parsedWalletBalance >= minAmount;
+
+  // Check if user's current level is at or above this plan's level
+  const isCurrentOrLower = userLevel >= plan.minLevel;
+
+  // Check if this is exactly the user's current level plan
+  const isCurrentLevel = userLevel === plan.minLevel;
+
+  // Check if this plan requires a higher level than the user's current level
+  const isHigherLevel = plan.minLevel > userLevel;
+
+  // Check if the plan is available for upgrade (higher level AND enough balance)
+  const isAvailableForUpgrade = isHigherLevel && hasEnoughBalance;
+
+  // For progress bar, we'll use wallet balance
   const percentComplete = Math.min(
     100,
-    (parseFloat(walletBalance || 0) / minAmount) * 100
+    (parsedWalletBalance / minAmount) * 100
   );
 
   // Calculate monthly and yearly returns
   const monthlyReturn = (dailyRate * 30).toFixed(1);
   const yearlyReturn = (dailyRate * 365).toFixed(1);
 
+  const handleUpgradeClick = () => {
+    setShowUpgradeModal(true);
+  };
+
   return (
-    <div className={`plan-item ${isActive ? "plan-item-active" : ""}`}>
-      <div className="plan-header">
-        <div>
-          <h3 className="plan-title">{plan.name}</h3>
-          <p className="plan-description">{plan.description}</p>
+    <>
+      <div
+        className={`plan-item ${isCurrentLevel ? "plan-item-active" : ""} ${
+          isAvailableForUpgrade ? "plan-item-available" : ""
+        }`}
+      >
+        <div className="plan-header">
+          <div>
+            <h3 className="plan-title">{plan.name}</h3>
+            <p className="plan-description">{plan.description}</p>
+          </div>
+          {isCurrentLevel ? (
+            <span className="plan-status plan-status-active">Current</span>
+          ) : isCurrentOrLower ? (
+            <span className="plan-status plan-status-base">Base</span>
+          ) : isAvailableForUpgrade ? (
+            <span className="plan-status plan-status-available">Available</span>
+          ) : (
+            <span className="plan-status plan-status-locked">Locked</span>
+          )}
         </div>
-        <span
-          className={`plan-status ${
-            isActive ? "plan-status-active" : "plan-status-locked"
-          }`}
-        >
-          {isActive ? "Active" : "Locked"}
-        </span>
-      </div>
 
-      {detailed && (
-        <div className="plan-stats-grid">
-          <div className="plan-stat-box">
-            <div className="plan-stat-label">Daily</div>
-            <div className="plan-stat-value">{dailyRate}%</div>
+        {detailed && (
+          <div className="plan-stats-grid">
+            <div className="plan-stat-box">
+              <div className="plan-stat-label">Daily</div>
+              <div className="plan-stat-value">{dailyRate}%</div>
+            </div>
+            <div className="plan-stat-box">
+              <div className="plan-stat-label">Monthly</div>
+              <div className="plan-stat-value">~{monthlyReturn}%</div>
+            </div>
+            <div className="plan-stat-box">
+              <div className="plan-stat-label">Yearly</div>
+              <div className="plan-stat-value">~{yearlyReturn}%</div>
+            </div>
           </div>
-          <div className="plan-stat-box">
-            <div className="plan-stat-label">Monthly</div>
-            <div className="plan-stat-value">~{monthlyReturn}%</div>
-          </div>
-          <div className="plan-stat-box">
-            <div className="plan-stat-label">Yearly</div>
-            <div className="plan-stat-value">~{yearlyReturn}%</div>
-          </div>
-        </div>
-      )}
+        )}
 
-      <div className="plan-progress-container">
-        <div className="plan-progress-header">
-          <span className="plan-min-amount">Min: ${minAmount.toFixed(2)}</span>
-          <span className="plan-daily-rate">{dailyRate}% daily</span>
+        <div className="plan-progress-container">
+          <div className="plan-progress-header">
+            <span className="plan-min-amount">
+              Min: ${minAmount.toFixed(2)}
+            </span>
+            <span className="plan-daily-rate">{dailyRate}% daily</span>
+          </div>
+          <div className="plan-progress-bar">
+            <div
+              className={`plan-progress-fill ${
+                hasEnoughBalance
+                  ? "plan-progress-fill-active"
+                  : "plan-progress-fill-locked"
+              }`}
+              style={{ width: `${percentComplete}%` }}
+            ></div>
+          </div>
+          <div className="plan-balance-text">
+            Your balance: ${parsedWalletBalance.toFixed(2)}
+          </div>
         </div>
-        <div className="plan-progress-bar">
-          <div
-            className={`plan-progress-fill ${
-              isActive
-                ? "plan-progress-fill-active"
-                : "plan-progress-fill-locked"
+
+        {/* Show the upgrade button only for higher-level plans */}
+        {isHigherLevel && (
+          <Button
+            className={`plan-upgrade-button ${
+              hasEnoughBalance ? "plan-upgrade-button-available" : ""
             }`}
-            style={{ width: `${percentComplete}%` }}
-          ></div>
-        </div>
-        <div className="plan-balance-text">
-          Your balance: ${parseFloat(walletBalance).toFixed(2)}
-        </div>
+            size="sm"
+            onClick={handleUpgradeClick}
+          >
+            <ArrowUp className="plan-upgrade-icon" /> Upgrade Plan
+          </Button>
+        )}
       </div>
 
-      {!isActive && (
-        <Button className="plan-upgrade-button" size="sm">
-          <ArrowUp className="plan-upgrade-icon" /> Upgrade Plan
-        </Button>
-      )}
-    </div>
+      {/* Plan Upgrade Modal */}
+      <PlanUpgradeModal
+        show={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        plan={plan}
+        walletBalance={parsedWalletBalance}
+        walletCurrency={walletCurrency || "USD"}
+        userToken={user?.token}
+      />
+    </>
   );
 };
 
@@ -216,9 +269,10 @@ const InvestmentPlans = ({
         <div className={`plans-grid ${showAll ? "plans-grid-full" : ""}`}>
           {displayedPlans.map((plan) => (
             <PlanItem
-              key={plan._id} // Changed from id to _id to match backend data
+              key={plan._id}
               plan={plan}
               walletBalance={walletBalance || "0"}
+              userLevel={userLevel}
               detailed={showDetailed}
             />
           ))}

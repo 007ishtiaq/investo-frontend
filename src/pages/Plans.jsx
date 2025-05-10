@@ -3,16 +3,28 @@ import InvestmentCard from "../components/InvestmentCard/InvestmentCard";
 import { useSelector } from "react-redux";
 import { getInvestmentPlans } from "../functions/investmentplans";
 import { getUserLevel } from "../functions/user"; // Import the getUserLevel function
+import { useWallet } from "../contexts/WalletContext";
 import toast from "react-hot-toast";
+import "./Plans.css";
+import PlanUpgradeModal from "../components/PlanUpgradeModal/PlanUpgradeModal";
 
 /**
  * Investment page component displaying available investment plans
  */
 const Plans = () => {
   const { user } = useSelector((state) => ({ ...state }));
+  const { walletBalance, walletCurrency } = useWallet();
   const [userLevel, setUserLevel] = useState(1);
   const [loading, setLoading] = useState(true);
   const [investmentPlans, setInvestmentPlans] = useState([]);
+  const [selectedPlan, setSelectedPlan] = useState(null);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
+  // Function to handle plan upgrade button click
+  const handleUpgradeClick = (plan) => {
+    setSelectedPlan(plan);
+    setShowUpgradeModal(true);
+  };
 
   // Fetch user level from backend using the getUserLevel function
   useEffect(() => {
@@ -68,6 +80,8 @@ const Plans = () => {
     minAmount: plan.minAmount,
     featured: plan.featured,
     additionalFeatures: plan.features,
+    // Add this prop to enable upgrade modal
+    onUpgrade: () => handleUpgradeClick(plan),
   });
 
   return (
@@ -176,160 +190,18 @@ const Plans = () => {
           </div>
         </div>
       </div>
+
+      {/* Plan Upgrade Modal */}
+      <PlanUpgradeModal
+        show={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        plan={selectedPlan}
+        walletBalance={walletBalance}
+        walletCurrency={walletCurrency}
+        userToken={user?.token}
+      />
     </div>
   );
 };
 
 export default Plans;
-
-// Add styling for the Investment page
-document.head.appendChild(document.createElement("style")).textContent = `
-.investment-page {
-  padding: 3rem 0;
-}
-
-.investment-header {
-  text-align: center;
-  margin-bottom: 3rem;
-}
-
-.page-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  color: var(--color-text-primary);
-}
-
-.page-description {
-  font-size: 1.125rem;
-  color: var(--color-text-secondary);
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.investment-stats {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
-  margin-bottom: 3rem;
-  text-align: center;
-}
-
-@media (min-width: 768px) {
-  .investment-stats {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-.stat-item {
-  background-color: var(--color-card-bg);
-  padding: 1.5rem;
-  border-radius: 1rem;
-  border: 1px solid var(--color-border);
-}
-
-.stat-value {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--color-primary);
-  margin-bottom: 0.5rem;
-}
-
-.stat-label {
-  font-size: 0.875rem;
-  color: var(--color-text-secondary);
-}
-
-.investment-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-  margin-bottom: 4rem;
-}
-
-@media (min-width: 640px) {
-  .investment-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .investment-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-.section-header {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.section-title {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 0.875rem;
-  color: var(--color-text-primary);
-}
-
-.section-description {
-  font-size: 1rem;
-  color: var(--color-text-secondary);
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.fixed-deposit-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-  margin-bottom: 4rem;
-}
-
-@media (min-width: 640px) {
-  .fixed-deposit-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .fixed-deposit-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-.fixed-deposit-grid-item {
-  height: 100%;
-}
-
-.investment-faq {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.faq-title {
-  font-size: 1.875rem;
-  font-weight: 700;
-  margin-bottom: 2rem;
-  text-align: center;
-  color: var(--color-text-primary);
-}
-
-.faq-item {
-  margin-bottom: 1.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.faq-question {
-  font-size: 1.125rem;
-  font-weight: 600;
-  margin-bottom: 0.75rem;
-  color: var(--color-text-primary);
-}
-
-.faq-answer {
-  font-size: 1rem;
-  color: var(--color-text-secondary);
-  line-height: 1.6;
-}
-`;

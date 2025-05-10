@@ -33,6 +33,18 @@ const InvestmentCard = ({ plan, userLevel, user }) => {
   // Check if the plan is available to the user based on their level
   const isAvailable = isLoggedIn && userLevel >= plan.level;
 
+  // Check if this plan is higher than user's level (for upgrade button)
+  const isHigherLevel = isLoggedIn && plan.level > userLevel;
+
+  // Handler for plan upgrade button
+  const handleUpgradeClick = (e) => {
+    e.preventDefault();
+    // Use the onUpgrade handler from props
+    if (plan.onUpgrade) {
+      plan.onUpgrade();
+    }
+  };
+
   return (
     <div
       className={`investment-card ${
@@ -104,12 +116,17 @@ const InvestmentCard = ({ plan, userLevel, user }) => {
       </div>
 
       {isLoggedIn ? (
-        isAvailable ? (
-          <div className="locked-message">Achieved Level {plan.level}</div>
-        ) : (
-          <Link to={`/invest/${plan.id}`} className="invest-button">
+        isHigherLevel ? (
+          // Show "Upgrade Now" button for plans higher than the user's level
+          <button onClick={handleUpgradeClick} className="invest-button">
             Upgrade Now
-          </Link>
+          </button>
+        ) : isUserLevel ? (
+          // Show "Current Plan" for user's current level
+          <div className="current-plan-message">Current Plan</div>
+        ) : (
+          // Show "Base Plan" for levels below the user's current level
+          <div className="base-plan-message">Base Plan</div>
         )
       ) : (
         <Link to={`/login`} className="invest-button">

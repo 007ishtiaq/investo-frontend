@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, useEffect } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Header from "./components/Header/Header";
 import Home from "./pages/Home";
@@ -8,12 +8,16 @@ import Footer from "./components/Footer/Footer";
 import Headerbottom from "./components/Header/Headerbottom";
 import Tasks from "./pages/Tasks";
 import Login from "./pages/Login/Login";
+import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 import Registration from "./pages/Registration/Registration";
 import OTPVerification from "./pages/OtpVerification/OtpVerification";
 import RegisterComplete from "./pages/RegisterComplete/RegisterComplete";
 import { Toaster } from "react-hot-toast";
 import Layout from "./components/Layout/Layout";
 import Contact from "./pages/Contact";
+import { useDispatch, useSelector } from "react-redux";
+import { setupTokenRefresh } from "./functions/tokenRefresh";
+import { useTokenRefresh } from "./hooks/useTokenRefresh";
 
 // Lazy loaded components
 const UserRoute = lazy(() => import("./components/routes/UserRoute"));
@@ -40,6 +44,18 @@ const UserManagement = lazy(() => import("./pages/Admin/UserManagement"));
 const ContactMessages = lazy(() => import("./pages/Admin/ContactMessages"));
 
 function App() {
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => ({ ...state }));
+  // Use the token refresh hook
+  useTokenRefresh();
+
+  useEffect(() => {
+    if (user && user.token) {
+      // Setup token refresh system
+      setupTokenRefresh(user, dispatch);
+    }
+  }, [user, dispatch]);
+
   return (
     <Suspense
       fallback={<div className="container text-center p-5">Loading...</div>}
@@ -71,6 +87,7 @@ function App() {
           <Route exact path="/" component={Home} />
           <Route exact path="/tasks" component={Tasks} />
           <Route exact path="/login" component={Login} />
+          <Route exact path="/forgot/password" component={ForgotPassword} />
           <Route exact path="/register" component={Registration} />
           <Route exact path="/otpVerification" component={OTPVerification} />
           <Route exact path="/register/complete" component={RegisterComplete} />
