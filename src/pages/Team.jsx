@@ -2,7 +2,11 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
-import { getTeamMembers, getAffiliateCode } from "../functions/team";
+import {
+  getTeamMembers,
+  getAffiliateCode,
+  getTeamEarnings,
+} from "../functions/team";
 import { formatBalance } from "../functions/wallet";
 import { getUserLevel } from "../functions/user";
 import "./Team.css";
@@ -15,15 +19,36 @@ const Team = () => {
     activeMembers: 0,
     affiliateEarnings: 0,
   });
+  const [earnings, setEarnings] = useState({
+    total: 0,
+    daily: 0,
+    weekly: 0,
+    monthly: 0,
+    byLevel: {
+      level1: 0,
+      level2: 0,
+      level3: 0,
+      level4: 0,
+    },
+  });
+  const [membersByLevel, setMembersByLevel] = useState({
+    level1: 0,
+    level2: 0,
+    level3: 0,
+    level4: 0,
+  });
+  const [recentRewards, setRecentRewards] = useState([]);
   const [affiliateCode, setAffiliateCode] = useState("");
   const [loading, setLoading] = useState(true);
+  const [earningsLoading, setEarningsLoading] = useState(true);
   const [copied, setCopied] = useState(false);
-  const [userLevel, setUserLevel] = useState(1); // New state for user level
+  const [userLevel, setUserLevel] = useState(1);
 
   useEffect(() => {
     if (user && user.token) {
       loadTeamData();
-      loadUserLevel(); // New function to load user level
+      loadUserLevel();
+      loadTeamEarnings();
     }
   }, [user]);
 
@@ -57,14 +82,36 @@ const Team = () => {
     }
   };
 
-  // New function to fetch user level
+  // New function to load team earnings
+  const loadTeamEarnings = async () => {
+    setEarningsLoading(true);
+    try {
+      const res = await getTeamEarnings(user.token);
+      if (res && res.data && res.data.success) {
+        setEarnings(res.data.earnings);
+        setMembersByLevel(res.data.membersByLevel);
+        setRecentRewards(res.data.recentRewards || []);
+
+        // Update the total earnings in stats
+        setStats((prev) => ({
+          ...prev,
+          affiliateEarnings: res.data.earnings.total,
+        }));
+      }
+    } catch (error) {
+      console.error("Error loading team earnings:", error);
+      toast.error("Failed to load team earnings");
+    } finally {
+      setEarningsLoading(false);
+    }
+  };
+
   const loadUserLevel = async () => {
     try {
       const level = await getUserLevel(user.token);
       setUserLevel(level);
     } catch (error) {
       console.error("Error loading user level:", error);
-      // We'll keep the default level 1 if there's an error
     }
   };
 
@@ -115,16 +162,14 @@ const Team = () => {
               <span className="stat-value">
                 {formatBalance(stats.affiliateEarnings, "USD")}
               </span>
-              <span className="stat-label">Earnings By team</span>
+              <span className="stat-label">Earnings By Team</span>
             </div>
             <div className="stat-card">
-              {/* Updated to use the fetched userLevel */}
               <span className="stat-value">{userLevel}</span>
               <span className="stat-label">Your Account Level</span>
             </div>
           </div>
 
-          {/* Rest of the component remains the same */}
           {/* Affiliate Link Section */}
           <div className="affiliate-section">
             <h2>Share Your Affiliate Link</h2>
