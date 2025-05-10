@@ -13,6 +13,7 @@ import {
   DollarSign,
   Users,
   XCircle,
+  Clock,
 } from "lucide-react";
 import { useSelector } from "react-redux";
 import { getTransactionHistory } from "../../functions/wallet";
@@ -20,6 +21,15 @@ import toast from "react-hot-toast";
 import "./RecentTransactions.css";
 
 const TransactionIcon = ({ type, source, status }) => {
+  // For pending transactions
+  if (status === "pending") {
+    return (
+      <div className="transaction-icon pending-icon">
+        <Clock className="icon-inner" />
+      </div>
+    );
+  }
+
   // For rejected transactions (both deposit and withdrawal)
   if (status === "failed" || status === "rejected") {
     return (
@@ -72,13 +82,20 @@ const formatDate = (dateString) => {
 const TransactionItem = ({ transaction }) => {
   const amount = parseFloat(transaction.amount);
   const isPositive = transaction.type === "credit";
+  const isPending = transaction.status === "pending";
 
   let title = "Transaction";
   if (transaction.source === "deposit") {
-    title =
-      transaction.status === "failed" || transaction.status === "rejected"
-        ? "Rejected Deposit"
-        : "Deposit";
+    if (transaction.status === "pending") {
+      title = "Deposit Under Verification";
+    } else if (
+      transaction.status === "failed" ||
+      transaction.status === "rejected"
+    ) {
+      title = "Rejected Deposit";
+    } else {
+      title = "Deposit";
+    }
   } else if (transaction.type === "debit") {
     title =
       transaction.status === "failed" || transaction.status === "rejected"
@@ -102,7 +119,14 @@ const TransactionItem = ({ transaction }) => {
       <div className="transaction-content">
         <div className="transaction-details">
           <div>
-            <p className="transaction-title">{title}</p>
+            <p className="transaction-title">
+              {title}
+              {isPending && (
+                <span className="transaction-status-badge pending">
+                  Pending
+                </span>
+              )}
+            </p>
             <p className="transaction-description">
               {transaction.description ? (
                 <span
@@ -118,10 +142,10 @@ const TransactionItem = ({ transaction }) => {
           <span
             className={`transaction-amount ${
               isPositive ? "amount-positive" : "amount-negative"
-            }`}
+            } ${isPending ? "amount-pending" : ""}`}
           >
             {isPositive ? "+" : "-"}
-            {Math.abs(amount).toFixed(3)}
+            {Math.abs(amount).toFixed(2)}
           </span>
         </div>
       </div>

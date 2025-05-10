@@ -14,6 +14,7 @@ import {
   Users,
   XCircle,
   AlertTriangle,
+  Clock,
 } from "lucide-react";
 import {
   Select,
@@ -30,6 +31,15 @@ import toast from "react-hot-toast";
 import "./History.css";
 
 const TransactionTypeIcon = ({ type, source, status }) => {
+  // For pending transactions (both deposits and withdrawals)
+  if (status === "pending") {
+    return (
+      <div className="transaction-icon transaction-icon-pending">
+        <Clock className="transaction-icon-svg" />
+      </div>
+    );
+  }
+
   // For rejected transactions
   if (status === "failed" || status === "rejected") {
     if (source === "deposit") {
@@ -139,6 +149,11 @@ const History = () => {
       return false;
     }
 
+    // Add filter for pending transactions
+    if (filter === "pending" && transaction.status !== "pending") {
+      return false;
+    }
+
     // New filter options for rejected transactions
     if (
       filter === "rejected" &&
@@ -173,7 +188,8 @@ const History = () => {
       filter !== "earning" &&
       filter !== "rejected" &&
       filter !== "rejected_deposit" &&
-      filter !== "rejected_withdraw"
+      filter !== "rejected_withdraw" &&
+      filter !== "pending"
     ) {
       // If filter is not one of the predefined ones, don't filter
       return true;
@@ -250,6 +266,9 @@ const History = () => {
                     <SelectItem value="deposit">Deposits</SelectItem>
                     <SelectItem value="withdraw">Withdrawals</SelectItem>
                     <SelectItem value="earning">Earnings</SelectItem>
+                    <SelectItem value="pending">
+                      Pending Transactions
+                    </SelectItem>
                     <SelectItem value="rejected">
                       Rejected Transactions
                     </SelectItem>
@@ -309,20 +328,31 @@ const History = () => {
                     {filteredTransactions.map((transaction) => {
                       const amount = parseFloat(transaction.amount);
                       const isPositive = transaction.type === "credit";
+                      const isPending = transaction.status === "pending";
 
                       let type = "Transaction";
                       if (transaction.source === "deposit") {
-                        type =
+                        if (transaction.status === "pending") {
+                          type = "Deposit Under Verification";
+                        } else if (
                           transaction.status === "failed" ||
                           transaction.status === "rejected"
-                            ? "Rejected Deposit"
-                            : "Deposit";
-                      } else if (transaction.type === "debit") {
-                        type =
+                        ) {
+                          type = "Rejected Deposit";
+                        } else {
+                          type = "Deposit";
+                        }
+                      } else if (transaction.source === "withdrawal") {
+                        if (transaction.status === "pending") {
+                          type = "Withdrawal Under Verification";
+                        } else if (
                           transaction.status === "failed" ||
                           transaction.status === "rejected"
-                            ? "Rejected Withdrawal"
-                            : "Withdrawal";
+                        ) {
+                          type = "Rejected Withdrawal";
+                        } else {
+                          type = "Withdrawal";
+                        }
                       } else if (
                         transaction.source === "task_reward" ||
                         transaction.source === "referral" ||
@@ -354,6 +384,11 @@ const History = () => {
                                 {transaction.source
                                   .replace(/_/g, " ")
                                   .replace(/\b\w/g, (c) => c.toUpperCase())}
+                                {isPending && (
+                                  <span className="transaction-status pending">
+                                    Pending Verification
+                                  </span>
+                                )}
                               </span>
                             </div>
                           </td>
@@ -361,10 +396,10 @@ const History = () => {
                           <td
                             className={`amount-cell ${
                               isPositive ? "amount-positive" : "amount-negative"
-                            }`}
+                            } ${isPending ? "amount-pending" : ""}`}
                           >
                             {isPositive ? "+" : "-"}
-                            {Math.abs(amount).toFixed(3)}
+                            {Math.abs(amount).toFixed(2)}
                           </td>
                         </tr>
                       );
@@ -373,70 +408,74 @@ const History = () => {
                 </table>
               </div>
 
-              {/* Mobile view - Transaction Items like RecentTransactions */}
+              {/* Mobile view - Transaction Items */}
               <div className="mobile-view">
                 {filteredTransactions.map((transaction) => {
                   const amount = parseFloat(transaction.amount);
                   const isPositive = transaction.type === "credit";
+                  const isPending = transaction.status === "pending";
 
-                  let title = "Transaction";
+                  let type = "Transaction";
                   if (transaction.source === "deposit") {
-                    title =
+                    if (transaction.status === "pending") {
+                      type = "Deposit Under Verification";
+                    } else if (
                       transaction.status === "failed" ||
                       transaction.status === "rejected"
-                        ? "Rejected Deposit"
-                        : "Deposit";
-                  } else if (transaction.type === "debit") {
-                    title =
+                    ) {
+                      type = "Rejected Deposit";
+                    } else {
+                      type = "Deposit";
+                    }
+                  } else if (transaction.source === "withdrawal") {
+                    if (transaction.status === "pending") {
+                      type = "Withdrawal Under Verification";
+                    } else if (
                       transaction.status === "failed" ||
                       transaction.status === "rejected"
-                        ? "Rejected Withdrawal"
-                        : "Withdrawal";
-                  } else if (transaction.source === "task_reward") {
-                    title = "Task Reward";
-                  } else if (transaction.source === "referral") {
-                    title = "Referral Bonus";
-                  } else if (transaction.source === "bonus") {
-                    title = "Bonus";
+                    ) {
+                      type = "Rejected Withdrawal";
+                    } else {
+                      type = "Withdrawal";
+                    }
+                  } else if (
+                    transaction.source === "task_reward" ||
+                    transaction.source === "referral" ||
+                    transaction.source === "bonus"
+                  ) {
+                    type = "Earnings";
                   }
 
                   return (
-                    <div key={transaction._id} className="transaction-item">
-                      <TransactionTypeIcon
-                        type={transaction.type}
-                        source={transaction.source}
-                        status={transaction.status}
-                      />
-                      <div className="transaction-content">
-                        <div className="transaction-details">
-                          <div>
-                            <p className="transaction-title">{title}</p>
-                            <p className="transaction-description">
-                              {transaction.description ? (
-                                <span
-                                  className="transaction-description-text"
-                                  title={transaction.description}
-                                >
-                                  {transaction.description}
-                                </span>
-                              ) : null}
-                              <span>{formatDate(transaction.createdAt)}</span>
-                            </p>
-                            <span className="transaction-source mobile-source">
-                              {transaction.source
-                                .replace(/_/g, " ")
-                                .replace(/\b\w/g, (c) => c.toUpperCase())}
-                            </span>
+                    <div className="transaction-item" key={transaction._id}>
+                      <div className="transaction-item-left">
+                        <TransactionTypeIcon
+                          type={transaction.type}
+                          source={transaction.source}
+                          status={transaction.status}
+                        />
+                        <div className="transaction-item-info">
+                          <div className="transaction-item-type">{type}</div>
+                          <div className="transaction-item-description">
+                            {transaction.description || type}
                           </div>
-                          <span
-                            className={`transaction-amount ${
-                              isPositive ? "amount-positive" : "amount-negative"
-                            }`}
-                          >
-                            {isPositive ? "+" : "-"}
-                            {Math.abs(amount).toFixed(2)}
-                          </span>
+                          <div className="transaction-item-date">
+                            {formatDate(transaction.createdAt)}
+                          </div>
+                          {isPending && (
+                            <div className="transaction-status-mobile pending">
+                              Pending Verification
+                            </div>
+                          )}
                         </div>
+                      </div>
+                      <div
+                        className={`transaction-item-amount ${
+                          isPositive ? "amount-positive" : "amount-negative"
+                        } ${isPending ? "amount-pending" : ""}`}
+                      >
+                        {isPositive ? "+" : "-"}
+                        {Math.abs(amount).toFixed(2)}
                       </div>
                     </div>
                   );
@@ -448,23 +487,37 @@ const History = () => {
           {/* Pagination */}
           {totalPages > 1 && (
             <div className="pagination">
-              <button
-                className="pagination-button"
+              <Button
+                variant="outline"
+                onClick={() => handlePageChange(1)}
+                disabled={currentPage === 1}
+              >
+                First
+              </Button>
+              <Button
+                variant="outline"
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
               >
                 Previous
-              </button>
-              <div className="pagination-info">
+              </Button>
+              <span className="pagination-info">
                 Page {currentPage} of {totalPages}
-              </div>
-              <button
-                className="pagination-button"
+              </span>
+              <Button
+                variant="outline"
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
               >
                 Next
-              </button>
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => handlePageChange(totalPages)}
+                disabled={currentPage === totalPages}
+              >
+                Last
+              </Button>
             </div>
           )}
         </CardContent>

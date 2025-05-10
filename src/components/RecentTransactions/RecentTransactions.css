@@ -190,6 +190,51 @@
   border-radius: 0.25rem;
 }
 
+/* Add these CSS rules to RecentTransactions.css */
+
+/* Pending icon styling */
+.pending-icon {
+  background-color: rgba(246, 192, 80, 0.1);
+  color: #f6c050;
+}
+
+/* Pending status badge */
+.transaction-status-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  padding: 1px 6px;
+  border-radius: 10px;
+  margin-left: 6px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  vertical-align: middle;
+}
+
+.transaction-status-badge.pending {
+  background-color: rgba(246, 192, 80, 0.15);
+  color: #f6c050;
+}
+
+/* Pending amount styling */
+.amount-pending {
+  color: #f6c050 !important;
+  opacity: 0.8;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .pending-icon {
+    background-color: rgba(246, 192, 80, 0.15);
+    color: #f6c050;
+  }
+
+  .transaction-status-badge.pending {
+    background-color: rgba(246, 192, 80, 0.2);
+    color: #f6c050;
+  }
+}
+
 /* Dark mode adjustments */
 @media (prefers-color-scheme: dark) {
   .transaction-item {

@@ -356,6 +356,63 @@
   color: #f59e0b; /* Amber */
 }
 
+/* Add these styles to your History.css file */
+
+.transaction-icon-pending {
+  background-color: rgba(246, 192, 80, 0.1);
+  color: #f6c050;
+}
+
+.transaction-status {
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+  font-weight: 500;
+}
+
+.transaction-status.pending {
+  background-color: rgba(246, 192, 80, 0.15);
+  color: #f6c050;
+}
+
+.transaction-status-mobile {
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-top: 4px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.transaction-status-mobile.pending {
+  background-color: rgba(246, 192, 80, 0.15);
+  color: #f6c050;
+}
+
+.amount-pending {
+  color: #f6c050 !important;
+  opacity: 0.7;
+}
+
+@media (prefers-color-scheme: dark) {
+  .transaction-icon-pending {
+    background-color: rgba(246, 192, 80, 0.15);
+    color: #f6c050;
+  }
+
+  .transaction-status.pending {
+    background-color: rgba(246, 192, 80, 0.2);
+    color: #f6c050;
+  }
+
+  .transaction-status-mobile.pending {
+    background-color: rgba(246, 192, 80, 0.2);
+    color: #f6c050;
+  }
+}
+
 /* Responsive styles */
 @media (max-width: 640px) {
   .desktop-view {
