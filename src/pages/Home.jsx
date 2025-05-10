@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import HeroSection from "../components/HeroSection/HeroSection";
 import NFTMarketplace from "../components/NFTMarketplace/NFTMarketplace";
 import CTASection from "../components/CTASection/CTASection";
 import HeroSlider from "../components/HeroSlider/HeroSlider";
@@ -7,6 +6,12 @@ import FeaturedNFT from "../components/FeaturedNFT/FeaturedNFT";
 import NFTCollectionsGrid from "../components/NFTCollectionsGrid/NFTCollectionsGrid";
 import NFTCollectionItems from "../components/NFTCollectionItems/NFTCollectionItems";
 import PromoBanner from "../components/PromoBanner/PromoBanner";
+import HeroBanner from "../components/HeroBanner/HeroBanner";
+import ActiveMembersStats from "../components/ActiveMembersStats/ActiveMembersStats";
+import Transactionsbanner from "../components/Transactionsbanner/Transactionsbanner";
+import NewMembers from "../components/NewMembers/NewMembers";
+import InvestmentPlansShowcase from "../components/InvestmentPlansShowcase/InvestmentPlansShowcase";
+import PlatformStats from "../components/PlatformStats/PlatformStats";
 
 // Sample Data
 const demoNfts = [
@@ -197,6 +202,86 @@ const sampleCollections = [
   },
 ];
 
+const sampleActiveStats = {
+  active: 843,
+  total: 12574,
+  growth: 15,
+};
+
+const sampleTransactions = [
+  { type: "deposit", amount: 500.0, user: "Michael S.", time: "5 min ago" },
+  { type: "withdraw", amount: 150.25, user: "Jennifer K.", time: "15 min ago" },
+  { type: "deposit", amount: 1000.0, user: "Robert L.", time: "1 hour ago" },
+];
+
+const sampleMembers = [
+  {
+    name: "Emma Davis",
+    joinDate: "2 days ago",
+    initialInvestment: 250,
+    level: 1,
+    color: "#7c3aed",
+  },
+  {
+    name: "James Wilson",
+    joinDate: "3 days ago",
+    initialInvestment: 500,
+    level: 2,
+    color: "#3b82f6",
+  },
+  {
+    name: "Sarah Johnson",
+    joinDate: "4 days ago",
+    initialInvestment: 1000,
+    level: 3,
+    color: "#f59e0b",
+  },
+];
+
+const samplePlans = [
+  {
+    name: "Starter Plan",
+    level: 1,
+    minInvestment: 100,
+    dailyReturn: 0.5,
+    features: [
+      "Daily profit distribution",
+      "Basic dashboard access",
+      "Email support",
+    ],
+  },
+  {
+    name: "Growth Plan",
+    level: 2,
+    minInvestment: 500,
+    dailyReturn: 0.7,
+    features: [
+      "Higher daily returns",
+      "Priority support",
+      "Advanced dashboard",
+    ],
+    popular: true,
+  },
+  {
+    name: "Premium Plan",
+    level: 3,
+    minInvestment: 1000,
+    dailyReturn: 1.0,
+    features: ["Maximum daily returns", "VIP support", "Full platform access"],
+  },
+];
+
+const sampleStats = {
+  totalInvested: 1250000,
+  investmentGrowth: 8.5,
+  totalUsers: 12574,
+  userGrowth: 12.7,
+  totalRewards: 385000,
+  rewardsGrowth: 5.9,
+  avgReturn: 21.5,
+  returnGrowth: 2.3,
+};
+
 function Home() {
   const nfts = demoNfts;
   const creators = demoCreators;
@@ -222,9 +307,14 @@ function Home() {
 
   return (
     <div className="home-page">
-      <HeroSection featuredNft={featuredNft} creator={featuredCreator} />
+      <HeroBanner theme="light" />
 
       <div className="container">
+        <ActiveMembersStats stats={sampleActiveStats} />
+        <Transactionsbanner transactions={sampleTransactions} />
+        <InvestmentPlansShowcase plans={samplePlans} />
+        <PlatformStats stats={sampleStats} />
+        <NewMembers members={sampleMembers} />
         <HeroSlider />
         <main className="marketplace-content">
           <div className="marketplace-sections">
