@@ -61,8 +61,34 @@ export const getCurrentUser = async (authtoken) => {
   });
 };
 
-// Update user profile (name, contact, etc.)
+// Update user profile with optional image upload
 export const updateUserProfile = async (authtoken, userData) => {
+  // Check if there's an image file to upload first
+  if (userData.profileImage && userData.profileImage instanceof File) {
+    try {
+      // Upload the image to Cloudinary
+      const imageUrl = await uploadImage(
+        userData.profileImage,
+        "contact_attachments"
+      );
+
+      // Replace the File object with the URL string
+      if (imageUrl) {
+        userData.profileImage = imageUrl;
+      } else {
+        // If upload failed, remove the field
+        delete userData.profileImage;
+      }
+    } catch (err) {
+      console.error("Profile image upload error:", err);
+      // Remove the field if upload failed
+      delete userData.profileImage;
+    }
+  } else if (!userData.profileImage) {
+    // If profileImage is null or empty string, don't send it
+    delete userData.profileImage;
+  }
+  // Now send the update request with the image URL if available
   return await axios.put(
     `${process.env.REACT_APP_API}/user/profile`,
     userData,

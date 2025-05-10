@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Card,
   CardContent,
@@ -9,7 +9,7 @@ import {
 } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
-import { User, Mail, Key, Shield, Bell } from "lucide-react";
+import { User, Mail, Key, Shield, Bell, Camera } from "lucide-react";
 import TwoFactorAuth from "../../components/TwoFactorAuth/TwoFactorAuth";
 import { useSelector } from "react-redux";
 import {
@@ -22,6 +22,8 @@ import toast from "react-hot-toast";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import "./Profile.css";
+import { Link } from "react-router-dom";
+import { Edit2 } from "lucide-react";
 
 // Custom FormLabel component instead of using the UI Label
 const FormLabel = ({ htmlFor, children }) => {
@@ -31,7 +33,6 @@ const FormLabel = ({ htmlFor, children }) => {
     </label>
   );
 };
-
 // Password change validation schema
 const passwordSchema = Yup.object({
   currentPassword: Yup.string().required("Current password is required"),
@@ -42,7 +43,6 @@ const passwordSchema = Yup.object({
     .required("Please confirm your password")
     .oneOf([Yup.ref("password"), null], "Passwords must match"),
 });
-
 const Profile = () => {
   const { user } = useSelector((state) => ({ ...state }));
   const [loading, setLoading] = useState(true);
@@ -54,19 +54,18 @@ const Profile = () => {
   const [saving, setSaving] = useState(false);
   const [updatingPassword, setUpdatingPassword] = useState(false);
   const [savingPreferences, setSavingPreferences] = useState(false);
-
+  const [profileImage, setProfileImage] = useState(null);
+  const fileInputRef = useRef(null);
   // Email notification preferences
   const [notifDeposits, setNotifDeposits] = useState(true);
   const [notifEarnings, setNotifEarnings] = useState(true);
   const [notifPromotions, setNotifPromotions] = useState(false);
   const [notifSecurity, setNotifSecurity] = useState(true);
-
   useEffect(() => {
     if (user && user.token) {
       loadUserProfile();
     }
   }, [user]);
-
   const loadUserProfile = async () => {
     try {
       setLoading(true);
@@ -74,7 +73,6 @@ const Profile = () => {
       setProfileData(res.data);
       setName(res.data.name);
       setPhone(res.data.contact || "");
-
       // Set notification preferences if available
       if (res.data.notifications) {
         setNotifDeposits(res.data.notifications.deposits !== false);
@@ -82,7 +80,6 @@ const Profile = () => {
         setNotifPromotions(res.data.notifications.promotions === true);
         setNotifSecurity(res.data.notifications.security !== false);
       }
-
       setLoading(false);
     } catch (err) {
       console.error("Failed to load profile:", err);
@@ -90,17 +87,66 @@ const Profile = () => {
       setLoading(false);
     }
   };
-
+  const handleImageClick = () => {
+    fileInputRef.current.click();
+  };
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    // Validate file type
+    const validImageTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/jpg",
+      "image/gif",
+    ];
+    if (!validImageTypes.includes(file.type)) {
+      toast.error("Please select a valid image file (JPEG, PNG, or GIF)");
+      return;
+    }
+    // Validate file size (limit to 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Image size must be less than 2MB");
+      return;
+    }
+    // Set the file for upload
+    setProfileImage(file);
+    // Create a preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      document.querySelector(
+        ".profile-avatar-fallback"
+      ).style.backgroundImage = `url(${reader.result})`;
+      document.querySelector(".profile-avatar-fallback").innerHTML = "";
+    };
+    reader.readAsDataURL(file);
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       setSaving(true);
-      const res = await updateUserProfile(user.token, {
+      const userData = {
         name,
         contact: phone,
-      });
+      };
+      // Add profile image to update data if available
+      if (profileImage) {
+        userData.profileImage = profileImage;
+      }
+      const res = await updateUserProfile(user.token, userData);
       setProfileData(res.data);
+      console.log(res.data);
+
       toast.success("Profile updated successfully");
+
+      // Reset the file input and state after successful update
+      if (profileImage) {
+        setProfileImage(null);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+      }
+
       setSaving(false);
     } catch (err) {
       console.error("Failed to update profile:", err);
@@ -108,24 +154,27 @@ const Profile = () => {
       setSaving(false);
     }
   };
-
+  // Get user initials for avatar
+  const getUserInitials = (name) => {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("");
+  };
   const handleNotificationSubmit = async (e) => {
     e.preventDefault();
     try {
       setSavingPreferences(true);
-
       const notificationPreferences = {
         deposits: notifDeposits,
         earnings: notifEarnings,
         promotions: notifPromotions,
         security: notifSecurity,
       };
-
       const res = await updateNotificationPreferences(
         user.token,
         notificationPreferences
       );
-
       if (res.data) {
         setProfileData({
           ...profileData,
@@ -133,7 +182,6 @@ const Profile = () => {
         });
         toast.success("Notification preferences updated successfully");
       }
-
       setSavingPreferences(false);
     } catch (err) {
       console.error("Failed to update notification preferences:", err);
@@ -141,7 +189,6 @@ const Profile = () => {
       setSavingPreferences(false);
     }
   };
-
   // Password formik setup
   const passwordFormik = useFormik({
     initialValues: {
@@ -153,24 +200,19 @@ const Profile = () => {
     onSubmit: async (values, action) => {
       try {
         setUpdatingPassword(true);
-
         // Get current user
         const currentUser = auth.currentUser;
-
         if (currentUser) {
           // For Firebase v8
           const credential = firebase.auth.EmailAuthProvider.credential(
             currentUser.email,
             values.currentPassword
           );
-
           try {
             // First reauthenticate with current password
             await currentUser.reauthenticateWithCredential(credential);
-
             // If reauthentication successful, update password
             await currentUser.updatePassword(values.password);
-
             toast.success("Password updated successfully");
             action.resetForm();
           } catch (error) {
@@ -186,7 +228,6 @@ const Profile = () => {
         }
       } catch (err) {
         console.error("Failed to update password:", err);
-
         // Handle specific errors
         if (err.code === "auth/requires-recent-login") {
           toast.error(
@@ -200,7 +241,6 @@ const Profile = () => {
       }
     },
   });
-
   if (loading || !profileData) {
     return (
       <div className="skeleton-container">
@@ -210,7 +250,6 @@ const Profile = () => {
             <div className="skeleton-text"></div>
           </CardContent>
         </Card>
-
         <Card>
           <CardHeader>
             <div className="skeleton-card-title"></div>
@@ -222,19 +261,34 @@ const Profile = () => {
       </div>
     );
   }
-
   return (
     <>
       <Card className="profile-header-card">
         <CardContent className="profile-header-content">
           <div className="profile-header">
-            <div className="profile-avatar">
-              <div className="profile-avatar-fallback">
-                {profileData.name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
+            <div className="profile-avatar" onClick={handleImageClick}>
+              <div
+                className="profile-avatar-fallback"
+                style={{
+                  backgroundImage: profileData.profileImage
+                    ? `url(${profileData.profileImage})`
+                    : "none",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
+              >
+                {!profileData.profileImage && getUserInitials(profileData.name)}
+                <Link to="/profile" className="profile-edit-button">
+                  <Edit2 size={14} />
+                </Link>
               </div>
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleImageChange}
+                accept="image/*"
+                style={{ display: "none" }}
+              />
             </div>
             <div className="profile-header-info">
               <h1 className="profile-title">{profileData.name}</h1>
