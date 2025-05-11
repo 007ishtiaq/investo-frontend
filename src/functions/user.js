@@ -3,13 +3,16 @@
 import axios from "axios";
 import { uploadImage } from "./cloudinary";
 
-export const getUsers = async (authtoken) => {
+export const getUsers = async (authtoken, page = 1, limit = 10, email = "") => {
   try {
-    const res = await axios.get(`${process.env.REACT_APP_API}/admin/users`, {
-      headers: {
-        authtoken,
-      },
-    });
+    const res = await axios.get(
+      `${process.env.REACT_APP_API}/admin/users?page=${page}&limit=${limit}&email=${email}`,
+      {
+        headers: {
+          authtoken,
+        },
+      }
+    );
 
     return res.data;
   } catch (error) {

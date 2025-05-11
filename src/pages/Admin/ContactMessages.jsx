@@ -69,6 +69,10 @@ const ContactMessages = () => {
   const [statusUpdating, setStatusUpdating] = useState(false);
   const [imageModalOpen, setImageModalOpen] = useState(false);
   const [modalImage, setModalImage] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const itemsPerPage = 10;
   const [stats, setStats] = useState({
     all: 0,
     new: 0,
@@ -77,10 +81,10 @@ const ContactMessages = () => {
     closed: 0,
   });
 
-  // Load all contacts on component mount
+  // Load contacts on component mount or when page changes
   useEffect(() => {
     loadContacts();
-  }, []);
+  }, [currentPage]);
 
   // Update stats whenever contacts change
   useEffect(() => {
@@ -89,7 +93,7 @@ const ContactMessages = () => {
 
   const updateStats = () => {
     const newStats = {
-      all: contacts.length,
+      all: totalItems, // Use totalItems for all count
       new: contacts.filter((c) => c.status === "new").length,
       in_progress: contacts.filter((c) => c.status === "in_progress").length,
       resolved: contacts.filter((c) => c.status === "resolved").length,
@@ -101,14 +105,28 @@ const ContactMessages = () => {
   const loadContacts = async () => {
     try {
       setLoading(true);
-      const response = await getAllContactMessages(user.token);
-      setContacts(response.data);
+      const response = await getAllContactMessages(
+        user.token,
+        currentPage,
+        itemsPerPage
+      );
+
+      // Update state with the contacts and pagination info
+      setContacts(response.data.contacts);
+      setCurrentPage(response.data.pagination.currentPage);
+      setTotalPages(response.data.pagination.totalPages);
+      setTotalItems(response.data.pagination.totalItems);
+
       setLoading(false);
     } catch (error) {
       console.error("Load contacts error:", error);
       toast.error("Failed to load contact messages");
       setLoading(false);
     }
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
 
   // Toggle contact expansion
@@ -196,6 +214,12 @@ const ContactMessages = () => {
     }
   };
 
+  // When changing tabs, reset to page 1
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setCurrentPage(1);
+  };
+
   if (!user || user.role !== "admin") {
     return (
       <div className="admin-access-denied">
@@ -231,28 +255,28 @@ const ContactMessages = () => {
             value={stats.all}
             icon={Inbox}
             color="blue"
-            onClick={() => setActiveTab("all")}
+            onClick={() => handleTabChange("all")}
           />
           <StatCard
             title="New Messages"
             value={stats.new}
             icon={MessageSquare}
             color="amber"
-            onClick={() => setActiveTab("new")}
+            onClick={() => handleTabChange("new")}
           />
           <StatCard
             title="In Progress"
             value={stats.in_progress}
             icon={Clock}
             color="purple"
-            onClick={() => setActiveTab("in_progress")}
+            onClick={() => handleTabChange("in_progress")}
           />
           <StatCard
             title="Resolved"
             value={stats.resolved}
             icon={CheckCircle}
             color="green"
-            onClick={() => setActiveTab("resolved")}
+            onClick={() => handleTabChange("resolved")}
           />
         </div>
       </div>
@@ -260,35 +284,35 @@ const ContactMessages = () => {
       <div className="contact-tabs">
         <button
           className={`tab ${activeTab === "all" ? "active" : ""}`}
-          onClick={() => setActiveTab("all")}
+          onClick={() => handleTabChange("all")}
         >
           <Inbox size={16} />
           <span>All Messages</span>
         </button>
         <button
           className={`tab ${activeTab === "new" ? "active" : ""}`}
-          onClick={() => setActiveTab("new")}
+          onClick={() => handleTabChange("new")}
         >
           <MessageSquare size={16} />
           <span>New</span>
         </button>
         <button
           className={`tab ${activeTab === "in_progress" ? "active" : ""}`}
-          onClick={() => setActiveTab("in_progress")}
+          onClick={() => handleTabChange("in_progress")}
         >
           <Clock size={16} />
           <span>In Progress</span>
         </button>
         <button
           className={`tab ${activeTab === "resolved" ? "active" : ""}`}
-          onClick={() => setActiveTab("resolved")}
+          onClick={() => handleTabChange("resolved")}
         >
           <CheckCircle size={16} />
           <span>Resolved</span>
         </button>
         <button
           className={`tab ${activeTab === "closed" ? "active" : ""}`}
-          onClick={() => setActiveTab("closed")}
+          onClick={() => handleTabChange("closed")}
         >
           <XCircle size={16} />
           <span>Closed</span>
@@ -307,178 +331,191 @@ const ContactMessages = () => {
           <p>There are no messages in this category.</p>
         </div>
       ) : (
-        <div className="contacts-list">
-          {getFilteredContacts().map((contact) => (
-            <div
-              key={contact._id}
-              className={`contact-item ${
-                expandedContact === contact._id ? "expanded" : ""
-              }`}
-            >
+        <>
+          <div className="contacts-list">
+            {getFilteredContacts().map((contact) => (
               <div
-                className="contact-header"
-                onClick={() => toggleContact(contact._id)}
+                key={contact._id}
+                className={`contact-item ${
+                  expandedContact === contact._id ? "expanded" : ""
+                }`}
               >
-                <div className="contact-info">
-                  <div className="contact-subject">{contact.subject}</div>
-                  <div className="contact-meta">
-                    <div className="contact-name">{contact.name}</div>
-                    <div className="contact-date">
-                      {formatDate(contact.createdAt)}
+                <div
+                  className="contact-header"
+                  onClick={() => toggleContact(contact._id)}
+                >
+                  <div className="contact-info">
+                    <div className="contact-subject">{contact.subject}</div>
+                    <div className="contact-meta">
+                      <div className="contact-name">{contact.name}</div>
+                      <div className="contact-date">
+                        {formatDate(contact.createdAt)}
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="contact-indicators">
-                  {contact.attachment && (
-                    <span className="has-attachment" title="Has attachment">
-                      <FileText size={16} />
-                    </span>
-                  )}
-                  <span
-                    className={`status-badge ${getStatusBadgeClass(
-                      contact.status
-                    )}`}
-                  >
-                    {contact.status.charAt(0).toUpperCase() +
-                      contact.status.slice(1).replace("_", " ")}
-                  </span>
-                  {expandedContact === contact._id ? (
-                    <ChevronUp size={20} />
-                  ) : (
-                    <ChevronDown size={20} />
-                  )}
-                </div>
-              </div>
-
-              {expandedContact === contact._id && (
-                <div className="contact-details">
-                  <div className="contact-body">
-                    <div className="detail-section">
-                      <h3>Customer Information</h3>
-                      <div className="detail-item">
-                        <span className="detail-label">Name:</span>
-                        <span className="detail-value">{contact.name}</span>
-                      </div>
-                      <div className="detail-item">
-                        <span className="detail-label">Email:</span>
-                        <span className="detail-value">{contact.email}</span>
-                      </div>
-                      <div className="detail-item">
-                        <span className="detail-label">Date:</span>
-                        <span className="detail-value">
-                          {formatDate(contact.createdAt)}
-                        </span>
-                      </div>
-                      <div className="detail-item">
-                        <span className="detail-label">Status:</span>
-                        <div className="status-selector">
-                          <select
-                            value={contact.status}
-                            onChange={(e) =>
-                              handleStatusUpdate(contact._id, e.target.value)
-                            }
-                            disabled={statusUpdating}
-                          >
-                            <option value="new">New</option>
-                            <option value="in_progress">In Progress</option>
-                            <option value="resolved">Resolved</option>
-                            <option value="closed">Closed</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="detail-section">
-                      <h3>Message</h3>
-                      <div className="message-content">{contact.message}</div>
-                    </div>
-
+                  <div className="contact-indicators">
                     {contact.attachment && (
+                      <span className="has-attachment" title="Has attachment">
+                        <FileText size={16} />
+                      </span>
+                    )}
+                    <span
+                      className={`status-badge ${getStatusBadgeClass(
+                        contact.status
+                      )}`}
+                    >
+                      {contact.status.charAt(0).toUpperCase() +
+                        contact.status.slice(1).replace("_", " ")}
+                    </span>
+                    {expandedContact === contact._id ? (
+                      <ChevronUp size={20} />
+                    ) : (
+                      <ChevronDown size={20} />
+                    )}
+                  </div>
+                </div>
+
+                {expandedContact === contact._id && (
+                  <div className="contact-details">
+                    <div className="contact-body">
                       <div className="detail-section">
-                        <h3>Attachment</h3>
-                        <div className="attachment-container">
-                          <div className="attachment-preview">
-                            <button
-                              className="view-attachment"
-                              onClick={() =>
-                                openImageModal(contact.attachment.url)
+                        <h3>Customer Information</h3>
+                        <div className="detail-item">
+                          <span className="detail-label">Name:</span>
+                          <span className="detail-value">{contact.name}</span>
+                        </div>
+                        <div className="detail-item">
+                          <span className="detail-label">Email:</span>
+                          <span className="detail-value">{contact.email}</span>
+                        </div>
+                        <div className="detail-item">
+                          <span className="detail-label">Date:</span>
+                          <span className="detail-value">
+                            {formatDate(contact.createdAt)}
+                          </span>
+                        </div>
+                        <div className="detail-item">
+                          <span className="detail-label">Status:</span>
+                          <div className="status-selector">
+                            <select
+                              value={contact.status}
+                              onChange={(e) =>
+                                handleStatusUpdate(contact._id, e.target.value)
                               }
+                              disabled={statusUpdating}
                             >
-                              <FileText size={16} />
-                              <span>
-                                {contact.attachment.originalName ||
-                                  "View Attachment"}
-                              </span>
-                            </button>
+                              <option value="new">New</option>
+                              <option value="in_progress">In Progress</option>
+                              <option value="resolved">Resolved</option>
+                              <option value="closed">Closed</option>
+                            </select>
                           </div>
                         </div>
                       </div>
-                    )}
 
-                    <div className="detail-section">
-                      <h3>Admin Notes</h3>
-                      {contact.notes && contact.notes.length > 0 ? (
-                        <div className="notes-list">
-                          {contact.notes.map((note, index) => (
-                            <div key={index} className="note-item">
-                              <div className="note-header">
-                                <span className="note-author">
-                                  {note.createdBy}
-                                </span>
-                                <span className="note-date">
-                                  {formatDate(note.createdAt)}
-                                </span>
-                              </div>
-                              <div className="note-text">{note.text}</div>
+                      <div className="detail-section">
+                        <h3>Message</h3>
+                        <div className="message-content">{contact.message}</div>
+                        {contact.attachment && (
+                          <div className="attachment-section">
+                            <h3>Attachment</h3>
+                            <div className="attachment-preview">
+                              <img
+                                src={contact.attachment}
+                                alt="Attachment"
+                                onClick={() =>
+                                  openImageModal(contact.attachment)
+                                }
+                                className="attachment-thumbnail"
+                              />
                             </div>
-                          ))}
+                          </div>
+                        )}
+                      </div>
+
+                      {contact.notes && contact.notes.length > 0 && (
+                        <div className="detail-section">
+                          <h3>Admin Notes</h3>
+                          <div className="notes-list">
+                            {contact.notes.map((note, idx) => (
+                              <div key={idx} className="note-item">
+                                <div className="note-content">{note.text}</div>
+                                <div className="note-meta">
+                                  <span className="note-author">
+                                    {note.addedBy ? note.addedBy : "Admin"}
+                                  </span>
+                                  <span className="note-date">
+                                    {formatDate(note.addedAt)}
+                                  </span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
                         </div>
-                      ) : (
-                        <div className="no-notes">No notes added yet.</div>
                       )}
-                      <div className="add-note-container">
-                        <textarea
-                          placeholder="Add a note..."
-                          value={noteText}
-                          onChange={(e) => setNoteText(e.target.value)}
-                          rows="3"
-                          className="note-textarea"
-                        ></textarea>
-                        <button
-                          className="add-note-button"
-                          onClick={() => handleAddNote(contact._id)}
-                          disabled={addingNote || !noteText.trim()}
-                        >
-                          <PenLine size={16} />
-                          <span>{addingNote ? "Adding..." : "Add Note"}</span>
-                        </button>
+
+                      <div className="detail-section">
+                        <h3>Add Note</h3>
+                        <div className="note-form">
+                          <textarea
+                            placeholder="Add an internal note about this inquiry..."
+                            value={noteText}
+                            onChange={(e) => setNoteText(e.target.value)}
+                            rows="3"
+                            className="note-textarea"
+                          ></textarea>
+                          <button
+                            className="add-note-button"
+                            onClick={() => handleAddNote(contact._id)}
+                            disabled={addingNote || !noteText.trim()}
+                          >
+                            <PenLine size={16} />
+                            <span>{addingNote ? "Adding..." : "Add Note"}</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Pagination Controls - Only show for "all" tab */}
+          {activeTab === "all" && totalPages > 0 && (
+            <div className="pagination">
+              <button
+                className="page-button"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1 || loading}
+              >
+                Previous
+              </button>
+              <span className="page-info">
+                Page {currentPage} of {totalPages} ({totalItems} messages)
+              </span>
+              <button
+                className="page-button"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages || loading}
+              >
+                Next
+              </button>
             </div>
-          ))}
-        </div>
+          )}
+        </>
       )}
 
-      {/* Image Modal */}
       {imageModalOpen && (
-        <div
-          className="image-modal-overlay"
-          onClick={() => setImageModalOpen(false)}
-        >
-          <div
-            className="image-modal-content"
-            onClick={(e) => e.stopPropagation()}
-          >
+        <div className="image-modal">
+          <div className="image-modal-content">
             <button
               className="close-modal-button"
               onClick={() => setImageModalOpen(false)}
             >
-              &times;
+              ×
             </button>
-            <img src={modalImage} alt="Attachment" className="modal-image" />
+            <img src={modalImage} alt="Attachment Preview" />
           </div>
         </div>
       )}

@@ -24,6 +24,10 @@ const AdminDeposits = () => {
   const [adminNotes, setAdminNotes] = useState("");
   const [filter, setFilter] = useState("pending");
   const [editedAmount, setEditedAmount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const itemsPerPage = 10;
 
   // Manual deposit state
   const [showManualDepositForm, setShowManualDepositForm] = useState(false);
@@ -37,19 +41,39 @@ const AdminDeposits = () => {
   useEffect(() => {
     loadDeposits();
     loadInvestmentPlans();
-  }, [filter]);
+  }, [filter, currentPage]);
 
   const loadDeposits = async () => {
     try {
       setLoading(true);
-      const data = await getDeposits(user.token, filter);
 
-      setDeposits(data);
+      if (filter === "pending") {
+        // For pending deposits, load without pagination
+        const data = await getDeposits(user.token, filter);
+        setDeposits(data);
+      } else {
+        // For all deposits, load with pagination
+        const data = await getDeposits(
+          user.token,
+          filter,
+          currentPage,
+          itemsPerPage
+        );
+        setDeposits(data.deposits);
+        setCurrentPage(data.pagination.currentPage);
+        setTotalPages(data.pagination.totalPages);
+        setTotalItems(data.pagination.totalItems);
+      }
+
       setLoading(false);
     } catch (error) {
       toast.error(error.message || "Error loading deposits");
       setLoading(false);
     }
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
 
   const loadInvestmentPlans = async () => {
@@ -189,13 +213,19 @@ const AdminDeposits = () => {
               className={`filter-button ${
                 filter === "pending" ? "active" : ""
               }`}
-              onClick={() => setFilter("pending")}
+              onClick={() => {
+                setFilter("pending");
+                setCurrentPage(1);
+              }}
             >
               Pending Deposits
             </button>
             <button
               className={`filter-button ${filter === "all" ? "active" : ""}`}
-              onClick={() => setFilter("all")}
+              onClick={() => {
+                setFilter("all");
+                setCurrentPage(1);
+              }}
             >
               All Deposits
             </button>
@@ -367,21 +397,34 @@ const AdminDeposits = () => {
                           >
                             {deposit.status === "pending" ? "Review" : "View"}
                           </button>
-                          {deposit.screenshotUrl && (
-                            <a
-                              href={deposit.screenshotUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="screenshot-button"
-                            >
-                              Screenshot
-                            </a>
-                          )}
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
+
+                {/* Add pagination only for "all" filter */}
+                {filter === "all" && totalPages > 0 && (
+                  <div className="pagination">
+                    <button
+                      className="page-button"
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1 || loading}
+                    >
+                      Previous
+                    </button>
+                    <span className="page-info">
+                      Page {currentPage} of {totalPages} ({totalItems} deposits)
+                    </span>
+                    <button
+                      className="page-button"
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages || loading}
+                    >
+                      Next
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </>
@@ -411,25 +454,9 @@ const AdminDeposits = () => {
                   </div>
                   <div className="detail-row">
                     <span className="detail-label">Amount:</span>
-                    {activeDeposit.status === "pending" ? (
-                      <span className="detail-value">
-                        $
-                        <input
-                          type="number"
-                          step="0.01"
-                          min="0.01"
-                          value={editedAmount}
-                          onChange={(e) =>
-                            setEditedAmount(parseFloat(e.target.value))
-                          }
-                          className="amount-input"
-                        />
-                      </span>
-                    ) : (
-                      <span className="detail-value">
-                        ${activeDeposit.amount.toFixed(2)}
-                      </span>
-                    )}
+                    <span className="detail-value">
+                      ${activeDeposit.amount.toFixed(2)}
+                    </span>
                   </div>
                   <div className="detail-row">
                     <span className="detail-label">Payment Method:</span>
@@ -459,34 +486,37 @@ const AdminDeposits = () => {
                         activeDeposit.status.slice(1)}
                     </span>
                   </div>
-
+                  {activeDeposit.proofOfPayment && (
+                    <div className="proof-of-payment">
+                      <h3>Proof of Payment</h3>
+                      <div className="payment-proof-container">
+                        <a
+                          href={activeDeposit.proofOfPayment}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="payment-proof-link"
+                        >
+                          View Payment Proof
+                        </a>
+                      </div>
+                    </div>
+                  )}
                   {activeDeposit.status !== "pending" && (
                     <>
                       <div className="detail-row">
                         <span className="detail-label">Reviewed By:</span>
                         <span className="detail-value">
-                          {activeDeposit.approvedBy
-                            ? activeDeposit.approvedBy.name ||
-                              activeDeposit.approvedBy.email
-                            : "N/A"}
+                          {activeDeposit.approvedBy?.email || "N/A"}
                         </span>
                       </div>
                       <div className="detail-row">
-                        <span className="detail-label">Review Date:</span>
+                        <span className="detail-label">
+                          Assigned Investment Plan:
+                        </span>
                         <span className="detail-value">
-                          {activeDeposit.approvedAt
-                            ? formatDate(activeDeposit.approvedAt)
-                            : "N/A"}
+                          {activeDeposit.assignedPlan?.name || "N/A"}
                         </span>
                       </div>
-                      {activeDeposit.assignedPlan && (
-                        <div className="detail-row">
-                          <span className="detail-label">Assigned Plan:</span>
-                          <span className="detail-value">
-                            {activeDeposit.assignedPlan.name}
-                          </span>
-                        </div>
-                      )}
                       {activeDeposit.adminNotes && (
                         <div className="detail-row">
                           <span className="detail-label">Admin Notes:</span>
@@ -499,19 +529,25 @@ const AdminDeposits = () => {
                   )}
                 </div>
 
-                {activeDeposit.screenshotUrl && (
-                  <div className="screenshot-container">
-                    <h3>Payment Screenshot</h3>
-                    <img
-                      src={activeDeposit.screenshotUrl}
-                      alt="Payment proof"
-                      className="deposit-screenshot"
-                    />
-                  </div>
-                )}
-
                 {activeDeposit.status === "pending" && (
                   <div className="review-form">
+                    <h3>Review Deposit</h3>
+                    <div className="form-group">
+                      <label htmlFor="editAmount">Amount ($)</label>
+                      <input
+                        id="editAmount"
+                        type="number"
+                        min="0.01"
+                        step="0.01"
+                        value={editedAmount}
+                        onChange={(e) =>
+                          setEditedAmount(parseFloat(e.target.value))
+                        }
+                      />
+                      <p className="form-hint">
+                        You can adjust the amount if needed
+                      </p>
+                    </div>
                     <div className="form-group">
                       <label htmlFor="investmentPlan">
                         Select Investment Plan
@@ -520,7 +556,6 @@ const AdminDeposits = () => {
                         id="investmentPlan"
                         value={selectedPlanId}
                         onChange={(e) => setSelectedPlanId(e.target.value)}
-                        required
                       >
                         <option value="">-- Select Plan --</option>
                         {investmentPlans.map((plan) => (
@@ -531,32 +566,30 @@ const AdminDeposits = () => {
                         ))}
                       </select>
                     </div>
-
                     <div className="form-group">
-                      <label htmlFor="adminNotes">Notes (Optional)</label>
+                      <label htmlFor="adminNotes">Admin Notes (Optional)</label>
                       <textarea
                         id="adminNotes"
                         value={adminNotes}
                         onChange={(e) => setAdminNotes(e.target.value)}
-                        placeholder="Add notes or comments..."
+                        placeholder="Add notes about this review..."
                         rows="3"
                       />
                     </div>
-
-                    <div className="review-actions">
-                      <button
-                        className="approve-button"
-                        onClick={() => handleReviewSubmit("approved")}
-                        disabled={loading}
-                      >
-                        {loading ? "Processing..." : "Approve"}
-                      </button>
+                    <div className="modal-actions">
                       <button
                         className="reject-button"
                         onClick={() => handleReviewSubmit("rejected")}
                         disabled={loading}
                       >
                         {loading ? "Processing..." : "Reject"}
+                      </button>
+                      <button
+                        className="approve-button"
+                        onClick={() => handleReviewSubmit("approved")}
+                        disabled={loading}
+                      >
+                        {loading ? "Processing..." : "Approve"}
                       </button>
                     </div>
                   </div>

@@ -22,22 +22,47 @@ const AdminWithdrawals = () => {
   const [filter, setFilter] = useState("pending");
   const [transactionId, setTransactionId] = useState("");
   const [selectedPlanId, setSelectedPlanId] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     loadWithdrawals();
     loadInvestmentPlans();
-  }, [filter]);
+  }, [filter, currentPage]);
 
   const loadWithdrawals = async () => {
     try {
       setLoading(true);
-      const data = await getWithdrawals(user.token, filter);
-      setWithdrawals(data);
+
+      // For pending withdrawals, we don't use pagination
+      if (filter === "pending") {
+        const data = await getWithdrawals(user.token, filter);
+        setWithdrawals(data);
+      } else {
+        // For all withdrawals, use pagination
+        const data = await getWithdrawals(
+          user.token,
+          filter,
+          currentPage,
+          itemsPerPage
+        );
+        setWithdrawals(data.withdrawals);
+        setCurrentPage(data.pagination.currentPage);
+        setTotalPages(data.pagination.totalPages);
+        setTotalItems(data.pagination.totalItems);
+      }
+
       setLoading(false);
     } catch (error) {
       toast.error(error.message || "Error loading withdrawals");
       setLoading(false);
     }
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
 
   const loadInvestmentPlans = async () => {
@@ -144,13 +169,19 @@ const AdminWithdrawals = () => {
               className={`filter-button ${
                 filter === "pending" ? "active" : ""
               }`}
-              onClick={() => setFilter("pending")}
+              onClick={() => {
+                setFilter("pending");
+                setCurrentPage(1); // Reset to page 1 when changing filter
+              }}
             >
               Pending Withdrawals
             </button>
             <button
               className={`filter-button ${filter === "all" ? "active" : ""}`}
-              onClick={() => setFilter("all")}
+              onClick={() => {
+                setFilter("all");
+                setCurrentPage(1); // Reset to page 1 when changing filter
+              }}
             >
               All Withdrawals
             </button>
@@ -203,6 +234,29 @@ const AdminWithdrawals = () => {
                 ))}
               </tbody>
             </table>
+
+            {/* Add pagination only for "all" filter */}
+            {filter === "all" && totalPages > 0 && (
+              <div className="pagination">
+                <button
+                  className="page-button"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1 || loading}
+                >
+                  Previous
+                </button>
+                <span className="page-info">
+                  Page {currentPage} of {totalPages} ({totalItems} withdrawals)
+                </span>
+                <button
+                  className="page-button"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages || loading}
+                >
+                  Next
+                </button>
+              </div>
+            )}
           </div>
         )}
 
@@ -336,10 +390,12 @@ const AdminWithdrawals = () => {
 
                 {activeWithdrawal.status === "pending" && (
                   <div className="review-form">
-                    {/* Investment Plan Selector */}
+                    <h3>Review Withdrawal</h3>
+
+                    {/* Assign Plan Selection */}
                     <div className="form-group">
                       <label htmlFor="investmentPlan">
-                        Investment Plan Selection
+                        Assign Investment Plan
                       </label>
                       <select
                         id="investmentPlan"
@@ -354,47 +410,51 @@ const AdminWithdrawals = () => {
                           </option>
                         ))}
                       </select>
+                      <p className="form-hint">
+                        Select a plan to assign or generate profits from
+                      </p>
                     </div>
 
-                    {/* Transaction ID field */}
+                    {/* Transaction ID field (only for approvals) */}
                     <div className="form-group">
-                      <label htmlFor="transactionId">
-                        Transaction ID (Required for approval)
-                      </label>
+                      <label htmlFor="transactionId">Transaction ID</label>
                       <input
-                        type="text"
                         id="transactionId"
+                        type="text"
                         value={transactionId}
                         onChange={(e) => setTransactionId(e.target.value)}
-                        placeholder="Enter transaction ID after processing payment"
+                        placeholder="Enter transaction ID for approved withdrawals"
                       />
+                      <p className="form-hint">
+                        Required when approving withdrawals
+                      </p>
                     </div>
 
                     <div className="form-group">
-                      <label htmlFor="adminNotes">Notes (Optional)</label>
+                      <label htmlFor="adminNotes">Admin Notes (Optional)</label>
                       <textarea
                         id="adminNotes"
                         value={adminNotes}
                         onChange={(e) => setAdminNotes(e.target.value)}
-                        placeholder="Add notes or comments..."
+                        placeholder="Add notes about this review..."
                         rows="3"
                       />
                     </div>
 
-                    <div className="review-actions">
+                    <div className="modal-actions">
                       <button
                         className="reject-button"
                         onClick={() => handleReviewSubmit("rejected")}
                         disabled={loading}
                       >
-                        Reject
+                        {loading ? "Processing..." : "Reject"}
                       </button>
                       <button
                         className="approve-button"
                         onClick={() => handleReviewSubmit("approved")}
                         disabled={loading}
                       >
-                        Approve
+                        {loading ? "Processing..." : "Approve"}
                       </button>
                     </div>
                   </div>

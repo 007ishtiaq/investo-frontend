@@ -2,16 +2,25 @@
 import axios from "axios";
 
 // Get all withdrawals or filtered by status
-export const getWithdrawals = async (authtoken, status = "all") => {
+export const getWithdrawals = async (
+  authtoken,
+  status = "all",
+  page = 1,
+  limit = 10
+) => {
   try {
-    const response = await axios.get(
-      `${process.env.REACT_APP_API}/admin/withdrawals?status=${status}`,
-      {
-        headers: {
-          authtoken,
-        },
-      }
-    );
+    let url = `${process.env.REACT_APP_API}/admin/withdrawals?status=${status}`;
+
+    // Add pagination parameters for 'all' status
+    if (status === "all") {
+      url += `&page=${page}&limit=${limit}`;
+    }
+
+    const response = await axios.get(url, {
+      headers: {
+        authtoken,
+      },
+    });
     return response.data;
   } catch (error) {
     if (error.response && error.response.data) {

@@ -13,21 +13,53 @@ const UserManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeUser, setActiveUser] = useState(null);
   const [selectedLevel, setSelectedLevel] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const [debounceTimeout, setDebounceTimeout] = useState(null);
+  const itemsPerPage = 10;
 
   useEffect(() => {
-    loadUsers();
-  }, []);
+    loadUsers(currentPage, searchTerm);
+  }, [currentPage]);
 
-  const loadUsers = async () => {
+  useEffect(() => {
+    // Debounce search to avoid too many API calls
+    if (debounceTimeout) {
+      clearTimeout(debounceTimeout);
+    }
+
+    const timeoutId = setTimeout(() => {
+      setCurrentPage(1); // Reset to first page on new search
+      loadUsers(1, searchTerm);
+    }, 500);
+
+    setDebounceTimeout(timeoutId);
+
+    return () => {
+      if (debounceTimeout) {
+        clearTimeout(debounceTimeout);
+      }
+    };
+  }, [searchTerm]);
+
+  const loadUsers = async (page, email = "") => {
     try {
       setLoading(true);
-      const data = await getUsers(user.token);
-      setUsers(data);
+      const data = await getUsers(user.token, page, itemsPerPage, email);
+      setUsers(data.users);
+      setCurrentPage(data.pagination.currentPage);
+      setTotalPages(data.pagination.totalPages);
+      setTotalItems(data.pagination.totalItems);
       setLoading(false);
     } catch (error) {
       toast.error(error.message || "Error loading users");
       setLoading(false);
     }
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
 
   const openUserModal = (user) => {
@@ -56,14 +88,6 @@ const UserManagement = () => {
       setLoading(false);
     }
   };
-
-  const filteredUsers = users.filter((user) => {
-    const searchLower = searchTerm.toLowerCase();
-    return (
-      user.email.toLowerCase().includes(searchLower) ||
-      (user.name && user.name.toLowerCase().includes(searchLower))
-    );
-  });
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString();
@@ -96,7 +120,7 @@ const UserManagement = () => {
           <div className="search-container">
             <input
               type="text"
-              placeholder="Search by email or name..."
+              placeholder="Search by email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="search-input"
@@ -106,7 +130,7 @@ const UserManagement = () => {
 
         {loading && users.length === 0 ? (
           <div className="loading-spinner">Loading...</div>
-        ) : filteredUsers.length === 0 ? (
+        ) : users.length === 0 ? (
           <div className="no-users">
             <p>No users found.</p>
           </div>
@@ -125,7 +149,7 @@ const UserManagement = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredUsers.map((u) => (
+                {users.map((u) => (
                   <tr key={u._id}>
                     <td>{u.name || "-"}</td>
                     <td>{u.email}</td>
@@ -161,6 +185,29 @@ const UserManagement = () => {
                 ))}
               </tbody>
             </table>
+
+            {/* Pagination Controls */}
+            {totalPages > 0 && (
+              <div className="pagination">
+                <button
+                  className="page-button"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1 || loading}
+                >
+                  Previous
+                </button>
+                <span className="page-info">
+                  Page {currentPage} of {totalPages} ({totalItems} users)
+                </span>
+                <button
+                  className="page-button"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages || loading}
+                >
+                  Next
+                </button>
+              </div>
+            )}
           </div>
         )}
 

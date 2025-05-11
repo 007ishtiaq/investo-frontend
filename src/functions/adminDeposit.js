@@ -2,12 +2,17 @@
 
 import axios from "axios";
 
-export const getDeposits = async (authtoken, filter = "pending") => {
+export const getDeposits = async (
+  authtoken,
+  filter = "pending",
+  page = 1,
+  limit = 10
+) => {
   try {
     const endpoint =
       filter === "pending"
         ? `${process.env.REACT_APP_API}/admin/deposits/pending`
-        : `${process.env.REACT_APP_API}/admin/deposits`;
+        : `${process.env.REACT_APP_API}/admin/deposits?page=${page}&limit=${limit}`;
 
     const res = await axios.get(endpoint, {
       headers: {

@@ -95,12 +95,19 @@ export const getAdminAnalytics = async (authtoken) => {
 };
 
 // Get all contact messages
-export const getAllContactMessages = async (authtoken) => {
-  return await axios.get(`${process.env.REACT_APP_API}/admin/contacts`, {
-    headers: {
-      authtoken,
-    },
-  });
+export const getAllContactMessages = async (
+  authtoken,
+  page = 1,
+  limit = 10
+) => {
+  return await axios.get(
+    `${process.env.REACT_APP_API}/admin/contacts?page=${page}&limit=${limit}`,
+    {
+      headers: {
+        authtoken,
+      },
+    }
+  );
 };
 // Get single contact message
 export const getSingleContactMessage = async (id, authtoken) => {
