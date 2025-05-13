@@ -32,6 +32,7 @@ const AdminTasks = () => {
     autoVerify: false, // Add this for YouTube watch auto-verification
     videoDuration: "", // Add this to specify video duration in seconds
     minLevel: 1,
+    displayDate: "",
   });
 
   useEffect(() => {
@@ -53,10 +54,21 @@ const AdminTasks = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormValues({
-      ...formValues,
-      [name]: type === "checkbox" ? checked : value,
-    });
+
+    if (name === "displayDate") {
+      // Handle the date field specifically
+      const dateValue = value ? new Date(value) : null;
+      setFormValues({
+        ...formValues,
+        [name]: dateValue,
+      });
+    } else {
+      // Handle other fields normally
+      setFormValues({
+        ...formValues,
+        [name]: type === "checkbox" ? checked : value,
+      });
+    }
   };
 
   const handleStepChange = (index, value) => {
@@ -93,6 +105,7 @@ const AdminTasks = () => {
       autoVerify: false,
       videoDuration: "",
       minLevel: 1,
+      displayDate: "",
     });
     setEditingTask(null);
   };
@@ -107,6 +120,10 @@ const AdminTasks = () => {
   // Update handleEditTask to include these fields
   const handleEditTask = (task) => {
     setEditingTask(task);
+
+    // Format the date for the form if it exists
+    const displayDate = task.displayDate ? new Date(task.displayDate) : "";
+
     setFormValues({
       title: task.title,
       description: task.description,
@@ -122,6 +139,7 @@ const AdminTasks = () => {
       autoVerify: task.autoVerify || false,
       videoDuration: task.videoDuration || "",
       minLevel: task.minLevel || 1,
+      displayDate: displayDate,
     });
     setShowForm(true);
     window.scrollTo(0, 0);
@@ -180,6 +198,20 @@ const AdminTasks = () => {
     }
   };
 
+  // Helper function to format date for display
+  const formatDate = (dateString) => {
+    if (!dateString) return "Every day";
+    const date = new Date(dateString);
+
+    // Get day, month and year with leading zeros if needed
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // getMonth() is zero-based
+    const year = date.getFullYear();
+
+    // Format as DD.MM.YYYY
+    return `${day}.${month}.${year}`;
+  };
+
   return (
     <div className="admin-tasks-page">
       <Toaster
@@ -230,6 +262,26 @@ const AdminTasks = () => {
                 </select>
                 <small className="form-text">
                   Only users at or above this level will see this task
+                </small>
+              </div>
+              <div className="form-group">
+                <label htmlFor="displayDate">Display Date</label>
+                <input
+                  type="date"
+                  id="displayDate"
+                  name="displayDate"
+                  value={
+                    formValues.displayDate
+                      ? new Date(formValues.displayDate)
+                          .toISOString()
+                          .split("T")[0]
+                      : ""
+                  }
+                  onChange={handleChange}
+                />
+                <small className="form-text">
+                  Leave blank to show this task every day, or select a specific
+                  date to only show on that day
                 </small>
               </div>
               <div className="form-group">
@@ -348,6 +400,21 @@ const AdminTasks = () => {
               {formValues.type === "youtube_watch" && (
                 <>
                   <div className="form-group">
+                    <label htmlFor="externalUrl">YouTube Video URL*</label>
+                    <input
+                      type="url"
+                      id="externalUrl"
+                      name="externalUrl"
+                      value={formValues.externalUrl}
+                      onChange={handleChange}
+                      placeholder="https://www.youtube.com/watch?v=..."
+                      required={formValues.type === "youtube_watch"}
+                    />
+                    <small className="form-text">
+                      The YouTube video URL users will watch
+                    </small>
+                  </div>
+                  <div className="form-group">
                     <label htmlFor="videoDuration">
                       Video Duration (seconds)*
                     </label>
@@ -377,22 +444,6 @@ const AdminTasks = () => {
                       Enable Auto-Verification (watches are verified
                       automatically)
                     </label>
-                  </div>
-
-                  <div className="form-group">
-                    <label htmlFor="externalUrl">YouTube Video URL*</label>
-                    <input
-                      type="url"
-                      id="externalUrl"
-                      name="externalUrl"
-                      value={formValues.externalUrl}
-                      onChange={handleChange}
-                      placeholder="https://www.youtube.com/watch?v=..."
-                      required={formValues.type === "youtube_watch"}
-                    />
-                    <small className="form-text">
-                      The YouTube video URL users will watch
-                    </small>
                   </div>
                 </>
               )}
@@ -537,6 +588,7 @@ const AdminTasks = () => {
                         <div className="task-cell">Reward</div>
                         <div className="task-cell">Difficulty</div>
                         <div className="task-cell">Status</div>
+                        <div className="task-cell">Live Date</div>
                         <div className="task-cell">Actions</div>
                       </div>
 
@@ -566,6 +618,9 @@ const AdminTasks = () => {
                               {task.active ? "Active" : "Inactive"}
                             </span>
                           </div>
+                          <td className="task-cell">
+                            {formatDate(task.displayDate)}
+                          </td>
                           <div className="task-cell actions-cell">
                             <button
                               className="edit-button"

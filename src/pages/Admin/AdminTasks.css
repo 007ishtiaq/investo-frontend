@@ -216,7 +216,7 @@
 
 .tasks-table-header {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr;
   background-color: #f8fafc;
   padding: 15px;
   font-weight: 600;
@@ -226,7 +226,7 @@
 
 .tasks-table-row {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr 1fr;
   padding: 15px;
   border-bottom: 1px solid #e2e8f0;
   transition: background-color 0.2s;
