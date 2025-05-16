@@ -138,7 +138,7 @@ const Dashboard = () => {
 
             <div className="profile-affiliate">
               <div className="affiliate-header">Your Affiliate Code</div>
-              <div className="affiliate-code-container">
+              <div className="affiliate-code-container-dashboard">
                 <div className="affiliate-code">{userData.affiliateCode}</div>
                 <button className="copy-button" onClick={copyAffiliateCode}>
                   <Copy size={16} />

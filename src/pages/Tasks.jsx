@@ -577,7 +577,7 @@ const Tasks = () => {
         </div>
 
         <div className="tasks-statistics">
-          <div className="stat-card">
+          <div className="stat-card-tasks">
             <div className="stat-title">Total Available Rewards</div>
             <div className="stat-value">
               <EthereumIcon size={18} />
@@ -585,18 +585,18 @@ const Tasks = () => {
             </div>
           </div>
 
-          <div className="stat-card">
+          <div className="stat-card-tasks">
             <div className="stat-title">Your Wallet Balance</div>
             <div className="stat-value">
               <EthereumIcon size={18} />
               <span>{walletBalance.toFixed(3)} USD</span>
             </div>
-            <Link to="/wallet" className="wallet-link ">
+            <Link to="/wallet" className="wallet-link wallet-link-tasks">
               View Wallet
             </Link>
           </div>
 
-          <div className="stat-card">
+          <div className="stat-card-tasks">
             <div className="stat-title">Completion Rate</div>
             <div className="stat-value">
               <span>

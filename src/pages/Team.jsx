@@ -253,7 +253,7 @@ const Team = () => {
                   <tbody>
                     <tr>
                       <td>
-                        <span className="level-badge-team level-1">
+                        <span className="level-badge-team level-1-team">
                           Level 1
                         </span>
                       </td>
@@ -264,7 +264,7 @@ const Team = () => {
                     </tr>
                     <tr>
                       <td>
-                        <span className="level-badge-team level-2">
+                        <span className="level-badge-team level-2-team">
                           Level 2
                         </span>
                       </td>
@@ -275,7 +275,7 @@ const Team = () => {
                     </tr>
                     <tr>
                       <td>
-                        <span className="level-badge-team level-3">
+                        <span className="level-badge-team level-3-team">
                           Level 3
                         </span>
                       </td>
@@ -286,7 +286,7 @@ const Team = () => {
                     </tr>
                     <tr>
                       <td>
-                        <span className="level-badge-team level-4">
+                        <span className="level-badge-team level-4-team">
                           Level 4
                         </span>
                       </td>
