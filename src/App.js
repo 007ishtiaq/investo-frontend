@@ -78,7 +78,6 @@ function App() {
         <Switch>
           {/* Public Routes (Unprotected) */}
           <Route exact path="/" component={Home} />
-          <Route exact path="/tasks" component={Tasks} />
           <Route exact path="/login" component={Login} />
           <Route exact path="/forgot/password" component={ForgotPassword} />
           <Route exact path="/register" component={Registration} />
@@ -122,6 +121,10 @@ function App() {
 
           <UserRoute exact path="/deposit">
             <Deposit />
+          </UserRoute>
+
+          <UserRoute exact path="/tasks">
+            <Tasks />
           </UserRoute>
 
           <UserRoute exact path="/team">

@@ -57,7 +57,7 @@ const Header = () => {
   }, []);
 
   // Determine dashboard path based on user role
-  const dashboardPath = user && user.role === "admin" ? "/admin" : "/user";
+  const dashboardPath = user && user.role === "admin" ? "/admin" : "/Dashboard";
 
   return (
     <header className="header">
@@ -75,20 +75,24 @@ const Header = () => {
         {/* Navigation */}
         {!isMobile && (
           <nav className="main-nav">
-            <Link to={dashboardPath} className="nav-link">
-              Dashboard
+            {user ? (
+              <Link to={dashboardPath} className="nav-link">
+                Dashboard
+              </Link>
+            ) : (
+              <Link to="/" className="nav-link">
+                Home
+              </Link>
+            )}
+
+            <Link to="/plans" className="nav-link">
+              Plans
             </Link>
             <Link to="/tasks" className="nav-link">
               Tasks
             </Link>
             <Link to="/team" className="nav-link">
               My Team
-            </Link>
-            <Link to="/plans" className="nav-link">
-              Plans
-            </Link>
-            <Link to="/Dashboard" className="nav-link">
-              Me
             </Link>
           </nav>
         )}
