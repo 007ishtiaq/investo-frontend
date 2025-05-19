@@ -17,8 +17,8 @@ const InvestmentCard = ({ plan, userLevel, user }) => {
     const totalProfit = dailyProfit * days;
 
     return {
-      daily: dailyProfit.toFixed(4),
-      total: totalProfit.toFixed(4),
+      daily: dailyProfit.toFixed(2),
+      total: totalProfit.toFixed(2),
     };
   };
 
@@ -61,7 +61,7 @@ const InvestmentCard = ({ plan, userLevel, user }) => {
         <div className="card-badge your-level-badge">Your Account Level</div>
       )}
 
-      <div className="card-header">
+      <div className="card-header-investment">
         <div
           className={`level-tag ${
             isLoggedIn && isUserLevel ? "your-level-tag" : ""
@@ -78,27 +78,27 @@ const InvestmentCard = ({ plan, userLevel, user }) => {
       </div>
 
       <div className="plan-details">
-        <div className="detail-item">
-          <div className="detail-label">Minimum Investment</div>
+        <div className="detail-item-plancard">
+          <div className="detail-label">Minimum to Invest</div>
           <div className="detail-value">
             <EthereumIcon size={14} />
-            <span>{plan.minAmount} ETH</span>
+            <span>{plan.minAmount} USD</span>
           </div>
         </div>
 
-        <div className="detail-item">
+        <div className="detail-item-plancard">
           <div className="detail-label">Daily Profit</div>
           <div className="detail-value">
             <EthereumIcon size={14} />
-            <span>{profit.daily} ETH</span>
+            <span>{profit.daily} USD</span>
           </div>
         </div>
 
-        <div className="detail-item">
+        <div className="detail-item-plancard">
           <div className="detail-label">Total Profit</div>
           <div className="detail-value">
             <EthereumIcon size={14} />
-            <span>{profit.total} ETH</span>
+            <span>{profit.total} USD</span>
           </div>
         </div>
       </div>
@@ -108,7 +108,7 @@ const InvestmentCard = ({ plan, userLevel, user }) => {
         <ul className="features-list">
           {plan.additionalFeatures.map((feature, index) => (
             <li key={index} className="feature-item">
-              <span className="feature-icon">✓</span>
+              <span className="feature-icon-plancard">✓</span>
               <span className="feature-text">{feature}</span>
             </li>
           ))}
@@ -118,9 +118,11 @@ const InvestmentCard = ({ plan, userLevel, user }) => {
       {isLoggedIn ? (
         isHigherLevel ? (
           // Show "Upgrade Now" button for plans higher than the user's level
-          <button onClick={handleUpgradeClick} className="invest-button">
-            Upgrade Now
-          </button>
+          <div>
+            <button onClick={handleUpgradeClick} className="invest-button">
+              Upgrade Now
+            </button>
+          </div>
         ) : isUserLevel ? (
           // Show "Current Plan" for user's current level
           <div className="current-plan-message">Current Plan</div>
@@ -129,9 +131,11 @@ const InvestmentCard = ({ plan, userLevel, user }) => {
           <div className="base-plan-message">Base Plan</div>
         )
       ) : (
-        <Link to={`/login`} className="invest-button">
-          Invest Now
-        </Link>
+        <div>
+          <Link to={`/login`} className="invest-button">
+            Invest Now
+          </Link>
+        </div>
       )}
     </div>
   );
@@ -144,7 +148,7 @@ document.head.appendChild(document.createElement("style")).textContent = `
 .investment-card {
   background-color: var(--color-card-bg);
   border-radius: 1rem;
-  padding: 1.5rem;
+  padding: 1.5rem 1rem 1rem;
   border: 1px solid var(--color-border);
   transition: transform var(--transition-normal), box-shadow var(--transition-normal);
   height: 100%;
@@ -186,7 +190,7 @@ document.head.appendChild(document.createElement("style")).textContent = `
   right: auto;
 }
 
-.card-header {
+.card-header-investment {
   text-align: center;
   margin-bottom: 1.25rem;
 }
@@ -247,7 +251,7 @@ document.head.appendChild(document.createElement("style")).textContent = `
   margin-bottom: 1.25rem;
 }
 
-.detail-item {
+.detail-item-plancard {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -255,7 +259,7 @@ document.head.appendChild(document.createElement("style")).textContent = `
   border-bottom: 1px solid var(--color-border);
 }
 
-.detail-item:last-child {
+.detail-item-plancard:last-child {
   border-bottom: none;
 }
 
@@ -301,7 +305,7 @@ document.head.appendChild(document.createElement("style")).textContent = `
   align-items: flex-start;
 }
 
-.feature-icon {
+.feature-icon-plancard {
   color: var(--color-success);
   margin-right: 0.5rem;
   font-weight: bold;

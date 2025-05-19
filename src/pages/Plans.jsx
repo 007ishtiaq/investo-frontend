@@ -49,7 +49,8 @@ const Plans = () => {
     const fetchPlans = async () => {
       try {
         setLoading(true);
-        const plans = await getInvestmentPlans(user?.token);
+        const plans = await getInvestmentPlans();
+        console.log("plans", plans);
 
         // Separate plans into daily income and fixed deposit
         const dailyPlans = plans.filter((plan) => !plan.isFixedDeposit);
@@ -63,11 +64,11 @@ const Plans = () => {
       }
     };
 
-    if (user && user.token) {
-      fetchPlans();
-    } else {
-      setLoading(false);
-    }
+    // if (user && user.token) {
+    fetchPlans();
+    // } else {
+    //   setLoading(false);
+    // }
   }, [user]);
 
   // Map database fields to component props for daily plans
@@ -138,14 +139,6 @@ const Plans = () => {
             ))}
           </div>
         )}
-
-        <div className="section-header">
-          <h2 className="section-title">Fixed Deposit Plans</h2>
-          <p className="section-description">
-            Our fixed deposit plans offer guaranteed returns at maturity. Ideal
-            for investors looking for predictable growth over time.
-          </p>
-        </div>
 
         <div className="investment-faq">
           <h2 className="faq-title">Frequently Asked Questions</h2>

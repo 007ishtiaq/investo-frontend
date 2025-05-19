@@ -2,35 +2,21 @@
 
 import axios from "axios";
 
-export const getInvestmentPlans = async (authtoken) => {
+export const getInvestmentPlans = async () => {
   try {
-    const headers = authtoken ? { authtoken } : {};
-
-    const res = await axios.get(
-      `${process.env.REACT_APP_API}/investment-plans`,
-      { headers }
+    const response = await axios.get(
+      `${process.env.REACT_APP_API}/investment-plans`
     );
-    return res.data;
+    return response.data;
   } catch (error) {
-    console.error("Load investment plans error:", error);
-    throw new Error("Error loading investment plans");
+    // Properly handle and log the error
+    console.error(
+      "Error fetching investment plans:",
+      error.response?.data || error.message
+    );
+    throw error;
   }
 };
-
-export const getUserLevelPlans = async (token) => {
-  try {
-    const res = await axios.get("/api/user/investment-plans", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return res.data;
-  } catch (error) {
-    console.error("Load user plans error:", error);
-    throw new Error("Error loading available investment plans");
-  }
-};
-
 // Function to upgrade user's plan
 export const upgradePlan = async (authtoken, { planId, investmentAmount }) => {
   try {
