@@ -8,13 +8,21 @@ import { EthereumIcon } from "../../utils/icons";
 const InvestmentCard = ({ plan, userLevel, user }) => {
   // Calculate daily and total profit
   const calculateProfit = () => {
-    const dailyProfit = plan.minAmount * (plan.dailyRoi / 100);
+    // Calculate profit normally for all plans (including first plan)
+    let dailyProfit = 0;
 
-    // Extract the number of days from the duration string
-    const durationMatch = plan.duration.match(/(\d+)/);
-    const days = durationMatch ? parseInt(durationMatch[0]) : 30;
+    // For the first (Basic) plan, we need to handle minAmount=0 special case
+    if (plan.minAmount === 0) {
+      // Use a base investment amount of 100 for calculation purposes
+      // (since multiplying by 0 would always give 0)
+      const baseAmount = 100;
+      dailyProfit = baseAmount * (plan.dailyRoi / 100);
+    } else {
+      dailyProfit = plan.minAmount * (plan.dailyRoi / 100);
+    }
 
-    const totalProfit = dailyProfit * days;
+    // Total profit calculation (365 days for annual profit)
+    const totalProfit = dailyProfit * 365;
 
     return {
       daily: dailyProfit.toFixed(2),
@@ -36,6 +44,9 @@ const InvestmentCard = ({ plan, userLevel, user }) => {
   // Check if this plan is higher than user's level (for upgrade button)
   const isHigherLevel = isLoggedIn && plan.level > userLevel;
 
+  // Determine if this is the first (Basic) plan based on level and minAmount
+  const isBasicPlan = plan.level === 1 && plan.minAmount === 0;
+
   // Handler for plan upgrade button
   const handleUpgradeClick = (e) => {
     e.preventDefault();
@@ -44,6 +55,16 @@ const InvestmentCard = ({ plan, userLevel, user }) => {
       plan.onUpgrade();
     }
   };
+
+  // Determine ROI display ($ or %)
+  const roiDisplay = isBasicPlan ? `$${plan.dailyRoi}` : `${plan.dailyRoi}%`;
+
+  // Determine ROI label
+  const roiLabel = isBasicPlan ? "Daily Reward" : "Daily ROI";
+
+  // Determine profit labels - all plans show Annual Profit
+  const dailyProfitLabel = "Daily Profit";
+  const totalProfitLabel = "Annual Profit";
 
   return (
     <div
@@ -73,8 +94,8 @@ const InvestmentCard = ({ plan, userLevel, user }) => {
       </div>
 
       <div className="daily-roi">
-        <span className="roi-value">{plan.dailyRoi}%</span>
-        <span className="roi-label">Daily ROI</span>
+        <span className="roi-value">{roiDisplay}</span>
+        <span className="roi-label">{roiLabel}</span>
       </div>
 
       <div className="plan-details">
@@ -87,7 +108,7 @@ const InvestmentCard = ({ plan, userLevel, user }) => {
         </div>
 
         <div className="detail-item-plancard">
-          <div className="detail-label">Daily Profit</div>
+          <div className="detail-label">{dailyProfitLabel}</div>
           <div className="detail-value">
             <EthereumIcon size={14} />
             <span>{profit.daily} USD</span>
@@ -95,7 +116,7 @@ const InvestmentCard = ({ plan, userLevel, user }) => {
         </div>
 
         <div className="detail-item-plancard">
-          <div className="detail-label">Total Profit</div>
+          <div className="detail-label">{totalProfitLabel}</div>
           <div className="detail-value">
             <EthereumIcon size={14} />
             <span>{profit.total} USD</span>
@@ -131,10 +152,15 @@ const InvestmentCard = ({ plan, userLevel, user }) => {
           <div className="base-plan-message">Base Plan</div>
         )
       ) : (
+        // For non-logged in users: Basic Plan gets "Base Plan", others get "Invest Now"
         <div>
-          <Link to={`/login`} className="invest-button">
-            Invest Now
-          </Link>
+          {isBasicPlan ? (
+            <div className="base-plan-message">Base Plan</div>
+          ) : (
+            <Link to={`/login`} className="invest-button">
+              Invest Now
+            </Link>
+          )}
         </div>
       )}
     </div>
@@ -142,6 +168,10 @@ const InvestmentCard = ({ plan, userLevel, user }) => {
 };
 
 export default InvestmentCard;
+
+// Styling remains the same
+
+// Styling remains the same
 
 // Add styling for the InvestmentCard component
 document.head.appendChild(document.createElement("style")).textContent = `
@@ -355,5 +385,17 @@ document.head.appendChild(document.createElement("style")).textContent = `
 .your-level-card .invest-button {
   background: linear-gradient(45deg, #00c3ff, #00e5ff);
   font-weight: 600;
+}
+
+.current-plan-message,
+.base-plan-message {
+  display: block;
+  padding: 0.75rem;
+  background-color: var(--color-background-hover);
+  color: var(--color-text-secondary);
+  text-align: center;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  margin-top: auto;
 }
 `;

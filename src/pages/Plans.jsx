@@ -35,7 +35,7 @@ const Plans = () => {
           setUserLevel(level);
         } catch (error) {
           console.error("Error fetching user level:", error);
-          // Default to level 1 if there's an error (not 2 as it was before)
+          // Default to level 1 if there's an error
           setUserLevel(1);
         }
       }
@@ -49,26 +49,29 @@ const Plans = () => {
     const fetchPlans = async () => {
       try {
         setLoading(true);
-        const plans = await getInvestmentPlans();
-        console.log("plans", plans);
+        const response = await getInvestmentPlans();
+        console.log("plans", response);
+
+        // Check if response is valid and contains data
+        if (!response || !Array.isArray(response)) {
+          throw new Error("Invalid response from server");
+        }
 
         // Separate plans into daily income and fixed deposit
-        const dailyPlans = plans.filter((plan) => !plan.isFixedDeposit);
+        const dailyPlans = response.filter((plan) => !plan.isFixedDeposit);
 
         setInvestmentPlans(dailyPlans);
       } catch (error) {
         console.error("Error fetching investment plans:", error);
         toast.error("Failed to load investment plans");
+
+        setInvestmentPlans([]);
       } finally {
         setLoading(false);
       }
     };
 
-    // if (user && user.token) {
     fetchPlans();
-    // } else {
-    //   setLoading(false);
-    // }
   }, [user]);
 
   // Map database fields to component props for daily plans
@@ -80,7 +83,7 @@ const Plans = () => {
     duration: `${plan.durationInDays} Days`,
     minAmount: plan.minAmount,
     featured: plan.featured,
-    additionalFeatures: plan.features,
+    additionalFeatures: plan.features || [],
     // Add this prop to enable upgrade modal
     onUpgrade: () => handleUpgradeClick(plan),
   });
@@ -126,6 +129,11 @@ const Plans = () => {
 
         {loading ? (
           <div className="loading-spinner">Loading plans...</div>
+        ) : investmentPlans.length === 0 ? (
+          <div className="no-plans-message">
+            No investment plans available at the moment. Please check back
+            later.
+          </div>
         ) : (
           <div className="investment-grid">
             {investmentPlans.map((plan) => (
