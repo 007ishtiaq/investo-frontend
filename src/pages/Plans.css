@@ -172,7 +172,7 @@
   margin-top: 20px;
 }
 
-.feature-item {
+/* .feature-item {
   display: flex;
   align-items: flex-start;
   gap: 10px;
@@ -183,7 +183,7 @@
   color: #4caf50;
   margin-top: 3px;
   flex-shrink: 0;
-}
+} */
 
 .plan-footer {
   padding: 0 25px 25px;

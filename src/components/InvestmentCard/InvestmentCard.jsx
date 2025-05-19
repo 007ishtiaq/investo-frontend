@@ -128,9 +128,9 @@ const InvestmentCard = ({ plan, userLevel, user }) => {
         <h4 className="features-title">Features</h4>
         <ul className="features-list">
           {plan.additionalFeatures.map((feature, index) => (
-            <li key={index} className="feature-item">
+            <li key={index} className="feature-item-plancard">
               <span className="feature-icon-plancard">✓</span>
-              <span className="feature-text">{feature}</span>
+              <span className="feature-text-plancard">{feature}</span>
             </li>
           ))}
         </ul>
@@ -329,7 +329,7 @@ document.head.appendChild(document.createElement("style")).textContent = `
   list-style: none;
 }
 
-.feature-item {
+.feature-item-plancard {
   margin-bottom: 0.5rem;
   display: flex;
   align-items: flex-start;
@@ -342,7 +342,7 @@ document.head.appendChild(document.createElement("style")).textContent = `
   flex-shrink: 0;
 }
 
-.feature-text {
+.feature-text-plancard {
   font-size: 0.8125rem;
   color: var(--color-text-secondary);
 }
