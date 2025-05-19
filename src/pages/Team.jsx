@@ -178,7 +178,7 @@ const Team = () => {
             </p>
 
             <div className="affiliate-code-container">
-              <div className="affiliate-code">
+              <div className="affiliate-code-team">
                 <span>{affiliateCode}</span>
                 <button
                   className={`copy-btn ${copied ? "copied" : ""}`}

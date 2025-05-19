@@ -4,7 +4,7 @@ import WalletOverview from "../../components/WalletOverview/WalletOverview";
 import RecentTransactions from "../../components/RecentTransactions/RecentTransactions";
 import InvestmentPlans from "../../components/InvestmentPlans/InvestmentPlans";
 import { getCurrentUser } from "../../functions/user";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Copy, Edit2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
@@ -14,12 +14,29 @@ const Dashboard = () => {
   const { user } = useSelector((state) => ({ ...state }));
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (user && user.token) {
       loadUserData();
     }
   }, [user]);
+
+  const handleLogout = () => {
+    // Clean up Redux state
+    dispatch({
+      type: "LOGOUT",
+      payload: null,
+    });
+
+    // Clear localStorage
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("user");
+    }
+
+    // Redirect to login using window.location
+    window.location.href = "/login";
+  };
 
   const loadUserData = async () => {
     try {
@@ -29,8 +46,11 @@ const Dashboard = () => {
       setUserData(res.data);
       setLoading(false);
     } catch (err) {
-      console.error("Failed to load user data:", err);
+      // console.error("Failed to load user data:", err);
       toast.error("Failed to load user information");
+      if (err.response && err.response.status === 401) {
+        handleLogout();
+      }
       setLoading(false);
     }
   };

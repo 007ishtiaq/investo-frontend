@@ -84,14 +84,14 @@
   padding: 20px;
 }
 
-.affiliate-code {
+.affiliate-code-team {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 15px;
 }
 
-.affiliate-code span {
+.affiliate-code-team span {
   font-family: monospace;
   font-size: 18px;
   color: #333;
@@ -246,11 +246,11 @@
     grid-template-columns: 1fr;
   }
 
-  .affiliate-code {
+  .affiliate-code-team {
     flex-direction: column;
   }
 
-  .affiliate-code span {
+  .affiliate-code-team span {
     margin-right: 0;
     margin-bottom: 10px;
     text-align: center;
@@ -330,7 +330,7 @@
   background-color: rgba(var(--color-primary-rgb), 0.05);
 }
 
-.copy-button {
+/* .copy-button {
   padding: 0.75rem 1.5rem;
   background-color: var(--color-primary);
   color: white;
@@ -343,7 +343,7 @@
 
 .copy-button:hover {
   background-color: rgba(var(--color-primary-rgb), 0.9);
-}
+} */
 
 /* Stats section */
 .team-stats-section {
@@ -516,7 +516,7 @@
   color: white;
 }
 
-.-team {
+.level-1-team {
   background-color: #4caf50;
 }
 

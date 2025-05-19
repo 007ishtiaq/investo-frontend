@@ -447,26 +447,6 @@
   padding: 1rem 0;
 }
 
-.page-button {
-  padding: 0.5rem 1rem;
-  background-color: var(--primary-50, #eff6ff);
-  color: var(--primary-600, #2563eb);
-  border: 1px solid var(--primary-200, #bfdbfe);
-  border-radius: 0.25rem;
-  cursor: pointer;
-  font-size: 0.875rem;
-  transition: all 0.2s ease;
-}
-
-.page-button:hover:not(:disabled) {
-  background-color: var(--primary-100, #dbeafe);
-}
-
-.page-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
 .page-info {
   font-size: 0.875rem;
   color: var(--text-secondary, #6b7280);

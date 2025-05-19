@@ -111,7 +111,7 @@ const Wallet = () => {
             <div className="wallet-card">
               <div className="wallet-balance-section">
                 <div className="balance-label">Available Balance</div>
-                <div className="balance-amount">
+                <div className="balance-amount-wallet">
                   <EthereumIcon size={24} />
                   <span>${wallet.balance.toFixed(3)} USD</span>
                 </div>

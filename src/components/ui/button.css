@@ -12,16 +12,24 @@
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
   position: relative;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
 .button:focus-visible {
   outline: none;
   box-shadow: 0 0 0 2px var(--ring-color, rgba(59, 130, 246, 0.5));
+  background-color: var(--color-primary-dark);
 }
 
 .button:disabled {
-  pointer-events: none;
-  opacity: 0.5;
+  background-color: #cccccc;
+  cursor: not-allowed;
 }
 
 .button svg {
@@ -52,12 +60,10 @@
 
 .button-outline {
   border: 1px solid var(--input-border, #e5e7eb);
-  background-color: var(--background, white);
 }
 
 .button-outline:hover {
-  background-color: var(--accent-color, #f3f4f6);
-  color: var(--accent-foreground, #111827);
+  background-color: var(--color-primary-dark);
 }
 
 .button-secondary {

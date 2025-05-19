@@ -145,7 +145,7 @@ const TransactionItem = ({ transaction }) => {
             } ${isPending ? "amount-pending" : ""}`}
           >
             {isPositive ? "+" : "-"}
-            {Math.abs(amount).toFixed(2)}
+            {Math.abs(amount).toFixed(3)}
           </span>
         </div>
       </div>

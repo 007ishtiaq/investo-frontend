@@ -323,3 +323,43 @@ button {
     margin-bottom: 1rem;
   }
 }
+
+/* -------page button styling----- */
+.page-button {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.page-button:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.page-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+/* .page-button {
+  padding: 0.5rem 1rem;
+  background-color: var(--primary-50, #eff6ff);
+  color: var(--primary-600, #2563eb);
+  border: 1px solid var(--primary-200, #bfdbfe);
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.page-button:hover:not(:disabled) {
+  background-color: var(--primary-100, #dbeafe);
+}
+
+.page-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+} */

@@ -39,7 +39,7 @@
   margin-bottom: 8px;
 }
 
-.balance-amount {
+.balance-amount-wallet {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -48,7 +48,7 @@
   margin-bottom: 20px;
 }
 
-.balance-amount svg {
+.balance-amount-wallet svg {
   margin-right: 10px;
 }
 
@@ -138,25 +138,6 @@
   justify-content: space-between;
   align-items: center;
   margin-top: 20px;
-}
-
-.page-button {
-  background-color: var(--color-primary);
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.page-button:hover {
-  background-color: var(--color-primary-dark);
-}
-
-.page-button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
 }
 
 .page-info {

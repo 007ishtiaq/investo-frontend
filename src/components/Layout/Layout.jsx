@@ -155,7 +155,7 @@ const Layout = ({ children }) => {
                 </div>
                 <div className="actions-content">
                   <button
-                    className="deposit-button"
+                    className="deposit-button-layout"
                     onClick={handleOpenDepositModal}
                   >
                     <Plus className="action-icon" /> Deposit
