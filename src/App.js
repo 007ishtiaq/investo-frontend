@@ -32,6 +32,11 @@ const Profile = lazy(() => import("./pages/User/Profilepage"));
 const Deposit = lazy(() => import("./pages/Deposit"));
 const Team = lazy(() => import("./pages/Team"));
 const Plans = lazy(() => import("./pages/Plans"));
+const TermsAndConditions = lazy(() =>
+  import("./pages/legal/TermsAndConditions")
+);
+const PrivacyPolicy = lazy(() => import("./pages/legal/PrivacyPolicy"));
+const CookiePolicy = lazy(() => import("./pages/legal/CookiePolicy"));
 
 // Admin pages
 const AdminDashboard = lazy(() => import("./pages/Admin/AdminDashboard"));
@@ -84,86 +89,71 @@ function App() {
           <Route exact path="/otpVerification" component={OTPVerification} />
           <Route exact path="/register/complete" component={RegisterComplete} />
           <Route exact path="/contact" component={Contact} />
-
           {/* Semi-protected routes (accessible to all, but require login for full functionality) */}
           <Route exact path="/plans" component={Plans} />
-
+          <Route exact path="/terms" component={TermsAndConditions} />
+          <Route exact path="/privacy" component={PrivacyPolicy} />
+          <Route exact path="/cookies" component={CookiePolicy} />
           {/* User Protected Routes */}
           <UserRoute exact path="/dashboard">
             <Layout>
               <Dashboard />
             </Layout>
           </UserRoute>
-
           <UserRoute exact path="/wallet">
             <Layout>
               <Wallet />
             </Layout>
           </UserRoute>
-
           <UserRoute exact path="/invest">
             <Layout>
               <Invest />
             </Layout>
           </UserRoute>
-
           <UserRoute exact path="/history">
             <Layout>
               <History />
             </Layout>
           </UserRoute>
-
           <UserRoute exact path="/profile">
             <Layout>
               <Profile />
             </Layout>
           </UserRoute>
-
           <UserRoute exact path="/deposit">
             <Deposit />
           </UserRoute>
-
           <UserRoute exact path="/tasks">
             <Tasks />
           </UserRoute>
-
           <UserRoute exact path="/team">
             <Team />
           </UserRoute>
-
           {/* Admin Protected Routes */}
           <AdminRoute exact path="/admin">
             <AdminDashboard />
           </AdminRoute>
-
           <AdminRoute exact path="/admin/analytics">
             <AdminAnalytics />
           </AdminRoute>
-
           <AdminRoute exact path="/admin/tasks">
             <AdminTasks />
           </AdminRoute>
-
           <AdminRoute exact path="/admin/taskverification">
             <TaskVerification />
           </AdminRoute>
-
           <AdminRoute exact path="/admin/deposits">
             <AdminDeposits />
           </AdminRoute>
-
           <AdminRoute exact path="/admin/withdrawals">
             <AdminWithdrawals />
           </AdminRoute>
-
           <AdminRoute exact path="/admin/users">
             <UserManagement />
           </AdminRoute>
-
           <AdminRoute exact path="/admin/contact-messages">
             <ContactMessages />
           </AdminRoute>
-
           {/* 404 Page */}
           <Route path="*" component={NotFound} />
         </Switch>

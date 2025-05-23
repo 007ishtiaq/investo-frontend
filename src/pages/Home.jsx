@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import NFTMarketplace from "../components/NFTMarketplace/NFTMarketplace";
 import CTASection from "../components/CTASection/CTASection";
 import HeroSlider from "../components/HeroSlider/HeroSlider";
@@ -294,6 +294,9 @@ function Home() {
   // const [cardcollections, setCardcollections] = useState([]);
   // const [featuredNFT, setFeaturedNFT] = useState(null);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   // Map creators by ID
   const creatorsById = React.useMemo(() => {
     return allUsers.reduce((acc, creator) => {
