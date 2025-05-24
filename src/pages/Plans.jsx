@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import InvestmentCard from "../components/InvestmentCard/InvestmentCard";
 import { useSelector } from "react-redux";
 import { getInvestmentPlans } from "../functions/investmentplans";
@@ -7,6 +7,7 @@ import { useWallet } from "../contexts/WalletContext";
 import toast from "react-hot-toast";
 import "./Plans.css";
 import PlanUpgradeModal from "../components/PlanUpgradeModal/PlanUpgradeModal";
+import StatsCounter from "../components/StatsCounter/StatsCounter";
 
 /**
  * Investment page component displaying available investment plans
@@ -19,12 +20,59 @@ const Plans = () => {
   const [investmentPlans, setInvestmentPlans] = useState([]);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [animationTriggered, setAnimationTriggered] = useState(false);
+
+  // Refs for intersection observer
+  const headerRef = useRef(null);
+  const statsRef = useRef(null);
+  const sectionHeaderRef = useRef(null);
+  const gridRef = useRef(null);
+  const faqRef = useRef(null);
 
   // Function to handle plan upgrade button click
   const handleUpgradeClick = (plan) => {
     setSelectedPlan(plan);
     setShowUpgradeModal(true);
   };
+
+  // Set up intersection observer for animations
+  useEffect(() => {
+    const observerOptions = {
+      root: null,
+      rootMargin: "0px",
+      threshold: 0.1,
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("animate-in");
+          // Remove observer once animation is triggered
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    // Observe elements
+    if (headerRef.current) observer.observe(headerRef.current);
+    if (statsRef.current) observer.observe(statsRef.current);
+    if (sectionHeaderRef.current) observer.observe(sectionHeaderRef.current);
+    if (gridRef.current) observer.observe(gridRef.current);
+    if (faqRef.current) observer.observe(faqRef.current);
+
+    // Set animation triggered to true after initial load
+    setTimeout(() => setAnimationTriggered(true), 500);
+
+    return () => {
+      // Clean up observers
+      if (headerRef.current) observer.unobserve(headerRef.current);
+      if (statsRef.current) observer.unobserve(statsRef.current);
+      if (sectionHeaderRef.current)
+        observer.unobserve(sectionHeaderRef.current);
+      if (gridRef.current) observer.unobserve(gridRef.current);
+      if (faqRef.current) observer.unobserve(faqRef.current);
+    };
+  }, []);
 
   // Fetch user level from backend using the getUserLevel function
   useEffect(() => {
@@ -91,35 +139,77 @@ const Plans = () => {
   return (
     <div className="investment-page">
       <div className="container">
-        <div className="investment-header">
-          <h1 className="page-title">Investment Plans</h1>
-          <p className="page-description">
-            Invest your crypto assets and earn daily returns with our range of
-            investment plans. Choose the plan that suits your investment goals
-            and risk appetite.
-          </p>
+        <div className="investment-hero">
+          <div className="container">
+            <div className="investment-header" ref={headerRef}>
+              <div className="header-content-plans">
+                <h1 className="page-title">Investment Plans</h1>
+                <p className="page-description">
+                  Invest your crypto assets and earn daily returns with our
+                  range of investment plans. Choose the plan that suits your
+                  investment goals and risk appetite.
+                </p>
+                <div className="header-actions">
+                  <button className="learn-more-btn">
+                    <span className="btn-text">Learn More</span>
+                    <span className="btn-icon">→</span>
+                  </button>
+                </div>
+              </div>
+              <div className="header-graphic">
+                <div className="investment-graphic-container animate-float">
+                  <div className="investment-graphic-inner">
+                    <div className="investment-graphic-circle circle-1"></div>
+                    <div className="investment-graphic-circle circle-2"></div>
+                    <div className="investment-graphic-circle circle-3"></div>
+                    <div className="investment-graphic-chart"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="investment-stats" ref={statsRef}>
+              <div className="stat-item">
+                <StatsCounter
+                  value={10000}
+                  suffix="+"
+                  duration={2}
+                  triggerAnimation={animationTriggered}
+                />
+                <div className="stat-label">Active Investors</div>
+                <div className="stat-icon investor-icon"></div>
+              </div>
+              <div className="stat-item">
+                <div className="stat-prefix">$</div>
+                <StatsCounter
+                  value={25}
+                  suffix="M+"
+                  duration={2}
+                  triggerAnimation={animationTriggered}
+                />
+                <div className="stat-label">Total Invested</div>
+                <div className="stat-icon investment-icon"></div>
+              </div>
+              <div className="stat-item">
+                <StatsCounter
+                  value={99.9}
+                  suffix="%"
+                  duration={2}
+                  triggerAnimation={animationTriggered}
+                />
+                <div className="stat-label">Uptime</div>
+                <div className="stat-icon uptime-icon"></div>
+              </div>
+              <div className="stat-item">
+                <div className="stat-value">24/7</div>
+                <div className="stat-label">Support</div>
+                <div className="stat-icon support-icon"></div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="investment-stats">
-          <div className="stat-item">
-            <div className="stat-value">10,000+</div>
-            <div className="stat-label">Active Investors</div>
-          </div>
-          <div className="stat-item">
-            <div className="stat-value">$25M+</div>
-            <div className="stat-label">Total Invested</div>
-          </div>
-          <div className="stat-item">
-            <div className="stat-value">99.9%</div>
-            <div className="stat-label">Uptime</div>
-          </div>
-          <div className="stat-item">
-            <div className="stat-value">24/7</div>
-            <div className="stat-label">Support</div>
-          </div>
-        </div>
-
-        <div className="section-header">
+        <div className="section-header" ref={sectionHeaderRef}>
           <h2 className="section-title">Daily Profit Plans</h2>
           <p className="section-description">
             Invest in our daily profit plans and receive returns every 24 hours.
@@ -148,7 +238,7 @@ const Plans = () => {
           </div>
         )}
 
-        <div className="investment-faq">
+        <div className="investment-faq" ref={faqRef}>
           <h2 className="faq-title">Frequently Asked Questions</h2>
 
           <div className="faq-item">
