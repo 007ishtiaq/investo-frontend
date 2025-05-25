@@ -324,17 +324,20 @@ const Contact = () => {
 
       {/* FAQ Section */}
       <div className="container">
-        <div className="faq-section">
-          <h2 className="faq-title">Frequently Asked Questions</h2>
-          <div className="faq-container">
+        <div className="faq-section-contact">
+          <h2 className="faq-title-contact">Frequently Asked Questions</h2>
+          <div className="faq-container-contact">
             {faqData.map((faq) => (
               <div
                 key={faq.id}
-                className={`faq-item ${
+                className={`faq-item-contact ${
                   expandedFaq === faq.id ? "expanded" : ""
                 }`}
               >
-                <div className="faq-question" onClick={() => toggleFaq(faq.id)}>
+                <div
+                  className="faq-question-contact"
+                  onClick={() => toggleFaq(faq.id)}
+                >
                   <h3>{faq.question}</h3>
                   {expandedFaq === faq.id ? (
                     <ChevronUp size={20} />
@@ -343,7 +346,7 @@ const Contact = () => {
                   )}
                 </div>
                 {expandedFaq === faq.id && (
-                  <div className="faq-answer">
+                  <div className="faq-answer-contact">
                     <p>{faq.answer}</p>
                   </div>
                 )}
