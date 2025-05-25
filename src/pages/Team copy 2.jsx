@@ -189,6 +189,7 @@ const Team = () => {
       });
   };
 
+  // Non-logged in user view
   if (!user || !user.token) {
     return (
       <div className="team-page">
@@ -470,7 +471,7 @@ const Team = () => {
           {/* FAQ Section */}
           <div className="faq-section" ref={faqRef}>
             <h2 className="section-title">Frequently Asked Questions</h2>
-            <div className="faq-container-team">
+            <div className="faq-container">
               <div className="faq-item">
                 <h3 className="faq-question">
                   How do I join the affiliate program?
@@ -553,6 +554,7 @@ const Team = () => {
     );
   }
 
+  // Logged in user view (existing code)
   return (
     <div className="team-page">
       <div className="team-hero">

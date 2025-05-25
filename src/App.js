@@ -6,7 +6,6 @@ import NotFound from "./pages/not-found";
 import "./App.css";
 import Footer from "./components/Footer/Footer";
 import Headerbottom from "./components/Header/Headerbottom";
-import Tasks from "./pages/Tasks";
 import Login from "./pages/Login/Login";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 import Registration from "./pages/Registration/Registration";
@@ -30,8 +29,9 @@ const Invest = lazy(() => import("./pages/User/Invest"));
 const History = lazy(() => import("./pages/User/History"));
 const Profile = lazy(() => import("./pages/User/Profilepage"));
 const Deposit = lazy(() => import("./pages/Deposit"));
-const Team = lazy(() => import("./pages/Team"));
 const Plans = lazy(() => import("./pages/Plans"));
+const Tasks = lazy(() => import("./pages/Tasks"));
+const Team = lazy(() => import("./pages/Team"));
 const TermsAndConditions = lazy(() =>
   import("./pages/legal/TermsAndConditions")
 );
@@ -92,6 +92,7 @@ function App() {
           {/* Semi-protected routes (accessible to all, but require login for full functionality) */}
           <Route exact path="/plans" component={Plans} />
           <Route exact path="/tasks" component={Tasks} />
+          <Route exact path="/team" component={Team} />
           <Route exact path="/terms" component={TermsAndConditions} />
           <Route exact path="/privacy" component={PrivacyPolicy} />
           <Route exact path="/cookies" component={CookiePolicy} />
@@ -123,9 +124,6 @@ function App() {
           </UserRoute>
           <UserRoute exact path="/deposit">
             <Deposit />
-          </UserRoute>
-          <UserRoute exact path="/team">
-            <Team />
           </UserRoute>
           {/* Admin Protected Routes */}
           <AdminRoute exact path="/admin">

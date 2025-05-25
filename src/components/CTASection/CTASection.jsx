@@ -7,22 +7,22 @@ import { ChevronRightIcon } from "../../utils/icons";
  */
 const CTASection = () => {
   return (
-    <section className="cta-section">
-      <div className="cta-content">
-        <h2 className="cta-title">Ready to start investing?</h2>
-        <p className="cta-description">
+    <section className="cta-section-home">
+      <div className="cta-content-home">
+        <h2 className="cta-title-home">Ready to start investing?</h2>
+        <p className="cta-description-home">
           Join thousands of investors and start earning daily profits on your
           crypto assets. With our secure platform, you can invest with
           confidence.
         </p>
 
-        <div className="cta-actions">
-          <Link href="/invest" className="cta-button primary">
+        <div className="cta-actions-home">
+          <Link href="/invest" className="cta-button-home primary">
             <span>Investment Plans</span>
             <ChevronRightIcon size={20} />
           </Link>
 
-          <Link href="/dashboard" className="cta-button secondary">
+          <Link href="/dashboard" className="cta-button-home secondary">
             <span>View Dashboard</span>
             <ChevronRightIcon size={20} />
           </Link>
@@ -36,7 +36,7 @@ export default CTASection;
 
 // CSS for CTA Section
 document.head.appendChild(document.createElement("style")).textContent = `
-.cta-section {
+.cta-section-home {
   margin: 4rem 0;
   padding: 3rem 1.5rem;
   background: var(--gradient-cta-bg);
@@ -45,7 +45,7 @@ document.head.appendChild(document.createElement("style")).textContent = `
   overflow: hidden;
 }
 
-.cta-content {
+.cta-content-home {
   max-width: 800px;
   margin: 0 auto;
   text-align: center;
@@ -53,7 +53,7 @@ document.head.appendChild(document.createElement("style")).textContent = `
   z-index: 1;
 }
 
-.cta-title {
+.cta-title-home {
   font-size: 2.25rem;
   font-weight: 700;
   margin-bottom: 1rem;
@@ -62,7 +62,7 @@ document.head.appendChild(document.createElement("style")).textContent = `
   -webkit-text-fill-color: transparent;
 }
 
-.cta-description {
+.cta-description-home {
   font-size: 1.125rem;
   color: var(--color-text-secondary);
   margin-bottom: 2rem;
@@ -71,7 +71,7 @@ document.head.appendChild(document.createElement("style")).textContent = `
   margin-right: auto;
 }
 
-.cta-actions {
+.cta-actions-home {
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -79,7 +79,7 @@ document.head.appendChild(document.createElement("style")).textContent = `
   align-items: center;
 }
 
-.cta-button {
+.cta-button-home {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -93,33 +93,33 @@ document.head.appendChild(document.createElement("style")).textContent = `
   max-width: 250px;
 }
 
-.cta-button.primary {
+.cta-button-home.primary {
   background: var(--gradient-button);
   color: white;
   border: none;
 }
 
-.cta-button.secondary {
+.cta-button-home.secondary {
   background-color: var(--color-background);
   color: var(--color-text-primary);
   border: 1px solid var(--color-border);
 }
 
-.cta-button:hover {
+.cta-button-home:hover {
   transform: translateY(-2px);
   opacity: 0.9;
 }
 
-.cta-button svg {
+.cta-button-home svg {
   transition: transform var(--transition-fast);
 }
 
-.cta-button:hover svg {
+.cta-button-home:hover svg {
   transform: translateX(3px);
 }
 
 @media (min-width: 640px) {
-  .cta-actions {
+  .cta-actions-home {
     flex-direction: row;
   }
 }
