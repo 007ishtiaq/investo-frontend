@@ -73,47 +73,7 @@ export default function TasksIntroPage() {
             </div>
           </div>
         </div>
-        <div className="levels-section animate-in">
-          <h2 className="section-title">Level Up System</h2>
-          <div className="levels-grid">
-            <div className="level-card level-1">
-              <div className="level-badge">Level 1</div>
-              <div className="level-details">
-                <h3>Beginner</h3>
-                <p>Start your journey with basic tasks</p>
-                <ul>
-                  <li>Simple social media tasks</li>
-                  <li>Website visits</li>
-                  <li>Basic video watching</li>
-                </ul>
-              </div>
-            </div>
-            <div className="level-card level-2">
-              <div className="level-badge">Level 2</div>
-              <div className="level-details">
-                <h3>Explorer</h3>
-                <p>Unlock more valuable tasks</p>
-                <ul>
-                  <li>Higher reward tasks</li>
-                  <li>More task variety</li>
-                  <li>Exclusive offers</li>
-                </ul>
-              </div>
-            </div>
-            <div className="level-card level-3">
-              <div className="level-badge">Level 3+</div>
-              <div className="level-details">
-                <h3>Master</h3>
-                <p>Premium tasks and maximum rewards</p>
-                <ul>
-                  <li>Premium task access</li>
-                  <li>Highest rewards</li>
-                  <li>Special opportunities</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
+
         <div className="cta-section animate-in">
           <h2>Ready to start earning?</h2>
           <p>
