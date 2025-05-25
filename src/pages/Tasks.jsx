@@ -26,6 +26,7 @@ import "./Tasks.css";
 import { Camera, Upload, AlertTriangle } from "lucide-react";
 import { useWallet } from "../contexts/WalletContext";
 import LoadingSpinner from "../hooks/LoadingSpinner";
+import TasksIntroPage from "./TasksIntroPage";
 
 /**
  * EmptyState component for displaying when no tasks match criteria
@@ -259,57 +260,59 @@ const Tasks = () => {
 
   // Load all tasks from API
   const loadTasks = async () => {
-    try {
-      setLoading(true);
-      setError("");
+    if (user && user.token) {
+      try {
+        setLoading(true);
+        setError("");
 
-      const res = await getAllTasks(user ? user.token : "");
-      setTasks(res.data);
+        const res = await getAllTasks(user ? user.token : "");
+        setTasks(res.data);
 
-      // If user is logged in, update task completion status
-      if (user && user.token) {
-        try {
-          const userTasksRes = await getUserTasks(user.token);
+        // If user is logged in, update task completion status
+        if (user && user.token) {
+          try {
+            const userTasksRes = await getUserTasks(user.token);
 
-          // Map through tasks and update completion status
-          const updatedTasks = res.data.map((task) => {
-            const userTask = userTasksRes.data.find(
-              (ut) => ut.taskId === task._id
+            // Map through tasks and update completion status
+            const updatedTasks = res.data.map((task) => {
+              const userTask = userTasksRes.data.find(
+                (ut) => ut.taskId === task._id
+              );
+
+              if (userTask) {
+                return {
+                  ...task,
+                  completed: userTask.completed,
+                  verified: userTask.verified,
+                  startedAt: userTask.startedAt,
+                  status: userTask.status,
+                  rejectionReason: userTask.rejectionReason,
+                };
+              }
+
+              return task;
+            });
+
+            setTasks(updatedTasks);
+
+            // Set pending verification tasks
+            const pendingTasks = updatedTasks.filter(
+              (task) => task.status === "pending_verification"
             );
-
-            if (userTask) {
-              return {
-                ...task,
-                completed: userTask.completed,
-                verified: userTask.verified,
-                startedAt: userTask.startedAt,
-                status: userTask.status,
-                rejectionReason: userTask.rejectionReason,
-              };
-            }
-
-            return task;
-          });
-
-          setTasks(updatedTasks);
-
-          // Set pending verification tasks
-          const pendingTasks = updatedTasks.filter(
-            (task) => task.status === "pending_verification"
-          );
-          setPendingVerificationTasks(pendingTasks);
-        } catch (err) {
-          console.error("Error loading user tasks:", err);
-          // Continue with the tasks we have
+            setPendingVerificationTasks(pendingTasks);
+          } catch (err) {
+            console.error("Error loading user tasks:", err);
+            // Continue with the tasks we have
+          }
         }
-      }
 
-      setLoading(false);
-    } catch (err) {
-      setLoading(false);
-      setError("Error loading tasks. Please try again.");
-      console.error("Error loading tasks:", err);
-      toast.error("Failed to load tasks. Please refresh the page.");
+        setLoading(false);
+      } catch (err) {
+        setLoading(false);
+        setError("Error loading tasks. Please try again.");
+        console.error("Error loading tasks:", err);
+        toast.error("Failed to load tasks. Please refresh the page.");
+      }
     }
   };
 
@@ -595,673 +598,679 @@ const Tasks = () => {
         }}
       />
 
-      <div className="container">
-        {/* New Tasks Hero Section */}
-        <div className="tasks-hero">
-          <div className="container">
-            <div className="tasks-header" ref={headerRef}>
-              <div className="header-content-tasks">
-                <h1 className="page-title">Daily Tasks</h1>
-                <p className="page-description">
-                  Complete tasks to earn rewards and increase your level. New
-                  tasks are available every day.
-                </p>
-                <div className="header-actions">
-                  <div className="user-level-indicator">
-                    <div className="level-badge">Level {userLevel}</div>
-                    <div className="level-progress">
-                      <div
-                        className="level-progress-bar"
-                        style={{ width: `${Math.min(userLevel * 10, 100)}%` }}
-                      ></div>
+      {!user ? (
+        <TasksIntroPage />
+      ) : (
+        <div className="container">
+          <div className="tasks-hero">
+            <div className="container">
+              <div className="tasks-header" ref={headerRef}>
+                <div className="header-content-tasks">
+                  <h1 className="page-title">Daily Tasks</h1>
+                  <p className="page-description">
+                    Complete tasks to earn rewards and increase your level. New
+                    tasks are available every day.
+                  </p>
+                  <div className="header-actions">
+                    <div className="user-level-indicator">
+                      <div className="level-badge">Level {userLevel}</div>
+                      <div className="level-progress">
+                        <div
+                          className="level-progress-bar"
+                          style={{ width: `${Math.min(userLevel * 10, 100)}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="header-graphic">
+                  <div className="tasks-graphic-container animate-float">
+                    <div className="tasks-graphic-inner">
+                      <div className="tasks-graphic-circle circle-1"></div>
+                      <div className="tasks-graphic-circle circle-2"></div>
+                      <div className="tasks-graphic-circle circle-3"></div>
+                      <div className="tasks-graphic-checklist"></div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="header-graphic">
-                <div className="tasks-graphic-container animate-float">
-                  <div className="tasks-graphic-inner">
-                    <div className="tasks-graphic-circle circle-1"></div>
-                    <div className="tasks-graphic-circle circle-2"></div>
-                    <div className="tasks-graphic-circle circle-3"></div>
-                    <div className="tasks-graphic-checklist"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="tasks-statistics" ref={statsRef}>
-          <div className="stat-card-tasks">
-            <div className="stat-title">Total Available Rewards</div>
-            <div className="stat-value">
-              <EthereumIcon size={18} />
-              <span>{totalRewards.toFixed(3)} USD</span>
             </div>
           </div>
 
-          <div className="stat-card-tasks">
-            <div className="stat-title">Your Wallet Balance</div>
-            <div className="stat-value">
-              <EthereumIcon size={18} />
-              <span>{walletBalance.toFixed(3)} USD</span>
-            </div>
-            <Link to="/wallet" className="wallet-link wallet-link-tasks">
-              View Wallet
-            </Link>
-          </div>
-
-          <div className="stat-card-tasks">
-            <div className="stat-title">Completion Rate</div>
-            <div className="stat-value">
-              <span>
-                {tasks.length > 0
-                  ? Math.round(
-                      (tasks.filter((t) => t.completed).length / tasks.length) *
-                        100
-                    )
-                  : 0}
-                %
-              </span>
-            </div>
-            <div className="progress-bar">
-              <div
-                className="progress-fill"
-                style={{
-                  width: `${
-                    tasks.length > 0
-                      ? (tasks.filter((t) => t.completed).length /
-                          tasks.length) *
-                        100
-                      : 0
-                  }%`,
-                }}
-              ></div>
-            </div>
-          </div>
-          <div className="stat-card-tasks">
-            <div className="stat-title">Today's Tasks</div>
-            <div className="stat-value">
+          <div className="tasks-statistics" ref={statsRef}>
+            <div className="stat-card-tasks">
+              <div className="stat-title">Total Available Rewards</div>
               <div className="stat-value">
-                {new Date().toLocaleDateString(undefined, {
-                  month: "short",
-                  day: "numeric",
-                })}
+                <EthereumIcon size={18} />
+                <span>{totalRewards.toFixed(3)} USD</span>
               </div>
             </div>
-            <div className="stat-icon today-icon"></div>
-          </div>
-        </div>
 
-        {/* Level-based tasks info */}
-        <div className="level-tasks-info">
-          <h3>Rewards Per Level</h3>
-          <div className="level-tasks-grid">
-            {[1, 2, 3, 4].map((level) => {
-              const levelTasks = tasks.filter(
-                (task) => (task.minLevel || 1) === level
-              );
-              const totalReward = levelTasks
-                .reduce((sum, task) => sum + task.reward, 0)
-                .toFixed(3);
+            <div className="stat-card-tasks">
+              <div className="stat-title">Your Wallet Balance</div>
+              <div className="stat-value">
+                <EthereumIcon size={18} />
+                <span>{walletBalance.toFixed(3)} USD</span>
+              </div>
+              <Link to="/wallet" className="wallet-link wallet-link-tasks">
+                View Wallet
+              </Link>
+            </div>
 
-              return (
+            <div className="stat-card-tasks">
+              <div className="stat-title">Completion Rate</div>
+              <div className="stat-value">
+                <span>
+                  {tasks.length > 0
+                    ? Math.round(
+                        (tasks.filter((t) => t.completed).length /
+                          tasks.length) *
+                          100
+                      )
+                    : 0}
+                  %
+                </span>
+              </div>
+              <div className="progress-bar">
                 <div
-                  className={`level-task-count ${
-                    level > userLevel ? "locked-level" : ""
-                  }`}
-                  key={level}
-                >
-                  <div className={`level-number level-${level}`}>
-                    Level {level}
-                    {level > userLevel && (
-                      <LockIcon size={14} className="lock-icon" />
-                    )}
-                  </div>
-                  <div className="reward-amount">
-                    <EthereumIcon size={14} />
-                    <span>{totalReward} USD</span>
-                  </div>
-                  <div className="task-count small">
-                    ({levelTasks.length} Tasks)
-                  </div>
+                  className="progress-fill"
+                  style={{
+                    width: `${
+                      tasks.length > 0
+                        ? (tasks.filter((t) => t.completed).length /
+                            tasks.length) *
+                          100
+                        : 0
+                    }%`,
+                  }}
+                ></div>
+              </div>
+            </div>
+            <div className="stat-card-tasks">
+              <div className="stat-title">Today's Tasks</div>
+              <div className="stat-value">
+                <div className="stat-value">
+                  {new Date().toLocaleDateString(undefined, {
+                    month: "short",
+                    day: "numeric",
+                  })}
                 </div>
-              );
-            })}
-          </div>
-          <div className="user-level-indicator">
-            Your Level: <span className="current-level">{userLevel}</span>
-            {userLevel < 4 && (
-              <div className="level-up-hint">
-                <InfoIcon size={16} />
-                <span>Level up to unlock more rewards!</span>
               </div>
-            )}
+              <div className="stat-icon today-icon"></div>
+            </div>
           </div>
-        </div>
 
-        <div className="tasks-filter-section">
-          <div className="filter-label">Filter Tasks:</div>
-          <div className="filter-options">
-            <button
-              className={`filter-option ${
-                filterOption === "all" ? "active" : ""
-              }`}
-              onClick={() => setFilterOption("all")}
-            >
-              All Tasks
-            </button>
-            <button
-              className={`filter-option ${
-                filterOption === "pending" ? "active" : ""
-              }`}
-              onClick={() => setFilterOption("pending")}
-            >
-              Pending
-            </button>
-            <button
-              className={`filter-option ${
-                filterOption === "completed" ? "active" : ""
-              }`}
-              onClick={() => setFilterOption("completed")}
-            >
-              Completed
-            </button>
-            <button
-              className={`filter-option ${
-                filterOption === "rejected" ? "active" : ""
-              }`}
-              onClick={() => setFilterOption("rejected")}
-            >
-              Rejected
-            </button>
-          </div>
-        </div>
+          {/* Level-based tasks info */}
+          <div className="level-tasks-info">
+            <h3>Rewards Per Level</h3>
+            <div className="level-tasks-grid">
+              {[1, 2, 3, 4].map((level) => {
+                const levelTasks = tasks.filter(
+                  (task) => (task.minLevel || 1) === level
+                );
+                const totalReward = levelTasks
+                  .reduce((sum, task) => sum + task.reward, 0)
+                  .toFixed(3);
 
-        {error && <div className="error-message">{error}</div>}
-
-        {loading ? (
-          <div className="loading-indicator">
-            <LoadingSpinner />
-          </div>
-        ) : filteredTasks.length === 0 ? (
-          <EmptyState
-            message={
-              levelFilter !== "all"
-                ? `No ${levelFilter} level tasks found with the selected filter.`
-                : `No tasks found with the selected filter.`
-            }
-            filterOption={filterOption}
-            onReset={resetFilter}
-          />
-        ) : (
-          <div className="tasks-list">
-            {loading ? (
-              <div className="loading-container">
-                <div className="loading-spinner"></div>
-                <p>
-                  <LoadingSpinner />
-                </p>
-              </div>
-            ) : filteredTasks.length === 0 ? (
-              <EmptyState
-                message={
-                  filterOption === "completed"
-                    ? "You haven't completed any tasks yet."
-                    : filterOption === "pending"
-                    ? "No pending tasks found."
-                    : filterOption === "rejected"
-                    ? "You don't have any rejected tasks."
-                    : "No tasks available at the moment."
-                }
-                filterOption={filterOption}
-                onReset={resetFilter}
-              />
-            ) : (
-              filteredTasks.map((task) => (
-                <div
-                  key={task._id}
-                  className={`task-card ${task.completed ? "completed" : ""} ${
-                    task.status === "pending_verification"
-                      ? "pending-verification"
-                      : ""
-                  } ${task.status === "rejected" ? "rejected" : ""}`}
-                >
-                  <div className="task-status">
-                    {task.completed ? (
-                      <div className="completed-badge">
-                        <CheckIcon size={16} />
-                        <span>Completed</span>
-                      </div>
-                    ) : task.status === "pending_verification" ? (
-                      <div className="pending-verification-badge">
-                        <ClockIcon size={16} />
-                        <span>Under Verification</span>
-                      </div>
-                    ) : task.status === "rejected" ? (
-                      <div className="rejected-badge">
-                        <AlertTriangle size={16} />
-                        <span>Rejected</span>
-                      </div>
-                    ) : (
-                      <div className="reward-badge">
-                        <EthereumIcon size={16} />
-                        <span>{task.reward.toFixed(3)} USD</span>
-                      </div>
-                    )}
-                  </div>
-
-                  <h3 className="task-title">{task.title}</h3>
-                  <p className="task-description">{task.description}</p>
-
-                  {task.status === "rejected" && task.rejectionReason && (
-                    <div className="task-rejection-info">
-                      <div className="rejection-label">
-                        Reason for rejection:
-                      </div>
-                      <div className="rejection-reason">
-                        {task.rejectionReason}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="task-meta">
-                    <div
-                      className="difficulty-tag"
-                      style={{ color: difficultyColors[task.difficulty] }}
-                    >
-                      {task.difficulty.charAt(0).toUpperCase() +
-                        task.difficulty.slice(1)}
-                    </div>
-
-                    <div className="time-estimate">
-                      <ClockIcon size={14} />
-                      <span>{task.estimatedTime}</span>
-                    </div>
-                  </div>
-
-                  <button
-                    className="view-task-button"
-                    onClick={() => openTaskDetails(task)}
+                return (
+                  <div
+                    className={`level-task-count ${
+                      level > userLevel ? "locked-level" : ""
+                    }`}
+                    key={level}
                   >
-                    {task.completed
-                      ? "View Details"
-                      : task.status === "pending_verification"
-                      ? "View Progress"
-                      : task.status === "rejected"
-                      ? "View Details"
-                      : "Complete Task"}
-                  </button>
+                    <div className={`level-number level-${level}`}>
+                      Level {level}
+                      {level > userLevel && (
+                        <LockIcon size={14} className="lock-icon" />
+                      )}
+                    </div>
+                    <div className="reward-amount">
+                      <EthereumIcon size={14} />
+                      <span>{totalReward} USD</span>
+                    </div>
+                    <div className="task-count small">
+                      ({levelTasks.length} Tasks)
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="user-level-indicator">
+              Your Level: <span className="current-level">{userLevel}</span>
+              {userLevel < 4 && (
+                <div className="level-up-hint">
+                  <InfoIcon size={16} />
+                  <span>Level up to unlock more rewards!</span>
                 </div>
-              ))
-            )}
+              )}
+            </div>
           </div>
-        )}
 
-        {/* Task details modal */}
-        {activeTask && (
-          <div className="task-modal-overlay" onClick={closeTaskDetails}>
-            <div className="task-modal" onClick={(e) => e.stopPropagation()}>
+          <div className="tasks-filter-section">
+            <div className="filter-label">Filter Tasks:</div>
+            <div className="filter-options">
               <button
-                className="close-modal-button"
-                onClick={closeTaskDetails}
-                disabled={verificationStatus === "verifying"}
+                className={`filter-option ${
+                  filterOption === "all" ? "active" : ""
+                }`}
+                onClick={() => setFilterOption("all")}
               >
-                ×
+                All Tasks
               </button>
+              <button
+                className={`filter-option ${
+                  filterOption === "pending" ? "active" : ""
+                }`}
+                onClick={() => setFilterOption("pending")}
+              >
+                Pending
+              </button>
+              <button
+                className={`filter-option ${
+                  filterOption === "completed" ? "active" : ""
+                }`}
+                onClick={() => setFilterOption("completed")}
+              >
+                Completed
+              </button>
+              <button
+                className={`filter-option ${
+                  filterOption === "rejected" ? "active" : ""
+                }`}
+                onClick={() => setFilterOption("rejected")}
+              >
+                Rejected
+              </button>
+            </div>
+          </div>
 
-              <div className="task-modal-header">
-                <h2>{activeTask.title}</h2>
-                <div className="task-reward">
-                  <EthereumIcon size={18} />
-                  <span>{activeTask.reward.toFixed(3)} USD</span>
+          {error && <div className="error-message">{error}</div>}
+
+          {loading ? (
+            <div className="loading-indicator">
+              <LoadingSpinner />
+            </div>
+          ) : filteredTasks.length === 0 ? (
+            <EmptyState
+              message={
+                levelFilter !== "all"
+                  ? `No ${levelFilter} level tasks found with the selected filter.`
+                  : `No tasks found with the selected filter.`
+              }
+              filterOption={filterOption}
+              onReset={resetFilter}
+            />
+          ) : (
+            <div className="tasks-list">
+              {loading ? (
+                <div className="loading-container">
+                  <div className="loading-spinner"></div>
+                  <p>
+                    <LoadingSpinner />
+                  </p>
                 </div>
-              </div>
+              ) : filteredTasks.length === 0 ? (
+                <EmptyState
+                  message={
+                    filterOption === "completed"
+                      ? "You haven't completed any tasks yet."
+                      : filterOption === "pending"
+                      ? "No pending tasks found."
+                      : filterOption === "rejected"
+                      ? "You don't have any rejected tasks."
+                      : "No tasks available at the moment."
+                  }
+                  filterOption={filterOption}
+                  onReset={resetFilter}
+                />
+              ) : (
+                filteredTasks.map((task) => (
+                  <div
+                    key={task._id}
+                    className={`task-card ${
+                      task.completed ? "completed" : ""
+                    } ${
+                      task.status === "pending_verification"
+                        ? "pending-verification"
+                        : ""
+                    } ${task.status === "rejected" ? "rejected" : ""}`}
+                  >
+                    <div className="task-status">
+                      {task.completed ? (
+                        <div className="completed-badge">
+                          <CheckIcon size={16} />
+                          <span>Completed</span>
+                        </div>
+                      ) : task.status === "pending_verification" ? (
+                        <div className="pending-verification-badge">
+                          <ClockIcon size={16} />
+                          <span>Under Verification</span>
+                        </div>
+                      ) : task.status === "rejected" ? (
+                        <div className="rejected-badge">
+                          <AlertTriangle size={16} />
+                          <span>Rejected</span>
+                        </div>
+                      ) : (
+                        <div className="reward-badge">
+                          <EthereumIcon size={16} />
+                          <span>{task.reward.toFixed(3)} USD</span>
+                        </div>
+                      )}
+                    </div>
 
-              <div className="task-modal-content">
-                <p className="task-full-description">
-                  {activeTask.description}
-                </p>
+                    <h3 className="task-title">{task.title}</h3>
+                    <p className="task-description">{task.description}</p>
 
-                {/* Show task steps for all tasks */}
-                <div className="task-steps">
-                  <h3>Steps to Complete:</h3>
-                  <ol>
-                    {Array.isArray(activeTask.steps) &&
-                    activeTask.steps.length > 0 ? (
-                      activeTask.steps.map((step, index) => (
-                        <li key={index}>{step}</li>
-                      ))
-                    ) : (
-                      <li>Complete this task to earn rewards.</li>
-                    )}
-                  </ol>
-                </div>
-
-                {/* Show screenshot instructions for screenshot tasks */}
-                {activeTask.type === "screenshot" && (
-                  <div className="screenshot-instructions">
-                    {/* Display custom screenshot instructions if they exist, otherwise use default */}
-                    <p className="instructions-text">
-                      {activeTask.screenshotInstructions
-                        ? activeTask.screenshotInstructions
-                        : "Take a screenshot showing you've completed the task. Make sure important details are clearly visible."}
-                    </p>
-                    {/* Show required indicator if screenshot is required */}
-                    {activeTask.screenshotRequired && (
-                      <div className="screenshot-required-notice">
-                        <AlertTriangle size={14} className="required-icon" />
-                        <span>
-                          A screenshot is required to verify this task
-                        </span>
+                    {task.status === "rejected" && task.rejectionReason && (
+                      <div className="task-rejection-info">
+                        <div className="rejection-label">
+                          Reason for rejection:
+                        </div>
+                        <div className="rejection-reason">
+                          {task.rejectionReason}
+                        </div>
                       </div>
                     )}
-                  </div>
-                )}
 
-                {/* Tasks under verification: Show verification status instead of external link */}
-                {activeTask.status === "pending_verification" ? (
-                  <div className="verification-status-message">
-                    <div className="verification-status-icon">
-                      <ClockIcon size={18} />
-                    </div>
-                    <div className="verification-status-text">
-                      <span className="status-title">Under Verification</span>
-                      <span className="status-description">
-                        Our team is reviewing your submission. You'll be
-                        notified once verified.
-                      </span>
-                    </div>
-                  </div>
-                ) : (
-                  /* Show external URL link for regular tasks that aren't YouTube watch */
-                  activeTask.externalUrl &&
-                  activeTask.type !== "youtube_watch" &&
-                  !activeTask.completed &&
-                  activeTask.status !== "rejected" && (
-                    <a
-                      href={activeTask.externalUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="task-link-button"
-                    >
-                      <span>Go to Task</span>
-                      <ExternalLinkIcon size={16} />
-                    </a>
-                  )
-                )}
-
-                {/* Show rejection reason if task was rejected */}
-                {activeTask.status === "rejected" &&
-                  activeTask.rejectionReason && (
-                    <div className="task-rejection-details">
-                      <h3>Task Rejected</h3>
-                      <p className="rejection-reason">
-                        <strong>Reason:</strong> {activeTask.rejectionReason}
-                      </p>
-                      <p className="rejection-note">
-                        You can try a different task to earn rewards. If you
-                        believe this was rejected in error, please contact
-                        support.
-                      </p>
-                    </div>
-                  )}
-
-                {/* If task is completed, show completion info */}
-                {activeTask.completed && (
-                  <div className="task-completed-info">
-                    <div className="completed-status">
-                      <CheckIcon size={24} />
-                      <span>Task Completed</span>
-                    </div>
-                    <p>
-                      You've successfully completed this task and earned{" "}
-                      <strong>{activeTask.reward.toFixed(3)} USD</strong>!
-                    </p>
-                  </div>
-                )}
-
-                {/* Only show the start button for non-rejected tasks that haven't been started */}
-                {!activeTask.completed &&
-                  activeTask.status !== "pending_verification" &&
-                  activeTask.status !== "rejected" &&
-                  !activeTask.startedAt && (
-                    <div className="start-task-section">
-                      <button
-                        className="start-task-button"
-                        onClick={() => handleStartTask(activeTask._id)}
-                        disabled={isStartingTask}
+                    <div className="task-meta">
+                      <div
+                        className="difficulty-tag"
+                        style={{ color: difficultyColors[task.difficulty] }}
                       >
-                        {isStartingTask ? "Starting..." : "Start Task"}
-                      </button>
-                      <div className="task-info-note">
-                        <InfoIcon size={16} />
-                        <span>
-                          Starting this task will allow you to submit
-                          verification when complete.
-                        </span>
+                        {task.difficulty.charAt(0).toUpperCase() +
+                          task.difficulty.slice(1)}
                       </div>
+
+                      <div className="time-estimate">
+                        <ClockIcon size={14} />
+                        <span>{task.estimatedTime}</span>
+                      </div>
+                    </div>
+
+                    <button
+                      className="view-task-button"
+                      onClick={() => openTaskDetails(task)}
+                    >
+                      {task.completed
+                        ? "View Details"
+                        : task.status === "pending_verification"
+                        ? "View Progress"
+                        : task.status === "rejected"
+                        ? "View Details"
+                        : "Complete Task"}
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+
+          {/* Task details modal */}
+          {activeTask && (
+            <div className="task-modal-overlay" onClick={closeTaskDetails}>
+              <div className="task-modal" onClick={(e) => e.stopPropagation()}>
+                <button
+                  className="close-modal-button"
+                  onClick={closeTaskDetails}
+                  disabled={verificationStatus === "verifying"}
+                >
+                  ×
+                </button>
+
+                <div className="task-modal-header">
+                  <h2>{activeTask.title}</h2>
+                  <div className="task-reward">
+                    <EthereumIcon size={18} />
+                    <span>{activeTask.reward.toFixed(3)} USD</span>
+                  </div>
+                </div>
+
+                <div className="task-modal-content">
+                  <p className="task-full-description">
+                    {activeTask.description}
+                  </p>
+
+                  {/* Show task steps for all tasks */}
+                  <div className="task-steps">
+                    <h3>Steps to Complete:</h3>
+                    <ol>
+                      {Array.isArray(activeTask.steps) &&
+                      activeTask.steps.length > 0 ? (
+                        activeTask.steps.map((step, index) => (
+                          <li key={index}>{step}</li>
+                        ))
+                      ) : (
+                        <li>Complete this task to earn rewards.</li>
+                      )}
+                    </ol>
+                  </div>
+
+                  {/* Show screenshot instructions for screenshot tasks */}
+                  {activeTask.type === "screenshot" && (
+                    <div className="screenshot-instructions">
+                      {/* Display custom screenshot instructions if they exist, otherwise use default */}
+                      <p className="instructions-text">
+                        {activeTask.screenshotInstructions
+                          ? activeTask.screenshotInstructions
+                          : "Take a screenshot showing you've completed the task. Make sure important details are clearly visible."}
+                      </p>
+                      {/* Show required indicator if screenshot is required */}
+                      {activeTask.screenshotRequired && (
+                        <div className="screenshot-required-notice">
+                          <AlertTriangle size={14} className="required-icon" />
+                          <span>
+                            A screenshot is required to verify this task
+                          </span>
+                        </div>
+                      )}
                     </div>
                   )}
 
-                {/* Only show verification UI if task is started but not completed */}
-                {!activeTask.completed &&
-                  activeTask.status !== "pending_verification" &&
-                  activeTask.status !== "rejected" &&
-                  activeTask.startedAt && (
-                    <div className="verification-section">
-                      {/* YouTube watch task */}
-                      {activeTask.type === "youtube_watch" && (
-                        <div className="youtube-container">
-                          <h3>Watch the Video</h3>
-                          <div className="youtube-video-wrapper">
-                            <div className="video-progress-bar">
-                              <div
-                                className="progress-fill"
-                                style={{
-                                  width: `${Math.min(
-                                    100,
-                                    (videoWatchTime /
-                                      parseInt(
-                                        activeTask.videoDuration || 30
-                                      )) *
-                                      100
-                                  )}%`,
-                                }}
-                              ></div>
+                  {/* Tasks under verification: Show verification status instead of external link */}
+                  {activeTask.status === "pending_verification" ? (
+                    <div className="verification-status-message">
+                      <div className="verification-status-icon">
+                        <ClockIcon size={18} />
+                      </div>
+                      <div className="verification-status-text">
+                        <span className="status-title">Under Verification</span>
+                        <span className="status-description">
+                          Our team is reviewing your submission. You'll be
+                          notified once verified.
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    /* Show external URL link for regular tasks that aren't YouTube watch */
+                    activeTask.externalUrl &&
+                    activeTask.type !== "youtube_watch" &&
+                    !activeTask.completed &&
+                    activeTask.status !== "rejected" && (
+                      <a
+                        href={activeTask.externalUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="task-link-button"
+                      >
+                        <span>Go to Task</span>
+                        <ExternalLinkIcon size={16} />
+                      </a>
+                    )
+                  )}
+
+                  {/* Show rejection reason if task was rejected */}
+                  {activeTask.status === "rejected" &&
+                    activeTask.rejectionReason && (
+                      <div className="task-rejection-details">
+                        <h3>Task Rejected</h3>
+                        <p className="rejection-reason">
+                          <strong>Reason:</strong> {activeTask.rejectionReason}
+                        </p>
+                        <p className="rejection-note">
+                          You can try a different task to earn rewards. If you
+                          believe this was rejected in error, please contact
+                          support.
+                        </p>
+                      </div>
+                    )}
+
+                  {/* If task is completed, show completion info */}
+                  {activeTask.completed && (
+                    <div className="task-completed-info">
+                      <div className="completed-status">
+                        <CheckIcon size={24} />
+                        <span>Task Completed</span>
+                      </div>
+                      <p>
+                        You've successfully completed this task and earned{" "}
+                        <strong>{activeTask.reward.toFixed(3)} USD</strong>!
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Only show the start button for non-rejected tasks that haven't been started */}
+                  {!activeTask.completed &&
+                    activeTask.status !== "pending_verification" &&
+                    activeTask.status !== "rejected" &&
+                    !activeTask.startedAt && (
+                      <div className="start-task-section">
+                        <button
+                          className="start-task-button"
+                          onClick={() => handleStartTask(activeTask._id)}
+                          disabled={isStartingTask}
+                        >
+                          {isStartingTask ? "Starting..." : "Start Task"}
+                        </button>
+                        <div className="task-info-note">
+                          <InfoIcon size={16} />
+                          <span>
+                            Starting this task will allow you to submit
+                            verification when complete.
+                          </span>
+                        </div>
+                      </div>
+                    )}
+
+                  {/* Only show verification UI if task is started but not completed */}
+                  {!activeTask.completed &&
+                    activeTask.status !== "pending_verification" &&
+                    activeTask.status !== "rejected" &&
+                    activeTask.startedAt && (
+                      <div className="verification-section">
+                        {/* YouTube watch task */}
+                        {activeTask.type === "youtube_watch" && (
+                          <div className="youtube-container">
+                            <h3>Watch the Video</h3>
+                            <div className="youtube-video-wrapper">
+                              <div className="video-progress-bar">
+                                <div
+                                  className="progress-fill"
+                                  style={{
+                                    width: `${Math.min(
+                                      100,
+                                      (videoWatchTime /
+                                        parseInt(
+                                          activeTask.videoDuration || 30
+                                        )) *
+                                        100
+                                    )}%`,
+                                  }}
+                                ></div>
+                              </div>
+
+                              <iframe
+                                ref={youtubePlayerRef}
+                                width="100%"
+                                height="315"
+                                src={`https://www.youtube.com/embed/${getYouTubeVideoId(
+                                  activeTask.externalUrl
+                                )}?enablejsapi=1`}
+                                title="YouTube Video"
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                              ></iframe>
                             </div>
 
-                            <iframe
-                              ref={youtubePlayerRef}
-                              width="100%"
-                              height="315"
-                              src={`https://www.youtube.com/embed/${getYouTubeVideoId(
-                                activeTask.externalUrl
-                              )}?enablejsapi=1`}
-                              title="YouTube Video"
-                              frameBorder="0"
-                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                              allowFullScreen
-                            ></iframe>
-                          </div>
-
-                          <div className="video-tracking-info">
-                            <div className="tracking-icon">
-                              <ClockIcon size={16} />
-                            </div>
-                            <div className="tracking-details">
-                              <p className="tracking-message">
-                                Watch the video for{" "}
-                                {activeTask.videoDuration || 30} seconds to
-                                complete this task.
-                              </p>
-                              <div className="tracking-progress">
-                                <span>Progress:</span>
-                                <span className="progress-number">
-                                  {Math.floor(videoWatchTime)} /{" "}
-                                  {activeTask.videoDuration || 30} seconds
-                                </span>
+                            <div className="video-tracking-info">
+                              <div className="tracking-icon">
+                                <ClockIcon size={16} />
+                              </div>
+                              <div className="tracking-details">
+                                <p className="tracking-message">
+                                  Watch the video for{" "}
+                                  {activeTask.videoDuration || 30} seconds to
+                                  complete this task.
+                                </p>
+                                <div className="tracking-progress">
+                                  <span>Progress:</span>
+                                  <span className="progress-number">
+                                    {Math.floor(videoWatchTime)} /{" "}
+                                    {activeTask.videoDuration || 30} seconds
+                                  </span>
+                                </div>
                               </div>
                             </div>
-                          </div>
 
-                          {/* Always show a verification button for YouTube tasks */}
-                          <div className="verification-action youtube-verify-action">
-                            {verificationStatus === "error" && (
-                              <div className="verification-error">
-                                <AlertTriangle size={16} />
-                                <span>{error}</span>
-                              </div>
-                            )}
+                            {/* Always show a verification button for YouTube tasks */}
+                            <div className="verification-action youtube-verify-action">
+                              {verificationStatus === "error" && (
+                                <div className="verification-error">
+                                  <AlertTriangle size={16} />
+                                  <span>{error}</span>
+                                </div>
+                              )}
 
-                            <button
-                              className={`submit-verification-button ${
-                                videoWatchTime <
+                              <button
+                                className={`submit-verification-button ${
+                                  videoWatchTime <
+                                  parseInt(activeTask.videoDuration || 30)
+                                    ? "incomplete-button"
+                                    : ""
+                                }`}
+                                onClick={() =>
+                                  handleYoutubeVideoVerification(activeTask._id)
+                                }
+                                disabled={
+                                  videoWatchTime <
+                                    parseInt(activeTask.videoDuration || 30) ||
+                                  verificationStatus === "verifying"
+                                }
+                              >
+                                {videoWatchTime >=
                                 parseInt(activeTask.videoDuration || 30)
-                                  ? "incomplete-button"
-                                  : ""
-                              }`}
-                              onClick={() =>
-                                handleYoutubeVideoVerification(activeTask._id)
-                              }
-                              disabled={
-                                videoWatchTime <
-                                  parseInt(activeTask.videoDuration || 30) ||
-                                verificationStatus === "verifying"
-                              }
-                            >
-                              {videoWatchTime >=
-                              parseInt(activeTask.videoDuration || 30)
-                                ? verificationStatus === "idle"
-                                  ? "Complete Task & Earn Reward"
+                                  ? verificationStatus === "idle"
+                                    ? "Complete Task & Earn Reward"
+                                    : verificationStatus === "verifying"
+                                    ? "Verifying..."
+                                    : verificationStatus === "complete"
+                                    ? "Task Completed!"
+                                    : "Try Again"
+                                  : `Watch ${
+                                      parseInt(activeTask.videoDuration || 30) -
+                                      Math.floor(videoWatchTime)
+                                    } more seconds to complete`}
+                              </button>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Screenshot upload for screenshot tasks */}
+                        {activeTask.type === "screenshot" && (
+                          <div className="screenshot-upload-section">
+                            <h3>Upload Verification</h3>
+                            <div className="upload-container">
+                              <label
+                                htmlFor="screenshot-upload"
+                                className="upload-label"
+                              >
+                                {screenshotPreview ? (
+                                  <div className="preview-container">
+                                    <img
+                                      src={screenshotPreview}
+                                      alt="Screenshot preview"
+                                      className="screenshot-preview"
+                                    />
+                                    <div className="preview-overlay">
+                                      <span>Change Image</span>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <>
+                                    <div className="upload-icon">
+                                      <Camera size={24} />
+                                    </div>
+                                    <div className="upload-text">
+                                      <span className="primary-text">
+                                        Upload Screenshot
+                                      </span>
+                                      <span className="secondary-text">
+                                        Click or drag image here
+                                      </span>
+                                    </div>
+                                  </>
+                                )}
+                              </label>
+                              <input
+                                type="file"
+                                id="screenshot-upload"
+                                accept="image/*"
+                                onChange={handleScreenshotChange}
+                                className="hidden-file-input"
+                              />
+                            </div>
+
+                            <div className="verification-action">
+                              {verificationStatus === "error" && (
+                                <div className="verification-error">
+                                  <AlertTriangle size={16} />
+                                  <span>{error}</span>
+                                </div>
+                              )}
+
+                              <button
+                                className="submit-verification-button"
+                                onClick={() => verifyTask(activeTask._id)}
+                                disabled={
+                                  (activeTask.screenshotRequired &&
+                                    !screenshot) ||
+                                  verificationStatus === "verifying"
+                                }
+                              >
+                                {verificationStatus === "idle"
+                                  ? "Submit for Verification"
+                                  : verificationStatus === "verifying"
+                                  ? "Verifying..."
+                                  : verificationStatus === "complete"
+                                  ? "Verification Submitted!"
+                                  : "Try Again"}
+                              </button>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Custom task verification */}
+                        {activeTask.type === "custom" && (
+                          <div className="custom-task-verification">
+                            <h3>Task Verification</h3>
+                            <p className="verification-note">
+                              Complete all the steps above to verify this task.
+                            </p>
+
+                            <div className="verification-action">
+                              {verificationStatus === "error" && (
+                                <div className="verification-error">
+                                  <AlertTriangle size={16} />
+                                  <span>{error}</span>
+                                </div>
+                              )}
+
+                              <button
+                                className="submit-verification-button"
+                                onClick={() => verifyTask(activeTask._id)}
+                                disabled={verificationStatus === "verifying"}
+                              >
+                                {verificationStatus === "idle"
+                                  ? "Verify Completion"
                                   : verificationStatus === "verifying"
                                   ? "Verifying..."
                                   : verificationStatus === "complete"
                                   ? "Task Completed!"
-                                  : "Try Again"
-                                : `Watch ${
-                                    parseInt(activeTask.videoDuration || 30) -
-                                    Math.floor(videoWatchTime)
-                                  } more seconds to complete`}
-                            </button>
+                                  : "Try Again"}
+                              </button>
+                            </div>
                           </div>
-                        </div>
-                      )}
-
-                      {/* Screenshot upload for screenshot tasks */}
-                      {activeTask.type === "screenshot" && (
-                        <div className="screenshot-upload-section">
-                          <h3>Upload Verification</h3>
-                          <div className="upload-container">
-                            <label
-                              htmlFor="screenshot-upload"
-                              className="upload-label"
-                            >
-                              {screenshotPreview ? (
-                                <div className="preview-container">
-                                  <img
-                                    src={screenshotPreview}
-                                    alt="Screenshot preview"
-                                    className="screenshot-preview"
-                                  />
-                                  <div className="preview-overlay">
-                                    <span>Change Image</span>
-                                  </div>
-                                </div>
-                              ) : (
-                                <>
-                                  <div className="upload-icon">
-                                    <Camera size={24} />
-                                  </div>
-                                  <div className="upload-text">
-                                    <span className="primary-text">
-                                      Upload Screenshot
-                                    </span>
-                                    <span className="secondary-text">
-                                      Click or drag image here
-                                    </span>
-                                  </div>
-                                </>
-                              )}
-                            </label>
-                            <input
-                              type="file"
-                              id="screenshot-upload"
-                              accept="image/*"
-                              onChange={handleScreenshotChange}
-                              className="hidden-file-input"
-                            />
-                          </div>
-
-                          <div className="verification-action">
-                            {verificationStatus === "error" && (
-                              <div className="verification-error">
-                                <AlertTriangle size={16} />
-                                <span>{error}</span>
-                              </div>
-                            )}
-
-                            <button
-                              className="submit-verification-button"
-                              onClick={() => verifyTask(activeTask._id)}
-                              disabled={
-                                (activeTask.screenshotRequired &&
-                                  !screenshot) ||
-                                verificationStatus === "verifying"
-                              }
-                            >
-                              {verificationStatus === "idle"
-                                ? "Submit for Verification"
-                                : verificationStatus === "verifying"
-                                ? "Verifying..."
-                                : verificationStatus === "complete"
-                                ? "Verification Submitted!"
-                                : "Try Again"}
-                            </button>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Custom task verification */}
-                      {activeTask.type === "custom" && (
-                        <div className="custom-task-verification">
-                          <h3>Task Verification</h3>
-                          <p className="verification-note">
-                            Complete all the steps above to verify this task.
-                          </p>
-
-                          <div className="verification-action">
-                            {verificationStatus === "error" && (
-                              <div className="verification-error">
-                                <AlertTriangle size={16} />
-                                <span>{error}</span>
-                              </div>
-                            )}
-
-                            <button
-                              className="submit-verification-button"
-                              onClick={() => verifyTask(activeTask._id)}
-                              disabled={verificationStatus === "verifying"}
-                            >
-                              {verificationStatus === "idle"
-                                ? "Verify Completion"
-                                : verificationStatus === "verifying"
-                                ? "Verifying..."
-                                : verificationStatus === "complete"
-                                ? "Task Completed!"
-                                : "Try Again"}
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
+                        )}
+                      </div>
+                    )}
+                </div>
               </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { toast } from "react-hot-toast";
 import { upgradePlan } from "../../functions/investmentplans";
+import { formatBalance } from "../../functions/wallet";
 import "./PlanUpgradeModal.css";
 
 const PlanUpgradeModal = ({
@@ -93,7 +94,7 @@ const PlanUpgradeModal = ({
                   hasEnoughBalance ? "text-success" : "text-danger"
                 }`}
               >
-                ${walletBalance}
+                {formatBalance(walletBalance, walletCurrency)}
               </span>
             </div>
           </div>

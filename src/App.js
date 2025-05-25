@@ -91,6 +91,7 @@ function App() {
           <Route exact path="/contact" component={Contact} />
           {/* Semi-protected routes (accessible to all, but require login for full functionality) */}
           <Route exact path="/plans" component={Plans} />
+          <Route exact path="/tasks" component={Tasks} />
           <Route exact path="/terms" component={TermsAndConditions} />
           <Route exact path="/privacy" component={PrivacyPolicy} />
           <Route exact path="/cookies" component={CookiePolicy} />
@@ -122,9 +123,6 @@ function App() {
           </UserRoute>
           <UserRoute exact path="/deposit">
             <Deposit />
-          </UserRoute>
-          <UserRoute exact path="/tasks">
-            <Tasks />
           </UserRoute>
           <UserRoute exact path="/team">
             <Team />
