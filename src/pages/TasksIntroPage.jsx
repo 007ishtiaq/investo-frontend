@@ -75,18 +75,22 @@ export default function TasksIntroPage() {
         </div>
 
         <div className="cta-section animate-in">
-          <h2>Ready to start earning?</h2>
-          <p>
-            Create an account or login to start completing tasks and earning
-            rewards today.
-          </p>
-          <div className="cta-buttons">
-            <Link to="/register" className="register-button">
-              Create Account
+          <div className="cta-content">
+            <h2>Ready to Start Earning?</h2>
+            <p>
+              Join thousands of successful affiliates who are building passive
+              income streams with our program.
+            </p>
+            <Link to="/register" className="cta-button">
+              Create Your Account Now
             </Link>
-            <Link to="/login" className="login-button-alt">
-              Login
-            </Link>
+          </div>
+          <div className="cta-graphic">
+            <div className="cta-circles">
+              <div className="cta-circle circle-1"></div>
+              <div className="cta-circle circle-2"></div>
+              <div className="cta-circle circle-3"></div>
+            </div>
           </div>
         </div>
       </div>
