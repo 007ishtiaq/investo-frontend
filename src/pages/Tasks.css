@@ -1911,9 +1911,8 @@
   padding-right: 2rem;
 }
 
-.header-content-intro .page-title {
-  font-size: 3rem;
-  font-weight: 800;
+.header-content-intro .page-title,
+.page-title {
   margin-bottom: 1.5rem;
   background: linear-gradient(
     90deg,

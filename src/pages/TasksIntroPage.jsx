@@ -3,38 +3,6 @@ import { Link } from "react-router-dom";
 import "./Tasks.css";
 
 export default function TasksIntroPage() {
-  // Add this useEffect for animating sections when they come into view
-  useEffect(() => {
-    const observerOptions = {
-      root: null,
-      rootMargin: "0px",
-      threshold: 0.1,
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("animate-in");
-          observer.unobserve(entry.target);
-        }
-      });
-    }, observerOptions);
-
-    // Select all sections to animate
-    const sections = document.querySelectorAll(
-      ".features-section, .levels-section, .cta-section"
-    );
-    sections.forEach((section) => {
-      observer.observe(section);
-    });
-
-    return () => {
-      sections.forEach((section) => {
-        observer.unobserve(section);
-      });
-    };
-  }, []);
-
   return (
     <div className="tasks-intro-page">
       <div className="intro-hero">
