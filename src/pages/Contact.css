@@ -21,7 +21,7 @@
   flex-direction: column;
   align-items: center;
   padding: 3rem 1.5rem;
-  margin-bottom: 4rem;
+  margin-bottom: 23rem;
 }
 
 .contact-hero::before {
@@ -308,10 +308,16 @@
 }
 
 /* Responsive adjustments for mobile */
+@media (max-width: 770px) {
+  .contact-hero {
+    margin-bottom: 17rem;
+  }
+}
 @media (max-width: 640px) {
   .contact-hero {
     height: auto;
     padding-bottom: 6rem;
+    margin-bottom: 2rem;
   }
 
   .contact-form-wrapper {
