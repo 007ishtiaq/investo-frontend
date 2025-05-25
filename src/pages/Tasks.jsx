@@ -803,8 +803,8 @@ const Tasks = () => {
             />
           ) : (
             <div className="tasks-list">
-              {loading ? (
-                <div className="loading-container">
+              {!loading ? (
+                <div className="loading-container loading-container-tasks">
                   <div className="loading-spinner"></div>
                   <p>
                     <LoadingSpinner />

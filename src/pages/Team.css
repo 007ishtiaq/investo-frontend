@@ -650,16 +650,6 @@
   line-height: 1.6;
 }
 
-/* Loading spinner */
-.loading-spinner {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 200px;
-  font-size: 1.25rem;
-  color: var(#cbd5e1);
-}
-
 .team-hero {
   position: relative;
   overflow: hidden;

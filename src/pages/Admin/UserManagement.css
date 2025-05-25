@@ -37,12 +37,6 @@
   box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.1);
 }
 
-.loading-spinner {
-  text-align: center;
-  padding: 3rem;
-  color: var(--color-text-secondary);
-}
-
 .no-users {
   text-align: center;
   padding: 3rem;

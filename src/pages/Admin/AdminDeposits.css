@@ -39,12 +39,6 @@
   border-color: var(--color-primary);
 }
 
-.loading-spinner {
-  text-align: center;
-  padding: 3rem;
-  color: var(--color-text-secondary);
-}
-
 .no-deposits {
   text-align: center;
   padding: 3rem;

@@ -190,12 +190,6 @@
   color: var(--color-text-primary);
 }
 
-.loading-spinner {
-  text-align: center;
-  padding: 2rem;
-  color: var(--color-text-secondary);
-}
-
 .no-deposits {
   text-align: center;
   padding: 2rem;
