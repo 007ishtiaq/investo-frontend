@@ -69,8 +69,11 @@ const Tasks = () => {
   const youtubePlayerRef = useRef(null);
   const videoIntervalRef = useRef(null);
   const [userLevel, setUserLevel] = useState(1); // Default user level to 1
-
   const [walletBalance, setWalletBalance] = useState(0);
+
+  // Refs for intersection observer animations
+  const headerRef = useRef(null);
+  const statsRef = useRef(null);
 
   const loadWalletBalance = async () => {
     if (!user || !user.token) return;
@@ -92,6 +95,32 @@ const Tasks = () => {
       setWalletBalance(0);
     }
   };
+
+  // Set up animation observer
+  useEffect(() => {
+    const observerOptions = {
+      root: null,
+      rootMargin: "0px",
+      threshold: 0.1,
+    };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("animate-in");
+          // Remove observer once animation is triggered
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+    // Observe elements
+    if (headerRef.current) observer.observe(headerRef.current);
+    if (statsRef.current) observer.observe(statsRef.current);
+    return () => {
+      // Clean up observers
+      if (headerRef.current) observer.unobserve(headerRef.current);
+      if (statsRef.current) observer.unobserve(statsRef.current);
+    };
+  }, []);
 
   // Add this to your useEffect that runs on component mount:
   useEffect(() => {
@@ -567,16 +596,43 @@ const Tasks = () => {
       />
 
       <div className="container">
-        <div className="tasks-header">
-          <h1 className="page-title">Complete Tasks, Earn Rewards</h1>
-          <p className="page-description">
-            Complete simple tasks to earn cryptocurrency rewards. Tasks include
-            social media interactions, learning about the platform, and
-            promoting our community.
-          </p>
+        {/* New Tasks Hero Section */}
+        <div className="tasks-hero">
+          <div className="container">
+            <div className="tasks-header" ref={headerRef}>
+              <div className="header-content-tasks">
+                <h1 className="page-title">Daily Tasks</h1>
+                <p className="page-description">
+                  Complete tasks to earn rewards and increase your level. New
+                  tasks are available every day.
+                </p>
+                <div className="header-actions">
+                  <div className="user-level-indicator">
+                    <div className="level-badge">Level {userLevel}</div>
+                    <div className="level-progress">
+                      <div
+                        className="level-progress-bar"
+                        style={{ width: `${Math.min(userLevel * 10, 100)}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="header-graphic">
+                <div className="tasks-graphic-container animate-float">
+                  <div className="tasks-graphic-inner">
+                    <div className="tasks-graphic-circle circle-1"></div>
+                    <div className="tasks-graphic-circle circle-2"></div>
+                    <div className="tasks-graphic-circle circle-3"></div>
+                    <div className="tasks-graphic-checklist"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="tasks-statistics">
+        <div className="tasks-statistics" ref={statsRef}>
           <div className="stat-card-tasks">
             <div className="stat-title">Total Available Rewards</div>
             <div className="stat-value">
@@ -623,6 +679,18 @@ const Tasks = () => {
                 }}
               ></div>
             </div>
+          </div>
+          <div className="stat-card-tasks">
+            <div className="stat-title">Today's Tasks</div>
+            <div className="stat-value">
+              <div className="stat-value">
+                {new Date().toLocaleDateString(undefined, {
+                  month: "short",
+                  day: "numeric",
+                })}
+              </div>
+            </div>
+            <div className="stat-icon today-icon"></div>
           </div>
         </div>
 
