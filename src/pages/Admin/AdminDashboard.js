@@ -78,6 +78,22 @@ const StatCard = ({ title, value, icon, color, change, linkTo }) => {
   );
 };
 
+const MetricCard = ({ title, metrics }) => {
+  return (
+    <div className="analytics-metric-card">
+      <h3 className="analytics-metric-title">{title}</h3>
+      <div className="analytics-metric-grid">
+        {metrics.map((metric, index) => (
+          <div key={index} className="analytics-metric-item">
+            <span className="analytics-metric-label">{metric.label}</span>
+            <span className="analytics-metric-value">{metric.value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 // ChartCard component with empty data messaging
 const ChartCard = ({ title, type, data, labels }) => {
   // Check if data is empty (all zeros)
@@ -455,6 +471,19 @@ const AdminDashboard = () => {
         {loading ? null : analytics && analytics.topUsers ? (
           <div className="admin-tables-section">
             <h2 className="admin-section-title">Top Performers</h2>
+            <div className="analytics-detail-section">
+              <div className="analytics-detail-grid">
+                <MetricCard
+                  title="User Distribution by Level"
+                  metrics={[
+                    { label: "Level 1", value: analytics.userLevels.level1 },
+                    { label: "Level 2", value: analytics.userLevels.level2 },
+                    { label: "Level 3", value: analytics.userLevels.level3 },
+                    { label: "Level 4", value: analytics.userLevels.level4 },
+                  ]}
+                />
+              </div>
+            </div>
             <div className="admin-tables-grid">
               <TableCard
                 title="Top Users by Balance"

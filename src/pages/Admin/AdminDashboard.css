@@ -436,6 +436,51 @@
   gap: 1.5rem;
 }
 
+.analytics-detail-section {
+  margin-bottom: 2rem;
+}
+
+.analytics-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+.analytics-metric-card {
+  background-color: white;
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.analytics-metric-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 1rem;
+}
+
+.analytics-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.analytics-metric-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.analytics-metric-label {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.analytics-metric-value {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
 @media (min-width: 1024px) {
   .admin-tables-grid {
     grid-template-columns: 1fr 1fr;
