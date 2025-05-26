@@ -266,30 +266,30 @@ const Profile = () => {
       <Card className="profile-header-card">
         <CardContent className="profile-header-content">
           <div className="profile-header">
-            <div className="profile-avatar" onClick={handleImageClick}>
+            <div className="profile-avatar-container">
               <div
                 className="profile-avatar-fallback"
                 style={{
                   backgroundImage: profileData.profileImage
                     ? `url(${profileData.profileImage})`
-                    : "none",
+                    : "",
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                 }}
               >
                 {!profileData.profileImage && getUserInitials(profileData.name)}
-                <Link to="/profile" className="profile-edit-button">
-                  <Edit2 size={14} />
-                </Link>
               </div>
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleImageChange}
-                accept="image/*"
-                style={{ display: "none" }}
-              />
+              <div className="profile-edit-button" onClick={handleImageClick}>
+                <Edit2 size={14} />
+              </div>
             </div>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleImageChange}
+              accept="image/*"
+              style={{ display: "none" }}
+            />
             <div className="profile-header-info">
               <h1 className="profile-title">{profileData.name}</h1>
               <p className="profile-description">
