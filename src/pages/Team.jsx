@@ -588,29 +588,32 @@ const Team = () => {
       <div className="container">
         <div className="team-dashboard">
           {/* Stats Cards */}
-          <div className="stats-grid team-statistics" ref={statsRef}>
-            <div className="stat-card">
+          <div
+            className="stats-grid team-statistics team-statistics-auth"
+            ref={statsRef}
+          >
+            <div className="stat-card stat-item">
               <span className="stat-value">{stats.totalMembers}</span>
               <span className="stat-label">Total Referrals</span>
             </div>
-            <div className="stat-card">
+            <div className="stat-card stat-item">
               <span className="stat-value">{stats.activeMembers}</span>
               <span className="stat-label">Active Members</span>
             </div>
-            <div className="stat-card">
+            <div className="stat-card stat-item">
               <span className="stat-value">
                 {formatBalance(stats.affiliateEarnings, "USD")}
               </span>
               <span className="stat-label">Earnings By Team</span>
             </div>
-            <div className="stat-card">
+            <div className="stat-card stat-item">
               <span className="stat-value">{userLevel}</span>
               <span className="stat-label">Your Account Level</span>
             </div>
           </div>
 
           {/* Affiliate Link Section */}
-          <div className="affiliate-section">
+          <div className="affiliate-section" ref={affiliateSectionRef}>
             <h2>Share Your Affiliate Link</h2>
             <p>
               Invite friends and earn rewards when they join and complete tasks.
@@ -675,7 +678,7 @@ const Team = () => {
           </div>
 
           {/* Level Benefits */}
-          <div className="level-benefits-section">
+          <div className="level-benefits-section" ref={benefitsRef}>
             <div className="team-commission-section">
               <h2>Affiliate Commission Rates</h2>
               <div className="commission-table-container">
@@ -736,6 +739,129 @@ const Team = () => {
                     </tr>
                   </tbody>
                 </table>
+              </div>
+            </div>
+          </div>
+
+          {/* Example Earnings Section */}
+          <div className="example-earnings-section" ref={testimonialRef}>
+            <h2 className="section-title">Potential Earnings Example</h2>
+            <div className="earnings-example-container">
+              <div className="earnings-scenario">
+                <div className="scenario-header">
+                  <h3>Level 2 Account with 10 Direct Referrals</h3>
+                </div>
+                <div className="scenario-details">
+                  <div className="scenario-row">
+                    <div className="scenario-label">
+                      Level 1 (10 direct referrals):
+                    </div>
+                    <div className="scenario-value">
+                      10 × $0.02 = $0.20 daily
+                    </div>
+                  </div>
+                  <div className="scenario-row">
+                    <div className="scenario-label">
+                      Level 2 (50 indirect referrals averaging $100 investment):
+                    </div>
+                    <div className="scenario-value">
+                      50 × $100 × 0.20% = $10 daily
+                    </div>
+                  </div>
+                  <div className="scenario-row">
+                    <div className="scenario-label">
+                      Level 3 (200 indirect referrals averaging $100
+                      investment):
+                    </div>
+                    <div className="scenario-value">
+                      200 × $100 × 1.00% = $200 daily
+                    </div>
+                  </div>
+                  <div className="scenario-row">
+                    <div className="scenario-label">
+                      Level 4 (500 indirect referrals averaging $100
+                      investment):
+                    </div>
+                    <div className="scenario-value">
+                      500 × $100 × 1.50% = $750 daily
+                    </div>
+                  </div>
+                  <div className="scenario-total">
+                    <div className="total-label">Total Daily Earnings:</div>
+                    <div className="total-value">$960.20</div>
+                  </div>
+                  <div className="scenario-total">
+                    <div className="total-label">Total Monthly Earnings:</div>
+                    <div className="total-value">$28,806.00</div>
+                  </div>
+                </div>
+                <div className="scenario-note">
+                  <p>
+                    * This is just an example and actual earnings depend on your
+                    team's size, activity, and investment levels.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* FAQ Section */}
+          <div className="faq-section" ref={faqRef}>
+            <h2 className="section-title">Frequently Asked Questions</h2>
+            <div className="faq-container-team">
+              <div className="faq-item">
+                <h3 className="faq-question">
+                  How do I join the affiliate program?
+                </h3>
+                <p className="faq-answer">
+                  Simply create an account on our platform. Every user
+                  automatically gets an affiliate link they can start sharing.
+                </p>
+              </div>
+              <div className="faq-item">
+                <h3 className="faq-question">
+                  How are commissions calculated?
+                </h3>
+                <p className="faq-answer">
+                  Commissions are calculated based on your account level and the
+                  level of the referral in your network. Level 1 referrals
+                  (direct) earn a fixed amount daily, while deeper levels earn a
+                  percentage of their investment.
+                </p>
+              </div>
+              <div className="faq-item">
+                <h3 className="faq-question">
+                  When do I receive my commission payments?
+                </h3>
+                <p className="faq-answer">
+                  Commissions are calculated and added to your account balance
+                  daily at midnight UTC.
+                </p>
+              </div>
+              <div className="faq-item">
+                <h3 className="faq-question">
+                  How do I increase my account level?
+                </h3>
+                <p className="faq-answer">
+                  Your account level increases based on your activity on the
+                  platform, including completed tasks and investment amounts.
+                </p>
+              </div>
+              <div className="faq-item">
+                <h3 className="faq-question">
+                  Is there a limit to how many people I can refer?
+                </h3>
+                <p className="faq-answer">
+                  No, there's no limit. You can refer as many people as you want
+                  and build your team as large as possible.
+                </p>
+              </div>
+              <div className="faq-item">
+                <h3 className="faq-question">Do my referrals expire?</h3>
+                <p className="faq-answer">
+                  No, once someone joins using your affiliate link, they remain
+                  in your team permanently.
+                </p>
               </div>
             </div>
           </div>

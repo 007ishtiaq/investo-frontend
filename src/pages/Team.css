@@ -47,6 +47,10 @@
   transform: translateY(-5px);
 }
 
+.stat-card.stat-item::before {
+  border-radius: 0;
+}
+
 .stat-label {
   font-size: 14px;
   color: #666;
@@ -424,7 +428,8 @@
 
 /* Team Members List */
 .team-members-section {
-  margin-bottom: 3rem;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
 }
 
 .team-members-section h2 {
@@ -1314,6 +1319,7 @@
 }
 
 /* Enhanced Stats Section */
+
 .team-statistics {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -1322,6 +1328,10 @@
   opacity: 0;
   transform: translateY(30px);
   transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.team-statistics.team-statistics-auth {
+  margin: 0 0 1rem;
 }
 
 .team-statistics.animate-in {
