@@ -52,11 +52,14 @@
   transform: translateY(-5px);
 }
 
-.stat-title {
-  font-size: 0.9rem;
-  color: #4a5568;
+.stat-title-tasks {
+  font-size: 1rem;
   margin-bottom: 10px;
   align-self: flex-start;
+  font-weight: 500;
+  color: var(--color-text-secondary, #4b5563);
+  position: relative;
+  z-index: 1;
 }
 
 .stat-value {
@@ -617,17 +620,16 @@
   background-color: white;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  gap: 1rem;
 }
 
 .empty-state svg {
   color: #a0aec0;
-  margin-bottom: 15px;
 }
 
 .empty-state h3 {
   color: #4a5568;
-  margin-bottom: 15px;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
 }
 
 .reset-filter-button {

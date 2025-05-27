@@ -28,7 +28,7 @@ const NFTMarketplace = ({ nfts = [], creators = {} }) => {
 
   return (
     <section className="nft-marketplace">
-      <div className="section-header">
+      <div className="section-header-NFT">
         <h2 className="section-title">NFT Marketplace</h2>
         <Link href="/explore" className="view-all-link">
           View All <ChevronRightIcon size={16} />
@@ -86,7 +86,7 @@ document.head.appendChild(document.createElement("style")).textContent = `
   padding: 3rem 0;
 }
 
-.section-header {
+.section-header-NFT {
   display: flex;
   justify-content: space-between;
   align-items: center;

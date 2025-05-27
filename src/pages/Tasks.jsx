@@ -639,7 +639,7 @@ const Tasks = () => {
 
           <div className="tasks-statistics" ref={statsRef}>
             <div className="stat-card-tasks">
-              <div className="stat-title">Total Available Rewards</div>
+              <div className="stat-title-tasks">Total Available Rewards</div>
               <div className="stat-value">
                 <EthereumIcon size={18} />
                 <span>{totalRewards.toFixed(3)} USD</span>
@@ -647,7 +647,7 @@ const Tasks = () => {
             </div>
 
             <div className="stat-card-tasks">
-              <div className="stat-title">Your Wallet Balance</div>
+              <div className="stat-title-tasks">Your Wallet Balance</div>
               <div className="stat-value">
                 <EthereumIcon size={18} />
                 <span>{walletBalance.toFixed(3)} USD</span>
@@ -658,7 +658,7 @@ const Tasks = () => {
             </div>
 
             <div className="stat-card-tasks">
-              <div className="stat-title">Completion Rate</div>
+              <div className="stat-title-tasks">Completion Rate</div>
               <div className="stat-value">
                 <span>
                   {tasks.length > 0
@@ -687,7 +687,7 @@ const Tasks = () => {
               </div>
             </div>
             <div className="stat-card-tasks">
-              <div className="stat-title">Today's Tasks</div>
+              <div className="stat-title-tasks">Today's Tasks</div>
               <div className="stat-value">
                 <div className="stat-value">
                   {new Date().toLocaleDateString(undefined, {
@@ -803,12 +803,9 @@ const Tasks = () => {
             />
           ) : (
             <div className="tasks-list">
-              {!loading ? (
-                <div className="loading-container loading-container-tasks">
-                  <div className="loading-spinner"></div>
-                  <p>
-                    <LoadingSpinner />
-                  </p>
+              {loading ? (
+                <div className="loading-container loading-container-grid">
+                  <LoadingSpinner />
                 </div>
               ) : filteredTasks.length === 0 ? (
                 <EmptyState

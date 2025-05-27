@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import "./Plans.css";
 import PlanUpgradeModal from "../components/PlanUpgradeModal/PlanUpgradeModal";
 import StatsCounter from "../components/StatsCounter/StatsCounter";
+import LoadingSpinner from "../hooks/LoadingSpinner";
 
 /**
  * Investment page component displaying available investment plans
@@ -42,27 +43,26 @@ const Plans = () => {
       rootMargin: "0px",
       threshold: 0.1,
     };
-
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           entry.target.classList.add("animate-in");
-          // Remove observer once animation is triggered
+
+          // Trigger animation specifically when stats section comes into view
+          if (entry.target === statsRef.current) {
+            setAnimationTriggered(true);
+          }
+
           observer.unobserve(entry.target);
         }
       });
     }, observerOptions);
-
     // Observe elements
     if (headerRef.current) observer.observe(headerRef.current);
     if (statsRef.current) observer.observe(statsRef.current);
     if (sectionHeaderRef.current) observer.observe(sectionHeaderRef.current);
     if (gridRef.current) observer.observe(gridRef.current);
     if (faqRef.current) observer.observe(faqRef.current);
-
-    // Set animation triggered to true after initial load
-    setTimeout(() => setAnimationTriggered(true), 500);
-
     return () => {
       // Clean up observers
       if (headerRef.current) observer.unobserve(headerRef.current);
@@ -98,7 +98,7 @@ const Plans = () => {
       try {
         setLoading(true);
         const response = await getInvestmentPlans();
-        console.log("plans", response);
+        // console.log("plans", response);
 
         // Check if response is valid and contains data
         if (!response || !Array.isArray(response)) {
@@ -170,40 +170,46 @@ const Plans = () => {
 
             <div className="investment-stats" ref={statsRef}>
               <div className="stat-item">
-                <StatsCounter
-                  value={10000}
-                  suffix="+"
-                  duration={2}
-                  triggerAnimation={animationTriggered}
-                />
+                <div className="stats-value-plans">
+                  <StatsCounter
+                    value={10000}
+                    suffix="+"
+                    duration={2}
+                    triggerAnimation={animationTriggered}
+                  />
+                </div>
                 <div className="stat-label">Active Investors</div>
-                <div className="stat-icon investor-icon"></div>
+                <div className="stat-icon-plans investor-icon"></div>
               </div>
               <div className="stat-item">
-                <div className="stat-prefix">$</div>
-                <StatsCounter
-                  value={25}
-                  suffix="M+"
-                  duration={2}
-                  triggerAnimation={animationTriggered}
-                />
+                <div className="stats-value-plans">
+                  <span className="stat-prefix">$</span>
+                  <StatsCounter
+                    value={25}
+                    suffix="M+"
+                    duration={2}
+                    triggerAnimation={animationTriggered}
+                  />
+                </div>
                 <div className="stat-label">Total Invested</div>
-                <div className="stat-icon investment-icon"></div>
+                <div className="stat-icon-plans investment-icon"></div>
               </div>
               <div className="stat-item">
-                <StatsCounter
-                  value={99.9}
-                  suffix="%"
-                  duration={2}
-                  triggerAnimation={animationTriggered}
-                />
+                <div className="stats-value-plans">
+                  <StatsCounter
+                    value={99.9}
+                    suffix="%"
+                    duration={2}
+                    triggerAnimation={animationTriggered}
+                  />
+                </div>
                 <div className="stat-label">Uptime</div>
-                <div className="stat-icon uptime-icon"></div>
+                <div className="stat-icon-plans uptime-icon"></div>
               </div>
               <div className="stat-item">
-                <div className="stat-value">24/7</div>
+                <div className="stats-value-plans">24/7</div>
                 <div className="stat-label">Support</div>
-                <div className="stat-icon support-icon"></div>
+                <div className="stat-icon-plans support-icon"></div>
               </div>
             </div>
           </div>
@@ -218,7 +224,9 @@ const Plans = () => {
         </div>
 
         {loading ? (
-          <div className="loading-spinner">Loading plans...</div>
+          <div className="loading-container loading-container-grid">
+            <LoadingSpinner />
+          </div>
         ) : investmentPlans.length === 0 ? (
           <div className="no-plans-message">
             No investment plans available at the moment. Please check back

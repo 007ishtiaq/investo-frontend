@@ -16,41 +16,52 @@ const StatsCounter = ({
     if (triggerAnimation && !animationStarted) {
       setAnimationStarted(true);
 
-      let startTime;
-      const totalFrames = 60 * duration; // 60fps * duration in seconds
-      const increment = value / totalFrames;
+      const startValue = 0;
+      const endValue = value;
+      const totalDuration = duration * 1000; // Convert to milliseconds
+      const startTime = Date.now();
 
-      let currentCount = 0;
-      let frame = 0;
+      const updateCount = () => {
+        const currentTime = Date.now();
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / totalDuration, 1);
 
-      const counter = setInterval(() => {
-        currentCount += increment;
-        frame++;
+        // Use easing function for smoother animation
+        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+        const currentValue =
+          startValue + (endValue - startValue) * easeOutQuart;
 
-        if (frame <= totalFrames) {
-          // For integer values
-          if (Number.isInteger(value)) {
-            setCount(Math.floor(currentCount));
-          } else {
-            // For decimal values (round to 1 decimal place)
-            setCount(parseFloat(currentCount.toFixed(1)));
-          }
+        if (Number.isInteger(value)) {
+          setCount(Math.floor(currentValue));
         } else {
-          setCount(value);
-          clearInterval(counter);
+          setCount(parseFloat(currentValue.toFixed(1)));
         }
-      }, 1000 / 60); // 60fps
 
-      return () => clearInterval(counter);
+        if (progress < 1) {
+          requestAnimationFrame(updateCount);
+        } else {
+          setCount(endValue);
+        }
+      };
+
+      requestAnimationFrame(updateCount);
     }
   }, [triggerAnimation, value, duration, animationStarted]);
 
+  // Reset animation when triggerAnimation becomes false
+  useEffect(() => {
+    if (!triggerAnimation) {
+      setAnimationStarted(false);
+      setCount(0);
+    }
+  }, [triggerAnimation]);
+
   return (
-    <div className="stats-counter">
+    <span className="stats-counter">
       {prefix && <span className="stats-prefix">{prefix}</span>}
-      <span className="stats-value">{count}</span>
+      <span className="stats-value-plans">{count}</span>
       {suffix && <span className="stats-suffix">{suffix}</span>}
-    </div>
+    </span>
   );
 };
 

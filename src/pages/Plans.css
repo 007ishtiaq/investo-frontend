@@ -664,13 +664,6 @@ button:disabled {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
 }
 
-.stat-value {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--color-primary);
-  margin-bottom: 0.5rem;
-}
-
 .stat-label {
   font-size: 0.875rem;
   color: var(--color-text-secondary);
@@ -1311,10 +1304,9 @@ button:disabled {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
-.stat-value {
-  font-size: 2.5rem;
+.stats-value-plans {
+  font-size: 2.1rem;
   font-weight: 800;
-  margin-bottom: 0.5rem;
   color: var(--color-primary, #4f46e5);
   position: relative;
   z-index: 1;
@@ -1338,10 +1330,9 @@ button:disabled {
   z-index: 1;
 }
 
-.stat-icon {
+.stat-icon-plans {
   width: 40px;
   height: 40px;
-  margin-bottom: 1rem;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
