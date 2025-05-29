@@ -112,7 +112,7 @@
 .form-group {
   margin-bottom: 1.5rem;
 }
-.form-group.otpcont {
+.otpcont {
   display: flex;
   justify-content: center;
 }

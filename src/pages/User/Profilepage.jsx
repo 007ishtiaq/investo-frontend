@@ -49,7 +49,7 @@ const Profile = () => {
   const [profileData, setProfileData] = useState(null);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [showTwoFactorAuth, setShowTwoFactorAuth] = useState(false);
+  // const [showTwoFactorAuth, setShowTwoFactorAuth] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
   const [saving, setSaving] = useState(false);
   const [updatingPassword, setUpdatingPassword] = useState(false);
@@ -514,7 +514,7 @@ const Profile = () => {
                   </div>
                 </div>
 
-                <div className="security-section">
+                {/* <div className="security-section">
                   <h3 className="section-title">Two-Factor Authentication</h3>
 
                   {showTwoFactorAuth ? (
@@ -538,7 +538,7 @@ const Profile = () => {
                       </div>
                     </div>
                   )}
-                </div>
+                </div> */}
               </CardContent>
               <CardFooter className="card-footer">
                 <Button
