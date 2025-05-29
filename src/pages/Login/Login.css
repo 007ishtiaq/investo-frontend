@@ -56,6 +56,182 @@
   }
 }
 
+/* Add this to your Login.css */
+
+/* Logo Spinner Styles */
+.logo-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+}
+
+.logo-spinner-container {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-spinner-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  animation: logo-spin 2s linear infinite;
+}
+
+.logo-spinner-ring.ring-1 {
+  width: 50px;
+  height: 50px;
+  border-top: 2px solid #4f46e5;
+  border-right: 2px solid #4f46e5;
+  animation-duration: 1.5s;
+}
+
+.logo-spinner-ring.ring-2 {
+  width: 40px;
+  height: 40px;
+  border-bottom: 2px solid #7a70ff;
+  border-left: 2px solid #7a70ff;
+  animation-duration: 2s;
+  animation-direction: reverse;
+}
+
+.logo-spinner-ring.ring-3 {
+  width: 30px;
+  height: 30px;
+  border-top: 2px solid #a855f7;
+  border-right: 2px solid #a855f7;
+  animation-duration: 1s;
+}
+
+.logo-spinner-center {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: #4f46e5;
+}
+
+.logo-spinner-icon {
+  animation: logo-pulse 2s ease-in-out infinite;
+}
+
+@keyframes logo-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes logo-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(0.9);
+  }
+}
+
+/* Alternative: Dots Spinner for Logo Area */
+.logo-dots-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+}
+
+.logo-dots-container {
+  display: flex;
+  gap: 6px;
+}
+
+.logo-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #4f46e5, #7a70ff);
+  animation: logo-dot-bounce 1.4s ease-in-out infinite both;
+}
+
+.logo-dot:nth-child(1) {
+  animation-delay: -0.32s;
+}
+.logo-dot:nth-child(2) {
+  animation-delay: -0.16s;
+}
+.logo-dot:nth-child(3) {
+  animation-delay: 0s;
+}
+
+@keyframes logo-dot-bounce {
+  0%,
+  80%,
+  100% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+/* Gradient Ring Spinner Alternative */
+.logo-gradient-spinner {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent,
+    #4f46e5,
+    #7a70ff,
+    transparent
+  );
+  animation: logo-gradient-spin 1.5s linear infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-gradient-spinner::before {
+  content: "";
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  position: absolute;
+}
+
+.logo-gradient-spinner::after {
+  content: "⭐";
+  font-size: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes logo-gradient-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 .forgot-password-button {
   background: none;
   border: none;
