@@ -7,6 +7,7 @@ import * as Yup from "yup";
 import { auth } from "../../firebase";
 import { EthereumIcon } from "../../utils/icons";
 import "./ForgotPassword.css";
+import NoNetModal from "../../components/NoNetModal/NoNetModal";
 import "../Login/Login.css";
 
 // Spinner component for loading state
@@ -38,20 +39,6 @@ const LogoSpinner = () => (
             fill="currentColor"
           />
         </svg>
-      </div>
-    </div>
-  </div>
-);
-
-// No internet connection modal
-const NoNetModal = ({ classDisplay, setNoNetModal, handleRetry }) => (
-  <div className={`no-net-modal ${classDisplay}`}>
-    <div className="modal-content">
-      <h3>No Internet Connection</h3>
-      <p>Please check your internet connection and try again.</p>
-      <div className="modal-buttons">
-        <button onClick={() => setNoNetModal(false)}>Close</button>
-        <button onClick={handleRetry}>Retry</button>
       </div>
     </div>
   </div>

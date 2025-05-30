@@ -9,18 +9,38 @@ import { Copy, Edit2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import "./Dashboard.css";
+import NoNetModal from "../../components/NoNetModal/NoNetModal";
 
 const Dashboard = () => {
   const { user } = useSelector((state) => ({ ...state }));
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [noNetModal, setNoNetModal] = useState(true);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (user && user.token) {
-      loadUserData();
+      if (navigator.onLine) {
+        loadUserData();
+      } else {
+        setNoNetModal(true);
+      }
     }
   }, [user]);
+
+  useEffect(() => {
+    const handleOnlineStatus = () => {
+      if (navigator.onLine) {
+        setNoNetModal(false);
+      }
+    };
+
+    window.addEventListener("online", handleOnlineStatus);
+    return () => {
+      window.removeEventListener("online", handleOnlineStatus);
+    };
+  }, []);
 
   const handleLogout = () => {
     // Clean up Redux state
@@ -169,6 +189,12 @@ const Dashboard = () => {
           </div>
         </CardContent>
       </Card>
+
+      <NoNetModal
+        classDisplay={noNetModal ? "show" : ""}
+        setNoNetModal={setNoNetModal}
+        handleRetry={""}
+      />
 
       {/* Wallet Overview */}
       <WalletOverview />

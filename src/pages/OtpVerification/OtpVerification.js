@@ -7,6 +7,7 @@ import { verifyOTP, SendOTP } from "../../functions/auth";
 import { EthereumIcon } from "../../utils/icons";
 import "../Login/Login.css";
 import { useDispatch, useSelector } from "react-redux";
+import NoNetModal from "../../components/NoNetModal/NoNetModal";
 
 // Spinner component for loading state
 const Spinner = () => (
@@ -94,20 +95,6 @@ const OtpInput = ({ setValues }) => {
     </div>
   );
 };
-
-// No internet connection modal
-const NoNetModal = ({ classDisplay, setNoNetModal, handleRetry }) => (
-  <div className={`no-net-modal ${classDisplay}`}>
-    <div className="modal-content">
-      <h3>No Internet Connection</h3>
-      <p>Please check your internet connection and try again.</p>
-      <div className="modal-buttons">
-        <button onClick={() => setNoNetModal(false)}>Close</button>
-        <button onClick={handleRetry}>Retry</button>
-      </div>
-    </div>
-  </div>
-);
 
 // OTP schema
 const otpSchema = Yup.object({
@@ -391,7 +378,7 @@ const OtpVerification = () => {
       </div>
 
       <NoNetModal
-        classDisplay={noNetModal ? "open-popup" : ""}
+        classDisplay={noNetModal ? "show" : ""}
         setNoNetModal={setNoNetModal}
         handleRetry={handleSubmit}
       />

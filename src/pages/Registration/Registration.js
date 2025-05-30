@@ -8,6 +8,7 @@ import { SendOTP } from "../../functions/auth";
 import { EthereumIcon } from "../../utils/icons";
 import "../Login/Login.css";
 import { useLocation } from "react-router-dom";
+import NoNetModal from "../../components/NoNetModal/NoNetModal";
 
 // Spinner component for loading state
 const Spinner = () => (
@@ -15,20 +16,6 @@ const Spinner = () => (
     <div className="bounce1"></div>
     <div className="bounce2"></div>
     <div className="bounce3"></div>
-  </div>
-);
-
-// No internet connection modal
-const NoNetModal = ({ classDisplay, setNoNetModal, handleRetry }) => (
-  <div className={`no-net-modal ${classDisplay}`}>
-    <div className="modal-content">
-      <h3>No Internet Connection</h3>
-      <p>Please check your internet connection and try again.</p>
-      <div className="modal-buttons">
-        <button onClick={() => setNoNetModal(false)}>Close</button>
-        <button onClick={handleRetry}>Retry</button>
-      </div>
-    </div>
   </div>
 );
 
@@ -288,7 +275,7 @@ const Register = () => {
       </div>
 
       <NoNetModal
-        classDisplay={noNetModal ? "open-popup" : ""}
+        classDisplay={noNetModal ? "show" : ""}
         setNoNetModal={setNoNetModal}
         handleRetry={handleSubmit}
       />
