@@ -908,15 +908,70 @@ const Tasks = () => {
                 <LoadingSpinner />
               </div>
             ) : filteredTasks.length === 0 ? (
-              <EmptyState
-                message={
-                  levelFilter !== "all"
-                    ? `No ${levelFilter} level tasks found with the selected filter.`
-                    : `No tasks found with the selected filter.`
-                }
-                filterOption={filterOption}
-                onReset={resetFilter}
-              />
+              // Show network error UI when filter is "all" and no tasks, otherwise show normal empty state
+              filterOption === "all" && tasks.length === 0 ? (
+                <div className="network-error-container">
+                  <div className="network-error-content">
+                    <div className="network-error-icon">
+                      <div className="wifi-icon">
+                        <div className="wifi-circle wifi-circle-1"></div>
+                        <div className="wifi-circle wifi-circle-2"></div>
+                        <div className="wifi-circle wifi-circle-3"></div>
+                        <div className="wifi-base"></div>
+                        <div className="wifi-slash"></div>
+                      </div>
+                    </div>
+                    <div className="network-error-text">
+                      <h3>Failed to Load Tasks</h3>
+                      <p>
+                        It looks like you're not connected to the internet.
+                        Please check your connection and try again.
+                      </p>
+                    </div>
+                    <div className="network-error-actions">
+                      <button
+                        className="retry-btn"
+                        onClick={() => window.location.reload()}
+                      >
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+                          <path d="M21 3v5h-5" />
+                          <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+                          <path d="M3 21v-5h5" />
+                        </svg>
+                        Try Again
+                      </button>
+                      <button
+                        className="offline-mode-btn"
+                        onClick={() =>
+                          toast.info(
+                            "Offline mode - Some features may be limited"
+                          )
+                        }
+                      >
+                        Continue Offline
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <EmptyState
+                  message={
+                    filterOption === "all"
+                      ? "No tasks available at the moment."
+                      : `No ${filterOption} tasks found.`
+                  }
+                  filterOption={filterOption}
+                  onReset={() => setFilterOption("all")}
+                />
+              )
             ) : (
               <div className="tasks-list">
                 {loading ? (
