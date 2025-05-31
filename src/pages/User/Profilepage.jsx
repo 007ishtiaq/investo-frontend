@@ -21,6 +21,7 @@ import firebase, { auth } from "../../firebase";
 import toast from "react-hot-toast";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import NoNetModal from "../../components/NoNetModal/NoNetModal";
 import "./Profile.css";
 import { Link } from "react-router-dom";
 import { Edit2 } from "lucide-react";
@@ -55,18 +56,54 @@ const Profile = () => {
   const [updatingPassword, setUpdatingPassword] = useState(false);
   const [savingPreferences, setSavingPreferences] = useState(false);
   const [profileImage, setProfileImage] = useState(null);
+  const [noNetModal, setNoNetModal] = useState(false);
   const fileInputRef = useRef(null);
   // Email notification preferences
   const [notifDeposits, setNotifDeposits] = useState(true);
   const [notifEarnings, setNotifEarnings] = useState(true);
   const [notifPromotions, setNotifPromotions] = useState(false);
   const [notifSecurity, setNotifSecurity] = useState(true);
+
+  // Add network status monitoring
+  useEffect(() => {
+    const handleOnlineStatus = () => {
+      if (navigator.onLine) {
+        setNoNetModal(false);
+      }
+    };
+
+    const handleOfflineStatus = () => {
+      setNoNetModal(true);
+    };
+
+    window.addEventListener("online", handleOnlineStatus);
+    window.addEventListener("offline", handleOfflineStatus);
+
+    // Check initial status
+    if (!navigator.onLine) {
+      setNoNetModal(true);
+    }
+
+    return () => {
+      window.removeEventListener("online", handleOnlineStatus);
+      window.removeEventListener("offline", handleOfflineStatus);
+    };
+  }, []);
+
   useEffect(() => {
     if (user && user.token) {
       loadUserProfile();
     }
   }, [user]);
+
   const loadUserProfile = async () => {
+    // Check network status before making API call
+    if (!navigator.onLine) {
+      setNoNetModal(true);
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       const res = await getCurrentUser(user.token);
@@ -83,7 +120,17 @@ const Profile = () => {
       setLoading(false);
     } catch (err) {
       console.error("Failed to load profile:", err);
-      toast.error("Failed to load user profile");
+
+      // Check if it's a network error
+      if (
+        (err.message && err.message.includes("network")) ||
+        err.code === "NETWORK_ERROR" ||
+        !navigator.onLine
+      ) {
+        setNoNetModal(true);
+      } else {
+        toast.error("Failed to load user profile");
+      }
       setLoading(false);
     }
   };
@@ -123,6 +170,13 @@ const Profile = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Check network status before submitting
+    if (!navigator.onLine) {
+      setNoNetModal(true);
+      return;
+    }
+
     try {
       setSaving(true);
       const userData = {
@@ -150,7 +204,17 @@ const Profile = () => {
       setSaving(false);
     } catch (err) {
       console.error("Failed to update profile:", err);
-      toast.error("Failed to update profile");
+
+      // Check if it's a network error
+      if (
+        (err.message && err.message.includes("network")) ||
+        err.code === "NETWORK_ERROR" ||
+        !navigator.onLine
+      ) {
+        setNoNetModal(true);
+      } else {
+        toast.error("Failed to update profile");
+      }
       setSaving(false);
     }
   };
@@ -163,6 +227,12 @@ const Profile = () => {
   };
   const handleNotificationSubmit = async (e) => {
     e.preventDefault();
+    // Check network status before submitting
+    if (!navigator.onLine) {
+      setNoNetModal(true);
+      return;
+    }
+
     try {
       setSavingPreferences(true);
       const notificationPreferences = {
@@ -185,10 +255,32 @@ const Profile = () => {
       setSavingPreferences(false);
     } catch (err) {
       console.error("Failed to update notification preferences:", err);
-      toast.error("Failed to update notification preferences");
+
+      // Check if it's a network error
+      if (
+        (err.message && err.message.includes("network")) ||
+        err.code === "NETWORK_ERROR" ||
+        !navigator.onLine
+      ) {
+        setNoNetModal(true);
+      } else {
+        toast.error("Failed to update notification preferences");
+      }
       setSavingPreferences(false);
     }
   };
+
+  const handleRetry = () => {
+    if (navigator.onLine) {
+      setNoNetModal(false);
+      if (user && user.token && !profileData) {
+        loadUserProfile();
+      }
+    } else {
+      toast.error("Still no internet connection. Please check your network.");
+    }
+  };
+
   // Password formik setup
   const passwordFormik = useFormik({
     initialValues: {
@@ -198,6 +290,12 @@ const Profile = () => {
     },
     validationSchema: passwordSchema,
     onSubmit: async (values, action) => {
+      // Check network status before submitting
+      if (!navigator.onLine) {
+        setNoNetModal(true);
+        return;
+      }
+
       try {
         setUpdatingPassword(true);
         // Get current user
@@ -243,22 +341,30 @@ const Profile = () => {
   });
   if (loading || !profileData) {
     return (
-      <div className="skeleton-container">
-        <Card className="skeleton-header-card">
-          <CardContent className="skeleton-header-content">
-            <div className="skeleton-title"></div>
-            <div className="skeleton-text"></div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <div className="skeleton-card-title"></div>
-          </CardHeader>
-          <CardContent>
-            <div className="skeleton-card-content"></div>
-          </CardContent>
-        </Card>
-      </div>
+      <>
+        <div className="skeleton-container">
+          <Card className="skeleton-header-card">
+            <CardContent className="skeleton-header-content">
+              <div className="skeleton-title"></div>
+              <div className="skeleton-text"></div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <div className="skeleton-card-title"></div>
+            </CardHeader>
+            <CardContent>
+              <div className="skeleton-card-content"></div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <NoNetModal
+          classDisplay={noNetModal ? "show" : ""}
+          setNoNetModal={setNoNetModal}
+          handleRetry={handleRetry}
+        />
+      </>
     );
   }
   return (
@@ -634,6 +740,12 @@ const Profile = () => {
           </Card>
         )}
       </div>
+
+      <NoNetModal
+        classDisplay={noNetModal ? "show" : ""}
+        setNoNetModal={setNoNetModal}
+        handleRetry={handleRetry}
+      />
     </>
   );
 };

@@ -4,6 +4,7 @@ import { submitWithdrawal, formatBalance } from "../../functions/wallet";
 import { useWallet } from "../../contexts/WalletContext";
 import toast from "react-hot-toast";
 import { X } from "lucide-react";
+import NoNetModal from "../../components/NoNetModal/NoNetModal";
 import "./WithdrawModal.css";
 
 const WithdrawModal = ({ isOpen, onClose }) => {
@@ -14,10 +15,37 @@ const WithdrawModal = ({ isOpen, onClose }) => {
   const [walletAddress, setWalletAddress] = useState("");
   const [bankDetails, setBankDetails] = useState("");
   const [loading, setLoading] = useState(false);
-  const modalContentRef = useRef(null); // Reference to the modal content
+  const [noNetModal, setNoNetModal] = useState(false);
+  const modalContentRef = useRef(null);
 
   // Animation states
   const [isVisible, setIsVisible] = useState(false);
+
+  // Add network status monitoring
+  useEffect(() => {
+    const handleOnlineStatus = () => {
+      if (navigator.onLine) {
+        setNoNetModal(false);
+      }
+    };
+
+    const handleOfflineStatus = () => {
+      setNoNetModal(true);
+    };
+
+    window.addEventListener("online", handleOnlineStatus);
+    window.addEventListener("offline", handleOfflineStatus);
+
+    // Check initial status
+    if (!navigator.onLine) {
+      setNoNetModal(true);
+    }
+
+    return () => {
+      window.removeEventListener("online", handleOnlineStatus);
+      window.removeEventListener("offline", handleOfflineStatus);
+    };
+  }, []);
 
   // Handle animation on open/close
   useEffect(() => {
@@ -50,6 +78,12 @@ const WithdrawModal = ({ isOpen, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Check network status before submitting
+    if (!navigator.onLine) {
+      setNoNetModal(true);
+      return;
+    }
 
     if (!amount || !paymentMethod) {
       return toast.error("Please fill all required fields");
@@ -107,157 +141,188 @@ const WithdrawModal = ({ isOpen, onClose }) => {
       setLoading(false);
       handleClose(); // Use the animated close
     } catch (error) {
-      toast.error(error.message || "Failed to submit withdrawal request");
+      console.error("Withdrawal submission error:", error);
+
+      // Check if it's a network error
+      if (
+        (error.message && error.message.includes("network")) ||
+        error.code === "NETWORK_ERROR" ||
+        !navigator.onLine
+      ) {
+        setNoNetModal(true);
+      } else {
+        toast.error(error.message || "Failed to submit withdrawal request");
+      }
       setLoading(false);
+    }
+  };
+
+  const handleRetry = () => {
+    if (navigator.onLine) {
+      setNoNetModal(false);
+      // Modal is ready for new submission attempts
+    } else {
+      toast.error("Still no internet connection. Please check your network.");
     }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div
-      className={`withdraw-modal-overlay ${isVisible ? "visible" : ""}`}
-      onClick={handleOverlayClick} // Add click handler to the overlay
-    >
+    <>
       <div
-        className={`withdraw-modal ${isVisible ? "visible" : ""}`}
-        ref={modalContentRef} // Add ref to the modal content
+        className={`withdraw-modal-overlay ${isVisible ? "visible" : ""}`}
+        onClick={handleOverlayClick}
       >
-        <div className="withdraw-modal-header">
-          <h2>Withdraw Funds</h2>
-          <button className="close-modal-button" onClick={handleClose}>
-            <X size={20} />
-          </button>
-        </div>
+        <div
+          className={`withdraw-modal ${isVisible ? "visible" : ""}`}
+          ref={modalContentRef}
+        >
+          <div className="withdraw-modal-header">
+            <h2>Withdraw Funds</h2>
+            <button className="close-modal-button" onClick={handleClose}>
+              <X size={20} />
+            </button>
+          </div>
 
-        <div className="withdraw-instructions">
-          <div className="instructions-card">
-            <h3>How to withdraw funds</h3>
-            <ol>
-              <li>Enter the amount you wish to withdraw</li>
-              <li>Select your preferred withdrawal method</li>
-              <li>Provide your wallet address or bank details</li>
-              <li>Submit your withdrawal request for approval</li>
-            </ol>
-            <div className="instructions-note">
-              <strong>Note:</strong> Withdrawals are processed within 24-48
-              hours after approval. You'll receive an email notification once
-              processed.
+          <div className="withdraw-instructions">
+            <div className="instructions-card">
+              <h3>How to withdraw funds</h3>
+              <ol>
+                <li>Enter the amount you wish to withdraw</li>
+                <li>Select your preferred withdrawal method</li>
+                <li>Provide your wallet address or bank details</li>
+                <li>Submit your withdrawal request for approval</li>
+              </ol>
+              <div className="instructions-note">
+                <strong>Note:</strong> Withdrawals are processed within 24-48
+                hours after approval. You'll receive an email notification once
+                processed.
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="wallet-balance-display">
-          <span>Available Balance:</span>
-          <span className="balance-amount">{formatBalance(walletBalance)}</span>
-        </div>
-
-        {/* Withdrawal Verification Message */}
-        <div className="withdrawal-verification-message">
-          <div className="verification-icon">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="8" x2="12" y2="12"></line>
-              <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
-          </div>
-          <div className="verification-content">
-            <h4>Verification Process</h4>
-            <p>
-              For your security, withdrawal requests undergo a verification
-              process that may take 24-48 hours to complete. You'll receive
-              confirmation via email once your funds have been dispatched.
-            </p>
-          </div>
-        </div>
-
-        <form onSubmit={handleSubmit} className="withdraw-modal-form">
-          <div className="form-group">
-            <label htmlFor="amount">Amount (USD)*</label>
-            <input
-              type="number"
-              id="amount"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="Enter withdrawal amount"
-              min="0.01"
-              step="0.01"
-              required
-            />
+          <div className="wallet-balance-display">
+            <span>Available Balance:</span>
+            <span className="balance-amount">
+              {formatBalance(walletBalance)}
+            </span>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="paymentMethod">Withdrawal Method*</label>
-            <select
-              id="paymentMethod"
-              value={paymentMethod}
-              onChange={(e) => setPaymentMethod(e.target.value)}
-              required
-            >
-              <option value="">Select withdrawal method</option>
-              <option value="bitcoin">Bitcoin</option>
-              <option value="ethereum">Ethereum</option>
-              <option value="litecoin">Litecoin</option>
-              <option value="bank_transfer">Bank Transfer</option>
-            </select>
+          {/* Withdrawal Verification Message */}
+          <div className="withdrawal-verification-message">
+            <div className="verification-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+            </div>
+            <div className="verification-content">
+              <h4>Verification Process</h4>
+              <p>
+                For your security, withdrawal requests undergo a verification
+                process that may take 24-48 hours to complete. You'll receive
+                confirmation via email once your funds have been dispatched.
+              </p>
+            </div>
           </div>
 
-          {/* Conditional fields based on payment method */}
-          {["bitcoin", "ethereum", "litecoin"].includes(paymentMethod) && (
+          <form onSubmit={handleSubmit} className="withdraw-modal-form">
             <div className="form-group">
-              <label htmlFor="walletAddress">
-                {paymentMethod.charAt(0).toUpperCase() + paymentMethod.slice(1)}{" "}
-                Wallet Address*
-              </label>
+              <label htmlFor="amount">Amount (USD)*</label>
               <input
-                type="text"
-                id="walletAddress"
-                value={walletAddress}
-                onChange={(e) => setWalletAddress(e.target.value)}
-                placeholder={`Enter your ${paymentMethod} wallet address`}
+                type="number"
+                id="amount"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder="Enter withdrawal amount"
+                min="0.01"
+                step="0.01"
                 required
               />
             </div>
-          )}
 
-          {paymentMethod === "bank_transfer" && (
             <div className="form-group">
-              <label htmlFor="bankDetails">Bank Account Details*</label>
-              <textarea
-                id="bankDetails"
-                value={bankDetails}
-                onChange={(e) => setBankDetails(e.target.value)}
-                placeholder="Enter your bank name, account number, account name, routing number, and SWIFT/BIC code"
-                rows={4}
+              <label htmlFor="paymentMethod">Withdrawal Method*</label>
+              <select
+                id="paymentMethod"
+                value={paymentMethod}
+                onChange={(e) => setPaymentMethod(e.target.value)}
                 required
-              />
+              >
+                <option value="">Select withdrawal method</option>
+                <option value="bitcoin">Bitcoin</option>
+                <option value="ethereum">Ethereum</option>
+                <option value="litecoin">Litecoin</option>
+                <option value="bank_transfer">Bank Transfer</option>
+              </select>
             </div>
-          )}
 
-          <div className="withdraw-notice">
-            <p>
-              <strong>Important:</strong> Please ensure your withdrawal details
-              are correct. Incorrect information may lead to failed
-              transactions.
-            </p>
-          </div>
+            {/* Conditional fields based on payment method */}
+            {["bitcoin", "ethereum", "litecoin"].includes(paymentMethod) && (
+              <div className="form-group">
+                <label htmlFor="walletAddress">
+                  {paymentMethod.charAt(0).toUpperCase() +
+                    paymentMethod.slice(1)}{" "}
+                  Wallet Address*
+                </label>
+                <input
+                  type="text"
+                  id="walletAddress"
+                  value={walletAddress}
+                  onChange={(e) => setWalletAddress(e.target.value)}
+                  placeholder={`Enter your ${paymentMethod} wallet address`}
+                  required
+                />
+              </div>
+            )}
 
-          <button type="submit" className="submit-button" disabled={loading}>
-            {loading ? "Processing..." : "Submit Withdrawal Request"}
-          </button>
-        </form>
+            {paymentMethod === "bank_transfer" && (
+              <div className="form-group">
+                <label htmlFor="bankDetails">Bank Account Details*</label>
+                <textarea
+                  id="bankDetails"
+                  value={bankDetails}
+                  onChange={(e) => setBankDetails(e.target.value)}
+                  placeholder="Enter your bank name, account number, account name, routing number, and SWIFT/BIC code"
+                  rows={4}
+                  required
+                />
+              </div>
+            )}
+
+            <div className="withdraw-notice">
+              <p>
+                <strong>Important:</strong> Please ensure your withdrawal
+                details are correct. Incorrect information may lead to failed
+                transactions.
+              </p>
+            </div>
+
+            <button type="submit" className="submit-button" disabled={loading}>
+              {loading ? "Processing..." : "Submit Withdrawal Request"}
+            </button>
+          </form>
+        </div>
       </div>
-    </div>
+
+      <NoNetModal
+        classDisplay={noNetModal ? "show" : ""}
+        setNoNetModal={setNoNetModal}
+        handleRetry={handleRetry}
+      />
+    </>
   );
 };
 

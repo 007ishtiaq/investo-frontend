@@ -13,6 +13,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 import { sendContactMessage } from "../functions/user";
+import NoNetModal from "../components/NoNetModal/NoNetModal";
 import "./Contact.css";
 
 // Validation schema with Yup
@@ -44,6 +45,35 @@ const Contact = () => {
 
   // FAQ state
   const [expandedFaq, setExpandedFaq] = useState(null);
+
+  // Network modal state
+  const [noNetModal, setNoNetModal] = useState(false);
+
+  // Add network status monitoring
+  useEffect(() => {
+    const handleOnlineStatus = () => {
+      if (navigator.onLine) {
+        setNoNetModal(false);
+      }
+    };
+
+    const handleOfflineStatus = () => {
+      setNoNetModal(true);
+    };
+
+    window.addEventListener("online", handleOnlineStatus);
+    window.addEventListener("offline", handleOfflineStatus);
+
+    // Check initial status
+    if (!navigator.onLine) {
+      setNoNetModal(true);
+    }
+
+    return () => {
+      window.removeEventListener("online", handleOnlineStatus);
+      window.removeEventListener("offline", handleOfflineStatus);
+    };
+  }, []);
 
   // FAQ data
   const faqData = [
@@ -123,6 +153,13 @@ const Contact = () => {
 
   // Handle form submission
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+    // Check network status before submitting
+    if (!navigator.onLine) {
+      setNoNetModal(true);
+      setSubmitting(false);
+      return;
+    }
+
     try {
       // Show loading state
       setSubmitting(true);
@@ -155,12 +192,31 @@ const Contact = () => {
       setFilePreview("");
     } catch (error) {
       console.error("Contact form submission error:", error);
-      toast.error(
-        error.response?.data?.message ||
-          "Failed to send message. Please try again."
-      );
+
+      // Check if it's a network error
+      if (
+        (error.message && error.message.includes("network")) ||
+        error.code === "NETWORK_ERROR" ||
+        !navigator.onLine
+      ) {
+        setNoNetModal(true);
+      } else {
+        toast.error(
+          error.response?.data?.message ||
+            "Failed to send message. Please try again."
+        );
+      }
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleRetry = () => {
+    if (navigator.onLine) {
+      setNoNetModal(false);
+      // Form is ready for new submission attempts
+    } else {
+      toast.error("Still no internet connection. Please check your network.");
     }
   };
 
@@ -169,193 +225,201 @@ const Contact = () => {
   }, []);
 
   return (
-    <div className="contact-page">
-      <div className="contact-hero">
-        <div className="contact-hero-content">
-          <h1>Contact Us</h1>
-          <p>Have questions or need assistance? We're here to help you.</p>
-        </div>
+    <>
+      <div className="contact-page">
+        <div className="contact-hero">
+          <div className="contact-hero-content">
+            <h1>Contact Us</h1>
+            <p>Have questions or need assistance? We're here to help you.</p>
+          </div>
 
-        <div className="contact-form-wrapper">
-          <div className="contact-form-container">
-            <div className="contact-quick-info">
-              <div className="quick-info-item">
-                <Mail size={18} />
-                <span>support@yourplatform.com</span>
+          <div className="contact-form-wrapper">
+            <div className="contact-form-container">
+              <div className="contact-quick-info">
+                <div className="quick-info-item">
+                  <Mail size={18} />
+                  <span>support@yourplatform.com</span>
+                </div>
+                <div className="quick-info-item">
+                  <Phone size={18} />
+                  <span>+1 (123) 456-7890</span>
+                </div>
               </div>
-              <div className="quick-info-item">
-                <Phone size={18} />
-                <span>+1 (123) 456-7890</span>
-              </div>
-            </div>
 
-            <Formik
-              initialValues={{
-                name: user?.name || "",
-                email: user?.email || "",
-                subject: "",
-                message: "",
-                attachment: null,
-                fileName: "",
-              }}
-              validationSchema={ContactSchema}
-              onSubmit={handleSubmit}
-            >
-              {({ isSubmitting, setFieldValue }) => (
-                <Form className="contact-form">
-                  <div className="form-group">
-                    <label htmlFor="name">Your Name</label>
-                    <Field
-                      type="text"
-                      id="name"
-                      name="name"
-                      placeholder="Enter your name"
-                      className="form-input"
-                    />
-                    <ErrorMessage
-                      name="name"
-                      component="span"
-                      className="error-message"
-                    />
-                  </div>
+              <Formik
+                initialValues={{
+                  name: user?.name || "",
+                  email: user?.email || "",
+                  subject: "",
+                  message: "",
+                  attachment: null,
+                  fileName: "",
+                }}
+                validationSchema={ContactSchema}
+                onSubmit={handleSubmit}
+              >
+                {({ isSubmitting, setFieldValue }) => (
+                  <Form className="contact-form">
+                    <div className="form-group">
+                      <label htmlFor="name">Your Name</label>
+                      <Field
+                        type="text"
+                        id="name"
+                        name="name"
+                        placeholder="Enter your name"
+                        className="form-input"
+                      />
+                      <ErrorMessage
+                        name="name"
+                        component="span"
+                        className="error-message"
+                      />
+                    </div>
 
-                  <div className="form-group">
-                    <label htmlFor="email">Your Email</label>
-                    <Field
-                      type="email"
-                      id="email"
-                      name="email"
-                      placeholder="Enter your email address"
-                      className="form-input"
-                    />
-                    <ErrorMessage
-                      name="email"
-                      component="span"
-                      className="error-message"
-                    />
-                  </div>
+                    <div className="form-group">
+                      <label htmlFor="email">Your Email</label>
+                      <Field
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Enter your email address"
+                        className="form-input"
+                      />
+                      <ErrorMessage
+                        name="email"
+                        component="span"
+                        className="error-message"
+                      />
+                    </div>
 
-                  <div className="form-group">
-                    <label htmlFor="subject">Subject</label>
-                    <Field
-                      type="text"
-                      id="subject"
-                      name="subject"
-                      placeholder="Enter subject"
-                      className="form-input"
-                    />
-                    <ErrorMessage
-                      name="subject"
-                      component="span"
-                      className="error-message"
-                    />
-                  </div>
+                    <div className="form-group">
+                      <label htmlFor="subject">Subject</label>
+                      <Field
+                        type="text"
+                        id="subject"
+                        name="subject"
+                        placeholder="Enter subject"
+                        className="form-input"
+                      />
+                      <ErrorMessage
+                        name="subject"
+                        component="span"
+                        className="error-message"
+                      />
+                    </div>
 
-                  <div className="form-group">
-                    <label htmlFor="message">Message</label>
-                    <Field
-                      as="textarea"
-                      id="message"
-                      name="message"
-                      rows="5"
-                      placeholder="Enter your message"
-                      className="form-input"
-                    />
-                    <ErrorMessage
-                      name="message"
-                      component="span"
-                      className="error-message"
-                    />
-                  </div>
+                    <div className="form-group">
+                      <label htmlFor="message">Message</label>
+                      <Field
+                        as="textarea"
+                        id="message"
+                        name="message"
+                        rows="5"
+                        placeholder="Enter your message"
+                        className="form-input"
+                      />
+                      <ErrorMessage
+                        name="message"
+                        component="span"
+                        className="error-message"
+                      />
+                    </div>
 
-                  <div className="form-group">
-                    <label htmlFor="attachment" className="file-input-label">
-                      <Paperclip size={16} />
-                      <span>Attach File (Optional)</span>
-                    </label>
-                    <input
-                      type="file"
-                      id="attachment"
-                      onChange={(e) => handleFileChange(e, setFieldValue)}
-                      className="file-input"
-                    />
+                    <div className="form-group">
+                      <label htmlFor="attachment" className="file-input-label">
+                        <Paperclip size={16} />
+                        <span>Attach File (Optional)</span>
+                      </label>
+                      <input
+                        type="file"
+                        id="attachment"
+                        onChange={(e) => handleFileChange(e, setFieldValue)}
+                        className="file-input"
+                      />
 
-                    {fileName && (
-                      <div className="file-preview">
-                        {filePreview && (
-                          <div className="image-preview">
-                            <img src={filePreview} alt="Attachment preview" />
+                      {fileName && (
+                        <div className="file-preview">
+                          {filePreview && (
+                            <div className="image-preview">
+                              <img src={filePreview} alt="Attachment preview" />
+                            </div>
+                          )}
+                          <div className="file-info">
+                            <span className="file-name">{fileName}</span>
+                            <button
+                              type="button"
+                              onClick={() => removeAttachment(setFieldValue)}
+                              className="remove-file"
+                            >
+                              <X size={16} />
+                            </button>
                           </div>
-                        )}
-                        <div className="file-info">
-                          <span className="file-name">{fileName}</span>
-                          <button
-                            type="button"
-                            onClick={() => removeAttachment(setFieldValue)}
-                            className="remove-file"
-                          >
-                            <X size={16} />
-                          </button>
                         </div>
-                      </div>
-                    )}
-                  </div>
+                      )}
+                    </div>
 
-                  <button
-                    type="submit"
-                    className="submit-button"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? (
-                      <span className="loading-spinner"></span>
-                    ) : (
-                      <>
-                        <Send size={16} />
-                        <span>Send Message</span>
-                      </>
-                    )}
-                  </button>
-                </Form>
-              )}
-            </Formik>
+                    <button
+                      type="submit"
+                      className="submit-button"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? (
+                        <span className="loading-spinner"></span>
+                      ) : (
+                        <>
+                          <Send size={16} />
+                          <span>Send Message</span>
+                        </>
+                      )}
+                    </button>
+                  </Form>
+                )}
+              </Formik>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* FAQ Section */}
-      <div className="container">
-        <div className="faq-section-contact">
-          <h2 className="faq-title-contact">Frequently Asked Questions</h2>
-          <div className="faq-container-contact">
-            {faqData.map((faq) => (
-              <div
-                key={faq.id}
-                className={`faq-item-contact ${
-                  expandedFaq === faq.id ? "expanded" : ""
-                }`}
-              >
+        {/* FAQ Section */}
+        <div className="container">
+          <div className="faq-section-contact">
+            <h2 className="faq-title-contact">Frequently Asked Questions</h2>
+            <div className="faq-container-contact">
+              {faqData.map((faq) => (
                 <div
-                  className="faq-question-contact"
-                  onClick={() => toggleFaq(faq.id)}
+                  key={faq.id}
+                  className={`faq-item-contact ${
+                    expandedFaq === faq.id ? "expanded" : ""
+                  }`}
                 >
-                  <h3>{faq.question}</h3>
-                  {expandedFaq === faq.id ? (
-                    <ChevronUp size={20} />
-                  ) : (
-                    <ChevronDown size={20} />
+                  <div
+                    className="faq-question-contact"
+                    onClick={() => toggleFaq(faq.id)}
+                  >
+                    <h3>{faq.question}</h3>
+                    {expandedFaq === faq.id ? (
+                      <ChevronUp size={20} />
+                    ) : (
+                      <ChevronDown size={20} />
+                    )}
+                  </div>
+                  {expandedFaq === faq.id && (
+                    <div className="faq-answer-contact">
+                      <p>{faq.answer}</p>
+                    </div>
                   )}
                 </div>
-                {expandedFaq === faq.id && (
-                  <div className="faq-answer-contact">
-                    <p>{faq.answer}</p>
-                  </div>
-                )}
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+
+      <NoNetModal
+        classDisplay={noNetModal ? "show" : ""}
+        setNoNetModal={setNoNetModal}
+        handleRetry={handleRetry}
+      />
+    </>
   );
 };
 
