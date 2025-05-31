@@ -8,68 +8,96 @@ import { useSelector, useDispatch } from "react-redux";
 import { Copy, Edit2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+import NoNetModal from "../../components/NoNetModal/NoNetModal"; // Your existing import
 import "./Dashboard.css";
-import NoNetModal from "../../components/NoNetModal/NoNetModal";
 
 const Dashboard = () => {
   const { user } = useSelector((state) => ({ ...state }));
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [noNetModal, setNoNetModal] = useState(true);
+  const [noNetModal, setNoNetModal] = useState(false);
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (user && user.token) {
-      if (navigator.onLine) {
-        loadUserData();
-      } else {
-        setNoNetModal(true);
-      }
-    }
-  }, [user]);
-
+  // Add network status monitoring
   useEffect(() => {
     const handleOnlineStatus = () => {
+      console.log("Network came online");
       if (navigator.onLine) {
         setNoNetModal(false);
       }
     };
 
+    const handleOfflineStatus = () => {
+      console.log("Network went offline");
+      setNoNetModal(true);
+    };
+
     window.addEventListener("online", handleOnlineStatus);
+    window.addEventListener("offline", handleOfflineStatus);
+
+    // Check initial status
+    console.log("Initial network status:", navigator.onLine);
+    if (!navigator.onLine) {
+      console.log("Setting noNetModal to true");
+      setNoNetModal(true);
+    }
+
     return () => {
       window.removeEventListener("online", handleOnlineStatus);
+      window.removeEventListener("offline", handleOfflineStatus);
     };
   }, []);
 
+  useEffect(() => {
+    if (user && user.token) {
+      loadUserData();
+    }
+  }, [user]);
+
   const handleLogout = () => {
-    // Clean up Redux state
     dispatch({
       type: "LOGOUT",
       payload: null,
     });
 
-    // Clear localStorage
     if (typeof window !== "undefined") {
       localStorage.removeItem("user");
     }
 
-    // Redirect to login using window.location
     window.location.href = "/login";
   };
 
   const loadUserData = async () => {
+    // Check network status before making API call
+    if (!navigator.onLine) {
+      console.log("No internet, showing modal");
+      setNoNetModal(true);
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       const res = await getCurrentUser(user.token);
-      // console.log("User data:", res.data);
       setUserData(res.data);
       setLoading(false);
     } catch (err) {
-      // console.error("Failed to load user data:", err);
-      toast.error("Failed to load user information");
-      if (err.response && err.response.status === 401) {
-        handleLogout();
+      console.error("API Error:", err);
+
+      // Check if it's a network error
+      if (
+        (err.message && err.message.includes("network")) ||
+        err.code === "NETWORK_ERROR" ||
+        !navigator.onLine
+      ) {
+        console.log("Network error detected, showing modal");
+        setNoNetModal(true);
+      } else {
+        toast.error("Failed to load user information");
+        if (err.response && err.response.status === 401) {
+          handleLogout();
+        }
       }
       setLoading(false);
     }
@@ -82,7 +110,6 @@ const Dashboard = () => {
     }
   };
 
-  // Get level color based on user level
   const getLevelColor = (level) => {
     switch (level) {
       case 1:
@@ -98,7 +125,6 @@ const Dashboard = () => {
     }
   };
 
-  // Get user initials for avatar
   const getUserInitials = (name) => {
     return name
       .split(" ")
@@ -106,45 +132,71 @@ const Dashboard = () => {
       .join("");
   };
 
+  const handleRetry = () => {
+    console.log("Retry clicked, network status:", navigator.onLine);
+    if (navigator.onLine) {
+      setNoNetModal(false);
+      if (user && user.token && !userData) {
+        loadUserData();
+      }
+    } else {
+      toast.error("Still no internet connection. Please check your network.");
+    }
+  };
+
+  // Add a manual test button (remove this after testing)
+  const testModal = () => {
+    console.log("Test button clicked");
+    setNoNetModal(true);
+  };
+
+  console.log("Rendering Dashboard, noNetModal:", noNetModal);
+
   if (loading || !userData) {
     return (
-      <div className="dashboard-loading">
-        <Card className="dashboard-card margin-bottom">
-          <CardContent className="card-content-padding">
-            <div className="loading-profile-area">
-              <div className="loading-avatar"></div>
-              <div className="loading-details">
-                <div className="loading-title"></div>
-                <div className="loading-subtitle"></div>
+      <>
+        <div className="dashboard-loading">
+          <Card className="dashboard-card margin-bottom">
+            <CardContent className="card-content-padding">
+              <div className="loading-profile-area">
+                <div className="loading-avatar"></div>
+                <div className="loading-details">
+                  <div className="loading-title"></div>
+                  <div className="loading-subtitle"></div>
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        {/* Skeleton for wallet overview */}
-        <div className="wallet-overview-grid margin-bottom">
-          {[1, 2, 3].map((i) => (
-            <Card key={i}>
-              <CardContent className="card-content-padding">
-                <div className="loading-wallet-card"></div>
-              </CardContent>
-            </Card>
-          ))}
+          <div className="wallet-overview-grid margin-bottom">
+            {[1, 2, 3].map((i) => (
+              <Card key={i}>
+                <CardContent className="card-content-padding">
+                  <div className="loading-wallet-card"></div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <Card className="margin-bottom">
+            <CardContent className="card-content-padding">
+              <div className="loading-chart"></div>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Skeleton for chart */}
-        <Card className="margin-bottom">
-          <CardContent className="card-content-padding">
-            <div className="loading-chart"></div>
-          </CardContent>
-        </Card>
-      </div>
+        {/* Using your existing NoNetModal with correct props */}
+        <NoNetModal
+          classDisplay={noNetModal ? "show" : ""}
+          setNoNetModal={setNoNetModal}
+          handleRetry={handleRetry}
+        />
+      </>
     );
   }
 
   return (
     <>
-      {/* Dashboard Profile Area */}
       <Card className="margin-bottom profile-card">
         <CardContent className="card-content-padding profile-content">
           <div className="profile-area">
@@ -190,20 +242,19 @@ const Dashboard = () => {
         </CardContent>
       </Card>
 
-      <NoNetModal
-        classDisplay={noNetModal ? "show" : ""}
-        setNoNetModal={setNoNetModal}
-        handleRetry={""}
-      />
-
-      {/* Wallet Overview */}
       <WalletOverview />
 
-      {/* Recent Transactions and Investment Plans */}
       <div className="dashboard-grid margin-top">
         <RecentTransactions />
         <InvestmentPlans />
       </div>
+
+      {/* Using your existing NoNetModal with correct props */}
+      <NoNetModal
+        classDisplay={noNetModal ? "show" : ""}
+        setNoNetModal={setNoNetModal}
+        handleRetry={handleRetry}
+      />
     </>
   );
 };
