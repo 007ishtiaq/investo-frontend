@@ -5,7 +5,7 @@ import { EthereumIcon } from "../../utils/icons";
 /**
  * Investment Card component for displaying investment plans
  */
-const InvestmentCard = ({ plan, userLevel, user }) => {
+const InvestmentCard = ({ plan, userLevel, user, onNetworkError }) => {
   // Calculate daily and total profit
   const calculateProfit = () => {
     // Calculate profit normally for all plans (including first plan)
@@ -47,9 +47,19 @@ const InvestmentCard = ({ plan, userLevel, user }) => {
   // Determine if this is the first (Basic) plan based on level and minAmount
   const isBasicPlan = plan.level === 1 && plan.minAmount === 0;
 
-  // Handler for plan upgrade button
+  // Handler for plan upgrade button with network checking
   const handleUpgradeClick = (e) => {
     e.preventDefault();
+
+    // Check network status before proceeding
+    if (!navigator.onLine) {
+      // Call the network error handler passed from parent
+      if (onNetworkError) {
+        onNetworkError();
+      }
+      return;
+    }
+
     // Use the onUpgrade handler from props
     if (plan.onUpgrade) {
       plan.onUpgrade();
