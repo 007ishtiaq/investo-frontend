@@ -17,6 +17,7 @@ import Contact from "./pages/Contact";
 import { useDispatch, useSelector } from "react-redux";
 import { setupTokenRefresh } from "./functions/tokenRefresh";
 import { useTokenRefresh } from "./hooks/useTokenRefresh";
+import SuspenseLoading from "./hooks/SuspenseLoading";
 
 // Lazy loaded components
 const UserRoute = lazy(() => import("./components/routes/UserRoute"));
@@ -55,9 +56,7 @@ function App() {
   useTokenRefresh();
 
   return (
-    <Suspense
-      fallback={<div className="container text-center p-5">Loading...</div>}
-    >
+    <Suspense fallback={<SuspenseLoading />}>
       <Router>
         <Toaster
           position="top-center"
