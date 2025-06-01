@@ -7,6 +7,7 @@ import { getTeamMembers, getAffiliateCode } from "../functions/team";
 import { formatBalance } from "../functions/wallet";
 import { getUserLevel } from "../functions/user";
 import NoNetModal from "../components/NoNetModal/NoNetModal";
+import LoadingSpinner from "../hooks/LoadingSpinner";
 import "./Team.css";
 
 const Team = () => {
@@ -23,6 +24,7 @@ const Team = () => {
   const [copied, setCopied] = useState(false);
   const [userLevel, setUserLevel] = useState(1);
   const [noNetModal, setNoNetModal] = useState(false);
+  const [networkError, setNetworkError] = useState(false);
 
   // Refs for animation
   const headerRef = useRef(null);
@@ -120,10 +122,12 @@ const Team = () => {
     if (!navigator.onLine) {
       setNoNetModal(true);
       setLoading(false);
+      setNetworkError(true);
       return;
     }
 
     setLoading(true);
+    setNetworkError(false); // Reset network error on new attempt
     try {
       // Fetch team members
       const membersRes = await getTeamMembers(user.token);
@@ -154,6 +158,7 @@ const Team = () => {
         !navigator.onLine
       ) {
         setNoNetModal(true);
+        setNetworkError(true);
       } else {
         toast.error("Failed to load team data");
       }
@@ -681,14 +686,71 @@ const Team = () => {
               <h2>Your Team Members</h2>
 
               {loading ? (
-                <div className="loading">Loading team data...</div>
-              ) : teamMembers.length === 0 ? (
-                <div className="no-members">
-                  <p>
-                    You don't have any team members yet. Share your affiliate
-                    link to start building your team!
-                  </p>
+                <div className="loading">
+                  <LoadingSpinner />
                 </div>
+              ) : teamMembers.length === 0 ? (
+                // Show network error UI if there was a network error, otherwise show normal empty state
+                networkError ? (
+                  <div className="network-error-container">
+                    <div className="network-error-content">
+                      <div className="network-error-icon">
+                        <div className="wifi-icon">
+                          <div className="wifi-circle wifi-circle-1"></div>
+                          <div className="wifi-circle wifi-circle-2"></div>
+                          <div className="wifi-circle wifi-circle-3"></div>
+                          <div className="wifi-base"></div>
+                          <div className="wifi-slash"></div>
+                        </div>
+                      </div>
+                      <div className="network-error-text">
+                        <h3>Failed to Load Team Members</h3>
+                        <p>
+                          It looks like you're not connected to the internet.
+                          Please check your connection and try again.
+                        </p>
+                      </div>
+                      <div className="network-error-actions">
+                        <button
+                          className="retry-btn"
+                          onClick={() => window.location.reload()}
+                        >
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          >
+                            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+                            <path d="M21 3v5h-5" />
+                            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+                            <path d="M3 21v-5h5" />
+                          </svg>
+                          Try Again
+                        </button>
+                        <button
+                          className="offline-mode-btn"
+                          onClick={() =>
+                            toast.info(
+                              "Offline mode - Some features may be limited"
+                            )
+                          }
+                        >
+                          Continue Offline
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="no-members">
+                    <p>
+                      You don't have any team members yet. Share your affiliate
+                      link to start building your team!
+                    </p>
+                  </div>
+                )
               ) : (
                 <div className="team-table-container">
                   <table className="team-table">
