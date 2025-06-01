@@ -26,12 +26,3 @@ export const registerWithAffiliateCode = async (affiliateCode, userId) => {
     { affiliateCode, userId }
   );
 };
-
-// New function for team earnings
-export const getTeamEarnings = async (authtoken) => {
-  return await axios.get(`${process.env.REACT_APP_API}/team/earnings`, {
-    headers: {
-      authtoken,
-    },
-  });
-};
