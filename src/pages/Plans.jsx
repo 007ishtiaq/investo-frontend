@@ -302,7 +302,7 @@ const Plans = () => {
               <LoadingSpinner />
             </div>
           ) : investmentPlans.length === 0 ? (
-            <div className="network-error-container">
+            <div className="network-error-container-plans">
               <div className="network-error-content">
                 <div className="network-error-icon">
                   <div className="wifi-icon">

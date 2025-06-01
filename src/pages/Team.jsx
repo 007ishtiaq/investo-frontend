@@ -692,7 +692,7 @@ const Team = () => {
               ) : teamMembers.length === 0 ? (
                 // Show network error UI if there was a network error, otherwise show normal empty state
                 networkError ? (
-                  <div className="network-error-container">
+                  <div className="network-error-container-team">
                     <div className="network-error-content">
                       <div className="network-error-icon">
                         <div className="wifi-icon">

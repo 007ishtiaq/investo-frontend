@@ -910,7 +910,7 @@ const Tasks = () => {
             ) : filteredTasks.length === 0 ? (
               // Show network error UI when filter is "all" and no tasks, otherwise show normal empty state
               filterOption === "all" && tasks.length === 0 ? (
-                <div className="network-error-container">
+                <div className="network-error-container-tasks">
                   <div className="network-error-content">
                     <div className="network-error-icon">
                       <div className="wifi-icon">

@@ -2574,12 +2574,12 @@
 }
 
 /* Network Error Container - Tasks Page */
-.network-error-container {
+.network-error-container-tasks {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 400px;
-  padding: 60px 20px;
+  padding: 0px 20px;
   margin: 40px 0;
 }
 
@@ -2809,8 +2809,8 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .network-error-container {
-    padding: 40px 15px;
+  .network-error-container-tasks {
+    padding: 0px 5px;
     min-height: 350px;
   }
 
