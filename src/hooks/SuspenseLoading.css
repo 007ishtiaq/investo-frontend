@@ -124,7 +124,7 @@
   height: 12px;
   background: linear-gradient(45deg, #ffffff, #f0f0f0);
   border-radius: 50%;
-  animation: pulse 1.5s ease-in-out infinite;
+  animation: suspense-pulse 1.5s ease-in-out infinite;
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
 }
 
@@ -137,7 +137,7 @@
   }
 }
 
-@keyframes pulse {
+@keyframes suspense-pulse {
   0%,
   100% {
     transform: scale(1);
