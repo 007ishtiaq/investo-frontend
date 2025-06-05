@@ -10,6 +10,7 @@ import PlanUpgradeModal from "../components/PlanUpgradeModal/PlanUpgradeModal";
 import StatsCounter from "../components/StatsCounter/StatsCounter";
 import LoadingSpinner from "../hooks/LoadingSpinner";
 import NoNetModal from "../components/NoNetModal/NoNetModal";
+import DepositModal from "../../components/DepositModal/DepositModal";
 
 /**
  * Investment page component displaying available investment plans

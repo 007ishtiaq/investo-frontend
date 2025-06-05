@@ -16,7 +16,13 @@ import { ArrowRight, ArrowUp } from "lucide-react";
 import { useWallet } from "../../contexts/WalletContext";
 import PlanUpgradeModal from "../../components/PlanUpgradeModal/PlanUpgradeModal";
 
-const PlanItem = ({ plan, walletBalance, userLevel, detailed = false }) => {
+const PlanItem = ({
+  plan,
+  walletBalance,
+  userLevel,
+  detailed = false,
+  onOpenDepositModal,
+}) => {
   const { user } = useSelector((state) => ({ ...state }));
   const { walletCurrency } = useWallet();
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
@@ -138,6 +144,7 @@ const PlanItem = ({ plan, walletBalance, userLevel, detailed = false }) => {
         walletBalance={parsedWalletBalance}
         walletCurrency={walletCurrency || "USD"}
         userToken={user?.token}
+        onOpenDepositModal={onOpenDepositModal} // Pass the prop down
       />
     </>
   );
@@ -148,6 +155,7 @@ const InvestmentPlans = ({
   showDetailed = false,
   maxItems = 3,
   title = "Investment Plans",
+  onOpenDepositModal,
 }) => {
   const { user } = useSelector((state) => ({ ...state }));
   const { walletBalance } = useWallet();
@@ -274,6 +282,7 @@ const InvestmentPlans = ({
               walletBalance={walletBalance || "0"}
               userLevel={userLevel}
               detailed={showDetailed}
+              onOpenDepositModal={onOpenDepositModal} // Pass the prop down
             />
           ))}
         </div>

@@ -4,6 +4,7 @@ import { Button } from "../../components/ui/button";
 import { TrendingUp, AlertCircle } from "lucide-react";
 import { toast } from "react-hot-toast";
 import InvestmentPlans from "../../components/InvestmentPlans/InvestmentPlans";
+import DepositModal from "../../components/DepositModal/DepositModal";
 import NoNetModal from "../../components/NoNetModal/NoNetModal";
 import "./Invest.css";
 
@@ -56,6 +57,20 @@ const Invest = () => {
     setShowDepositModal(true);
   };
 
+  const handleOpenDepositModal = () => {
+    // Check network status before opening deposit modal
+    if (!navigator.onLine) {
+      setNoNetModal(true);
+      return;
+    }
+
+    setShowDepositModal(true);
+  };
+
+  const handleCloseDepositModal = () => {
+    setShowDepositModal(false);
+  };
+
   return (
     <>
       <Card className="invest-header-card">
@@ -100,6 +115,13 @@ const Invest = () => {
         showAll={true}
         showDetailed={true}
         title="Available Investment Plans"
+        onOpenDepositModal={handleOpenDepositModal} // Pass the function
+      />
+
+      {/* Deposit Modal */}
+      <DepositModal
+        isOpen={showDepositModal}
+        onClose={handleCloseDepositModal}
       />
 
       <NoNetModal
