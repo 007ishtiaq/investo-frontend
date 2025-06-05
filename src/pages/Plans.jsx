@@ -10,7 +10,7 @@ import PlanUpgradeModal from "../components/PlanUpgradeModal/PlanUpgradeModal";
 import StatsCounter from "../components/StatsCounter/StatsCounter";
 import LoadingSpinner from "../hooks/LoadingSpinner";
 import NoNetModal from "../components/NoNetModal/NoNetModal";
-import DepositModal from "../../components/DepositModal/DepositModal";
+import DepositModal from "../components/DepositModal/DepositModal";
 
 /**
  * Investment page component displaying available investment plans
@@ -25,6 +25,7 @@ const Plans = () => {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [animationTriggered, setAnimationTriggered] = useState(false);
   const [noNetModal, setNoNetModal] = useState(false);
+  const [showDepositModal, setShowDepositModal] = useState(false);
 
   // Refs for intersection observer
   const headerRef = useRef(null);
@@ -58,6 +59,20 @@ const Plans = () => {
       window.removeEventListener("offline", handleOfflineStatus);
     };
   }, []);
+
+  const handleOpenDepositModal = () => {
+    // Check network status before opening deposit modal
+    if (!navigator.onLine) {
+      setNoNetModal(true);
+      return;
+    }
+
+    setShowDepositModal(true);
+  };
+
+  const handleCloseDepositModal = () => {
+    setShowDepositModal(false);
+  };
 
   // Function to handle plan upgrade button click
   const handleUpgradeClick = (plan) => {
@@ -419,8 +434,15 @@ const Plans = () => {
           walletBalance={walletBalance}
           walletCurrency={walletCurrency}
           userToken={user?.token}
+          onOpenDepositModal={handleOpenDepositModal}
         />
       </div>
+
+      {/* Deposit Modal */}
+      <DepositModal
+        isOpen={showDepositModal}
+        onClose={handleCloseDepositModal}
+      />
 
       <NoNetModal
         classDisplay={noNetModal ? "show" : ""}
