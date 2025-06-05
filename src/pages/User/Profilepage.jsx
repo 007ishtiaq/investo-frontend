@@ -524,21 +524,14 @@ const Profile = () => {
         {activeTab === "security" && (
           <Card className="tab-content">
             <CardHeader>
-              <CardTitle>Security Settings</CardTitle>
+              <CardTitle>Password Update</CardTitle>
               <CardDescription>
-                Update your password and security preferences.
+                Choose a strong password that is at least 6 characters long and
+                contains a mix of letters, numbers, and symbols.
               </CardDescription>
             </CardHeader>
             <form onSubmit={passwordFormik.handleSubmit}>
               <CardContent className="profile-form">
-                <div className="form-group password-form-section">
-                  <h3 className="section-title">Password Update</h3>
-                  <p className="section-description">
-                    Choose a strong password that is at least 6 characters long
-                    and contains a mix of letters, numbers, and symbols.
-                  </p>
-                </div>
-
                 <div className="form-group">
                   <FormLabel htmlFor="currentPassword">
                     Current Password
@@ -667,7 +660,12 @@ const Profile = () => {
         {activeTab === "notifications" && (
           <Card className="tab-content">
             <CardHeader>
-              <CardTitle>Notification Preferences</CardTitle>
+              <CardTitle>
+                <div className="tab-head-title">
+                  <Bell className="feature-icon" />{" "}
+                  <div> Notification Preferences </div>
+                </div>
+              </CardTitle>
               <CardDescription>
                 Manage how and when we notify you.
               </CardDescription>
@@ -675,9 +673,7 @@ const Profile = () => {
             <form onSubmit={handleNotificationSubmit}>
               <CardContent className="notification-settings">
                 <div className="feature-section">
-                  <Bell className="feature-icon" />
                   <div className="notification-options">
-                    <h3 className="section-title">Email Notifications</h3>
                     <div className="option-grid">
                       <div className="checkbox-option">
                         <input

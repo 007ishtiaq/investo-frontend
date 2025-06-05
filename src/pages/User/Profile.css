@@ -236,6 +236,12 @@
   border: 1px solid var(--border-color, #e5e7eb);
   accent-color: var(--primary-color, #3b82f6);
 }
+.tab-head-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
 
 /* Card footer */
 .card-footer {

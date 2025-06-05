@@ -787,9 +787,9 @@ const Tasks = () => {
                     %
                   </span>
                 </div>
-                <div className="progress-bar">
+                <div className="progress-bar-tasks">
                   <div
-                    className="progress-fill"
+                    className="progress-fill-tasks"
                     style={{
                       width: `${
                         tasks.length > 0
