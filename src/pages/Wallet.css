@@ -199,3 +199,500 @@
 .auth-button:hover {
   background-color: var(--color-primary-dark);
 }
+
+/* History Redirect Section */
+.history-redirect-section {
+  margin: 1.5rem 0;
+  border-radius: 0.75rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.history-redirect-section:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.history-redirect-content {
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.history-redirect-text {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.history-redirect-icon {
+  height: 2rem;
+  width: 2rem;
+  color: #3b82f6;
+  background-color: #eff6ff;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  flex-shrink: 0;
+}
+
+.history-redirect-text h3 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.history-redirect-text p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.history-redirect-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.history-redirect-button:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.redirect-icon {
+  height: 1rem;
+  width: 1rem;
+}
+
+/* Transactions Section Header */
+.transactions-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.transactions-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.transactions-subtitle {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+/* Transaction Table (from History page) */
+.transactions-container {
+  width: 100%;
+}
+
+.desktop-view {
+  display: block;
+}
+
+.mobile-view {
+  display: none;
+}
+
+.transaction-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.transaction-table th {
+  text-align: left;
+  font-weight: 500;
+  padding: 0.75rem;
+  color: #6b7280;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  font-size: 0.875rem;
+}
+
+.transaction-table td {
+  padding: 1rem 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: middle;
+}
+
+.transaction-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.transaction-table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.amount-column {
+  text-align: right;
+}
+
+.amount-cell {
+  text-align: right;
+}
+
+/* Transaction Type Icons */
+.type-cell {
+  width: 200px;
+}
+
+.type-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.transaction-icon {
+  height: 2rem;
+  width: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.transaction-icon-svg {
+  height: 1rem;
+  width: 1rem;
+}
+
+.transaction-icon-deposit {
+  background-color: #eff6ff;
+  color: #3b82f6;
+}
+
+.transaction-icon-withdraw {
+  background-color: #fef2f2;
+  color: #ef4444;
+}
+
+.transaction-icon-earning {
+  background-color: #ecfdf5;
+  color: #10b981;
+}
+
+.transaction-icon-referral {
+  background-color: #f3e8ff;
+  color: #a855f7;
+}
+
+.transaction-icon-pending {
+  background-color: rgba(246, 192, 80, 0.1);
+  color: #f6c050;
+}
+
+.transaction-icon-rejected-deposit {
+  background-color: #fff1f2;
+  color: #ef4444;
+}
+
+.transaction-icon-rejected-withdrawal {
+  background-color: #fef9c3;
+  color: #f59e0b;
+}
+
+.type-text {
+  font-weight: 500;
+  color: #1e293b;
+  font-size: 0.875rem;
+}
+
+/* Description and Date cells */
+.description-cell {
+  max-width: 300px;
+}
+
+.description-text {
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.date-cell {
+  min-width: 150px;
+}
+
+.date-text {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+/* Amount styling */
+.amount-text {
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.amount-text.positive {
+  color: #10b981;
+}
+
+.amount-text.negative {
+  color: #ef4444;
+}
+
+.amount-text.pending-amount {
+  color: #f6c050;
+  opacity: 0.8;
+}
+
+/* Pending row styling */
+.pending-row {
+  background-color: rgba(246, 192, 80, 0.05);
+}
+
+.pending-row:hover {
+  background-color: rgba(246, 192, 80, 0.1);
+}
+
+/* Mobile view styles */
+.transaction-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.transaction-card:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.transaction-card:last-child {
+  margin-bottom: 0;
+}
+
+.pending-card {
+  background-color: rgba(246, 192, 80, 0.05);
+  border-color: rgba(246, 192, 80, 0.2);
+}
+
+.transaction-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.transaction-card-type {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.transaction-card-type-text {
+  font-weight: 500;
+  color: #1e293b;
+  font-size: 0.875rem;
+}
+
+.transaction-card-amount {
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.transaction-card-amount.positive {
+  color: #10b981;
+}
+
+.transaction-card-amount.negative {
+  color: #ef4444;
+}
+
+.transaction-card-amount.pending-amount {
+  color: #f6c050;
+  opacity: 0.8;
+}
+
+.transaction-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.transaction-card-description {
+  color: #374151;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.transaction-card-date {
+  color: #6b7280;
+  font-size: 0.75rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .history-redirect-content {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .history-redirect-text {
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: center;
+  }
+
+  .history-redirect-button {
+    align-self: center;
+    justify-content: center;
+  }
+
+  .transactions-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .desktop-view {
+    display: none;
+  }
+
+  .mobile-view {
+    display: block;
+  }
+
+  .history-redirect-section {
+    margin: 1rem 0;
+  }
+
+  .history-redirect-content {
+    padding: 1rem;
+  }
+
+  .history-redirect-text h3 {
+    font-size: 1rem;
+  }
+
+  .history-redirect-text p {
+    font-size: 0.8rem;
+  }
+
+  .history-redirect-button {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .history-redirect-section {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: #475569;
+  }
+
+  .history-redirect-section:hover {
+    border-color: #64748b;
+  }
+
+  .history-redirect-text h3 {
+    color: #f1f5f9;
+  }
+
+  .history-redirect-text p {
+    color: #cbd5e1;
+  }
+
+  .transaction-table {
+    background: #1e293b;
+  }
+
+  .transaction-table th {
+    background-color: #334155;
+    color: #cbd5e1;
+    border-bottom-color: #475569;
+  }
+
+  .transaction-table td {
+    border-bottom-color: #475569;
+  }
+
+  .transaction-table tbody tr:hover {
+    background-color: #334155;
+  }
+
+  .transactions-header h2 {
+    color: #f1f5f9;
+  }
+
+  .transactions-subtitle {
+    color: #cbd5e1;
+  }
+
+  .type-text {
+    color: #f1f5f9;
+  }
+
+  .description-text {
+    color: #e2e8f0;
+  }
+
+  .date-text {
+    color: #cbd5e1;
+  }
+
+  .transaction-card {
+    background: #1e293b;
+    border-color: #475569;
+  }
+
+  .transaction-card:hover {
+    border-color: #64748b;
+  }
+
+  .pending-card {
+    background-color: rgba(246, 192, 80, 0.1);
+    border-color: rgba(246, 192, 80, 0.3);
+  }
+
+  .pending-row {
+    background-color: rgba(246, 192, 80, 0.1);
+  }
+
+  .pending-row:hover {
+    background-color: rgba(246, 192, 80, 0.15);
+  }
+
+  .transaction-card-type-text {
+    color: #f1f5f9;
+  }
+
+  .transaction-card-description {
+    color: #e2e8f0;
+  }
+
+  .transaction-card-date {
+    color: #cbd5e1;
+  }
+}
