@@ -17,7 +17,6 @@ import {
 } from "lucide-react";
 import NoNetModal from "../components/NoNetModal/NoNetModal";
 import "./Wallet.css";
-// import "./User/History.css";
 
 const TransactionTypeIcon = ({ type, source, status }) => {
   // For pending transactions (both deposits and withdrawals)
@@ -344,9 +343,33 @@ const Wallet = () => {
                           <tbody>
                             {transactions.map((transaction) => {
                               const amount = parseFloat(transaction.amount);
-                              const isPositive = transaction.type === "credit";
+
+                              // Updated logic for amount styling
+                              let isPositive;
                               const isPending =
                                 transaction.status === "pending";
+                              const isRejected =
+                                transaction.status === "failed" ||
+                                transaction.status === "rejected";
+
+                              // For rejected deposits, treat as negative (show red)
+                              if (
+                                isRejected &&
+                                transaction.source === "deposit"
+                              ) {
+                                isPositive = false;
+                              }
+                              // For rejected withdrawals, also treat as negative (show red)
+                              else if (
+                                isRejected &&
+                                transaction.source === "withdrawal"
+                              ) {
+                                isPositive = false;
+                              }
+                              // For normal transactions, use the original logic
+                              else {
+                                isPositive = transaction.type === "credit";
+                              }
 
                               let type = "Transaction";
                               if (transaction.source === "deposit") {
@@ -412,7 +435,8 @@ const Wallet = () => {
                                         isPositive ? "positive" : "negative"
                                       } ${isPending ? "pending-amount" : ""}`}
                                     >
-                                      {isPositive ? "+" : "-"}$
+                                      {/* Show + for successful credits, - for everything else */}
+                                      {isPositive && !isRejected ? "+" : "-"}$
                                       {amount.toFixed(2)}
                                     </span>
                                   </td>
@@ -427,8 +451,29 @@ const Wallet = () => {
                       <div className="mobile-view">
                         {transactions.map((transaction) => {
                           const amount = parseFloat(transaction.amount);
-                          const isPositive = transaction.type === "credit";
+
+                          // Updated logic for amount styling (same as desktop)
+                          let isPositive;
                           const isPending = transaction.status === "pending";
+                          const isRejected =
+                            transaction.status === "failed" ||
+                            transaction.status === "rejected";
+
+                          // For rejected deposits, treat as negative (show red)
+                          if (isRejected && transaction.source === "deposit") {
+                            isPositive = false;
+                          }
+                          // For rejected withdrawals, also treat as negative (show red)
+                          else if (
+                            isRejected &&
+                            transaction.source === "withdrawal"
+                          ) {
+                            isPositive = false;
+                          }
+                          // For normal transactions, use the original logic
+                          else {
+                            isPositive = transaction.type === "credit";
+                          }
 
                           let type = "Transaction";
                           if (transaction.source === "deposit") {
@@ -484,7 +529,9 @@ const Wallet = () => {
                                     isPositive ? "positive" : "negative"
                                   } ${isPending ? "pending-amount" : ""}`}
                                 >
-                                  {isPositive ? "+" : "-"}${amount.toFixed(2)}
+                                  {/* Show + for successful credits, - for everything else */}
+                                  {isPositive && !isRejected ? "+" : "-"}$
+                                  {amount.toFixed(2)}
                                 </span>
                               </div>
                               <div className="transaction-card-body">

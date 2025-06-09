@@ -469,7 +469,7 @@ const History = () => {
                             } ${isPending ? "amount-pending" : ""}`}
                           >
                             {isPositive ? "+" : "-"}
-                            {Math.abs(amount).toFixed(2)}
+                            {Math.abs(amount).toFixed(3)}
                           </td>
                         </tr>
                       );
@@ -545,7 +545,7 @@ const History = () => {
                         } ${isPending ? "amount-pending" : ""}`}
                       >
                         {isPositive ? "+" : "-"}
-                        {Math.abs(amount).toFixed(2)}
+                        {Math.abs(amount).toFixed(3)}
                       </div>
                     </div>
                   );
