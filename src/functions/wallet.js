@@ -12,16 +12,21 @@ export const getUserWallet = async (authtoken) => {
 export const getTransactionHistory = async (
   authtoken,
   page = 1,
-  limit = 10
+  limit = 10,
+  filter = "all",
+  search = ""
 ) => {
-  return await axios.get(
-    `${process.env.REACT_APP_API}/wallet/transactions?page=${page}&limit=${limit}`,
-    {
-      headers: {
-        authtoken,
-      },
-    }
-  );
+  return await axios.get(`${process.env.REACT_APP_API}/wallet/transactions`, {
+    headers: {
+      authtoken,
+    },
+    params: {
+      page,
+      limit,
+      filter,
+      search,
+    },
+  });
 };
 
 // Submit withdrawal request

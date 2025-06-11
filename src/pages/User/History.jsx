@@ -135,11 +135,19 @@ const History = () => {
     };
   }, []);
 
+  // Load transactions when user, page, filter, or search changes
   useEffect(() => {
     if (user && user.token) {
       loadTransactions(currentPage);
     }
-  }, [user, currentPage]);
+  }, [user, currentPage, filter, search]);
+
+  // Reset to page 1 when filter or search changes
+  useEffect(() => {
+    if (currentPage !== 1) {
+      setCurrentPage(1);
+    }
+  }, [filter, search]);
 
   const loadTransactions = async (page) => {
     // Check network status before making API call
@@ -151,7 +159,13 @@ const History = () => {
 
     try {
       setLoading(true);
-      const res = await getTransactionHistory(user.token, page, itemsPerPage);
+      const res = await getTransactionHistory(
+        user.token,
+        page,
+        itemsPerPage,
+        filter,
+        search
+      );
       setTransactions(res.data.transactions);
       setCurrentPage(res.data.pagination.currentPage);
       setTotalPages(res.data.pagination.totalPages);
@@ -194,80 +208,12 @@ const History = () => {
     }
   };
 
-  // Filter transactions based on type, status, and search term
-  const filteredTransactions = transactions.filter((transaction) => {
-    // Filter by type and status
-    if (filter === "deposit" && transaction.source !== "deposit") {
-      return false;
-    }
-    if (filter === "withdraw" && transaction.type !== "debit") {
-      return false;
-    }
-    if (
-      filter === "earning" &&
-      transaction.source !== "task_reward" &&
-      transaction.source !== "referral" &&
-      transaction.source !== "bonus"
-    ) {
-      return false;
-    }
-
-    // Add filter for pending transactions
-    if (filter === "pending" && transaction.status !== "pending") {
-      return false;
-    }
-
-    // New filter options for rejected transactions
-    if (
-      filter === "rejected" &&
-      transaction.status !== "failed" &&
-      transaction.status !== "rejected"
-    ) {
-      return false;
-    }
-    if (
-      filter === "rejected_deposit" &&
-      !(
-        transaction.source === "deposit" &&
-        (transaction.status === "failed" || transaction.status === "rejected")
-      )
-    ) {
-      return false;
-    }
-    if (
-      filter === "rejected_withdraw" &&
-      !(
-        transaction.source === "withdrawal" &&
-        (transaction.status === "failed" || transaction.status === "rejected")
-      )
-    ) {
-      return false;
-    }
-
-    if (
-      filter !== "all" &&
-      filter !== "deposit" &&
-      filter !== "withdraw" &&
-      filter !== "earning" &&
-      filter !== "rejected" &&
-      filter !== "rejected_deposit" &&
-      filter !== "rejected_withdraw" &&
-      filter !== "pending"
-    ) {
-      // If filter is not one of the predefined ones, don't filter
-      return true;
-    }
-
-    // Filter by search term in description
-    if (
-      search &&
-      !transaction.description?.toLowerCase().includes(search.toLowerCase())
-    ) {
-      return false;
-    }
-
-    return true;
-  });
+  // Handle filter reset
+  const handleFilterReset = () => {
+    setFilter("all");
+    setSearch("");
+    setCurrentPage(1);
+  };
 
   if (!user || !user.token) {
     return (
@@ -355,10 +301,7 @@ const History = () => {
                   variant="outline"
                   size="icon"
                   className="filter-reset-button"
-                  onClick={() => {
-                    setFilter("all");
-                    setSearch("");
-                  }}
+                  onClick={handleFilterReset}
                   disabled={filter === "all" && search === ""}
                 >
                   <FilterX className="filter-reset-icon" />
@@ -378,7 +321,7 @@ const History = () => {
           </div>
         </CardHeader>
         <CardContent className="history-content">
-          {filteredTransactions.length === 0 ? (
+          {transactions.length === 0 ? (
             <div className="empty-message">
               No transactions found matching your criteria
             </div>
@@ -396,7 +339,7 @@ const History = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredTransactions.map((transaction) => {
+                    {transactions.map((transaction) => {
                       const amount = parseFloat(transaction.amount);
 
                       // Updated logic for amount styling
@@ -500,7 +443,7 @@ const History = () => {
 
               {/* Mobile view - Cards */}
               <div className="mobile-view">
-                {filteredTransactions.map((transaction) => {
+                {transactions.map((transaction) => {
                   const amount = parseFloat(transaction.amount);
 
                   // Updated logic for amount styling (same as desktop)
