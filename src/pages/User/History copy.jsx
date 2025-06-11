@@ -30,7 +30,6 @@ import { getTransactionHistory } from "../../functions/wallet";
 import toast from "react-hot-toast";
 import NoNetModal from "../../components/NoNetModal/NoNetModal";
 import "./History.css";
-import "../Wallet.css";
 
 const TransactionTypeIcon = ({ type, source, status }) => {
   // For pending transactions (both deposits and withdrawals)
@@ -398,29 +397,8 @@ const History = () => {
                   <tbody>
                     {filteredTransactions.map((transaction) => {
                       const amount = parseFloat(transaction.amount);
-
-                      // Updated logic for amount styling
-                      let isPositive;
+                      const isPositive = transaction.type === "credit";
                       const isPending = transaction.status === "pending";
-                      const isRejected =
-                        transaction.status === "failed" ||
-                        transaction.status === "rejected";
-
-                      // For rejected deposits, treat as negative (show red)
-                      if (isRejected && transaction.source === "deposit") {
-                        isPositive = false;
-                      }
-                      // For rejected withdrawals, also treat as negative (show red)
-                      else if (
-                        isRejected &&
-                        transaction.source === "withdrawal"
-                      ) {
-                        isPositive = false;
-                      }
-                      // For normal transactions, use the original logic
-                      else {
-                        isPositive = transaction.type === "credit";
-                      }
 
                       let type = "Transaction";
                       if (transaction.source === "deposit") {
@@ -445,51 +423,53 @@ const History = () => {
                         } else {
                           type = "Withdrawal";
                         }
-                      } else if (transaction.source === "task_reward") {
-                        type = "Task Reward";
-                      } else if (transaction.source === "referral") {
-                        type = "Referral Bonus";
-                      } else if (transaction.source === "bonus") {
-                        type = "Bonus";
+                      } else if (
+                        transaction.source === "task_reward" ||
+                        transaction.source === "referral" ||
+                        transaction.source === "bonus"
+                      ) {
+                        type = "Earnings";
                       }
 
                       return (
-                        <tr
-                          key={transaction._id}
-                          className={`transaction-row ${
-                            isPending ? "pending-row" : ""
-                          }`}
-                        >
-                          <td className="type-cell">
-                            <div className="type-content">
+                        <tr key={transaction._id}>
+                          <td>
+                            <div className="transaction-type">
                               <TransactionTypeIcon
                                 type={transaction.type}
                                 source={transaction.source}
                                 status={transaction.status}
                               />
-                              <span className="type-text">{type}</span>
+                              <span className="transaction-type-text">
+                                {type}
+                              </span>
                             </div>
                           </td>
-                          <td className="description-cell">
-                            <span className="description-text">
-                              {transaction.description}
-                            </span>
+                          <td>
+                            <div className="transaction-info">
+                              <div className="transaction-description">
+                                {transaction.description || type}
+                              </div>
+                              <span className="transaction-source">
+                                {transaction.source
+                                  .replace(/_/g, " ")
+                                  .replace(/\b\w/g, (c) => c.toUpperCase())}
+                                {isPending && (
+                                  <span className="transaction-status pending">
+                                    Pending Verification
+                                  </span>
+                                )}
+                              </span>
+                            </div>
                           </td>
-                          <td className="date-cell">
-                            <span className="date-text">
-                              {formatDate(transaction.createdAt)}
-                            </span>
-                          </td>
-                          <td className="amount-cell">
-                            <span
-                              className={`amount-text ${
-                                isPositive ? "positive" : "negative"
-                              } ${isPending ? "pending-amount" : ""}`}
-                            >
-                              {/* Show + for successful credits, - for everything else */}
-                              {isPositive && !isRejected ? "+" : "-"}$
-                              {amount.toFixed(2)}
-                            </span>
+                          <td>{formatDate(transaction.createdAt)}</td>
+                          <td
+                            className={`amount-cell ${
+                              isPositive ? "amount-positive" : "amount-negative"
+                            } ${isPending ? "amount-pending" : ""}`}
+                          >
+                            {isPositive ? "+" : "-"}
+                            {Math.abs(amount).toFixed(3)}
                           </td>
                         </tr>
                       );
@@ -498,30 +478,12 @@ const History = () => {
                 </table>
               </div>
 
-              {/* Mobile view - Cards */}
+              {/* Mobile view - Transaction Items */}
               <div className="mobile-view">
                 {filteredTransactions.map((transaction) => {
                   const amount = parseFloat(transaction.amount);
-
-                  // Updated logic for amount styling (same as desktop)
-                  let isPositive;
+                  const isPositive = transaction.type === "credit";
                   const isPending = transaction.status === "pending";
-                  const isRejected =
-                    transaction.status === "failed" ||
-                    transaction.status === "rejected";
-
-                  // For rejected deposits, treat as negative (show red)
-                  if (isRejected && transaction.source === "deposit") {
-                    isPositive = false;
-                  }
-                  // For rejected withdrawals, also treat as negative (show red)
-                  else if (isRejected && transaction.source === "withdrawal") {
-                    isPositive = false;
-                  }
-                  // For normal transactions, use the original logic
-                  else {
-                    isPositive = transaction.type === "credit";
-                  }
 
                   let type = "Transaction";
                   if (transaction.source === "deposit") {
@@ -546,49 +508,44 @@ const History = () => {
                     } else {
                       type = "Withdrawal";
                     }
-                  } else if (transaction.source === "task_reward") {
-                    type = "Task Reward";
-                  } else if (transaction.source === "referral") {
-                    type = "Referral Bonus";
-                  } else if (transaction.source === "bonus") {
-                    type = "Bonus";
+                  } else if (
+                    transaction.source === "task_reward" ||
+                    transaction.source === "referral" ||
+                    transaction.source === "bonus"
+                  ) {
+                    type = "Earnings";
                   }
 
                   return (
-                    <div
-                      key={transaction._id}
-                      className={`transaction-card ${
-                        isPending ? "pending-card" : ""
-                      }`}
-                    >
-                      <div className="transaction-card-header">
-                        <div className="transaction-card-type">
-                          <TransactionTypeIcon
-                            type={transaction.type}
-                            source={transaction.source}
-                            status={transaction.status}
-                          />
-                          <span className="transaction-card-type-text">
-                            {type}
-                          </span>
+                    <div className="transaction-item" key={transaction._id}>
+                      <div className="transaction-item-left">
+                        <TransactionTypeIcon
+                          type={transaction.type}
+                          source={transaction.source}
+                          status={transaction.status}
+                        />
+                        <div className="transaction-item-info">
+                          <div className="transaction-item-type">{type}</div>
+                          <div className="transaction-item-description">
+                            {transaction.description || type}
+                          </div>
+                          <div className="transaction-item-date">
+                            {formatDate(transaction.createdAt)}
+                          </div>
+                          {isPending && (
+                            <div className="transaction-status-mobile pending">
+                              Pending Verification
+                            </div>
+                          )}
                         </div>
-                        <span
-                          className={`transaction-card-amount ${
-                            isPositive ? "positive" : "negative"
-                          } ${isPending ? "pending-amount" : ""}`}
-                        >
-                          {/* Show + for successful credits, - for everything else */}
-                          {isPositive && !isRejected ? "+" : "-"}$
-                          {amount.toFixed(2)}
-                        </span>
                       </div>
-                      <div className="transaction-card-body">
-                        <div className="transaction-card-description">
-                          {transaction.description}
-                        </div>
-                        <div className="transaction-card-date">
-                          {formatDate(transaction.createdAt)}
-                        </div>
+                      <div
+                        className={`transaction-item-amount ${
+                          isPositive ? "amount-positive" : "amount-negative"
+                        } ${isPending ? "amount-pending" : ""}`}
+                      >
+                        {isPositive ? "+" : "-"}
+                        {Math.abs(amount).toFixed(3)}
                       </div>
                     </div>
                   );
@@ -599,7 +556,7 @@ const History = () => {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="pagination pagination-history">
+            <div className="pagination">
               <Button
                 variant="outline"
                 onClick={() => handlePageChange(1)}

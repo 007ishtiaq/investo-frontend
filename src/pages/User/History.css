@@ -391,6 +391,10 @@
   color: #f6c050;
 }
 
+.pagination.pagination-history {
+  justify-content: center;
+}
+
 .amount-pending {
   color: #f6c050 !important;
   opacity: 0.7;
