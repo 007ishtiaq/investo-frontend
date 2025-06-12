@@ -369,73 +369,183 @@ const Team = () => {
               </div>
             </div>
 
-            {/* Level Benefits Section */}
-            <div className="level-benefits-section" ref={commissionRatesRef}>
-              <div className="team-commission-section">
-                <h2 className="section-title">Affiliate Commission Rates</h2>
-                <p className="section-description">
-                  Our multi-level commission structure rewards you for building
-                  a strong team. As your account level increases, your
-                  commission rates increase too!
-                </p>
-                <div className="commission-table-container">
-                  <table className="commission-table">
-                    <thead>
-                      <tr>
-                        <th>Your Account Level</th>
-                        <th>Level 1 Referrals</th>
-                        <th>Level 2 Referrals</th>
-                        <th>Level 3 Referrals</th>
-                        <th>Level 4 Referrals</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>
-                          <span className="level-badge-team level-1-team">
-                            Level 1
-                          </span>
-                        </td>
-                        <td>0.01$ daily</td>
-                        <td>0.10% daily</td>
-                        <td>0.50% daily</td>
-                        <td>1.00% daily</td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <span className="level-badge-team level-2-team">
-                            Level 2
-                          </span>
-                        </td>
-                        <td>0.02$ daily</td>
-                        <td>0.20% daily</td>
-                        <td>1.00% daily</td>
-                        <td>1.50% daily</td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <span className="level-badge-team level-3-team">
-                            Level 3
-                          </span>
-                        </td>
-                        <td>0.03$ daily</td>
-                        <td>0.30% daily</td>
-                        <td>1.50% daily</td>
-                        <td>2.00% daily</td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <span className="level-badge-team level-4-team">
-                            Level 4
-                          </span>
-                        </td>
-                        <td>0.05$ daily</td>
-                        <td>0.50% daily</td>
-                        <td>2.00% daily</td>
-                        <td>3.00% daily</td>
-                      </tr>
-                    </tbody>
-                  </table>
+            {/* Rewards Information Section */}
+            <div
+              className="rewards-info-section level-benefits-section"
+              ref={commissionRatesRef}
+            >
+              <div className="rewards-info-container">
+                <div className="rewards-info-content">
+                  <div className="rewards-info-header">
+                    <div className="rewards-info-icon">
+                      <svg
+                        width="48"
+                        height="48"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                        <path d="M2 17l10 5 10-5" />
+                        <path d="M2 12l10 5 10-5" />
+                      </svg>
+                    </div>
+                    <div className="rewards-info-text team-commission-section">
+                      <h2>Affiliate Commission Rates</h2>
+                      <p className="section-description">
+                        Start earning immediately when your referrals take
+                        action! <br /> Here's how our system works:
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="commission-table-container">
+                    <table className="commission-table">
+                      <thead>
+                        <tr>
+                          <th>Your Account Level</th>
+                          <th>Level 1 Referrals</th>
+                          <th>Level 2 Referrals</th>
+                          <th>Level 3 Referrals</th>
+                          <th>Level 4 Referrals</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <span className="level-badge-team level-1-team">
+                              Level 1
+                            </span>
+                          </td>
+                          <td>0.01% daily</td>
+                          <td>0.10% daily</td>
+                          <td>0.50% daily</td>
+                          <td>1.00% daily</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <span className="level-badge-team level-2-team">
+                              Level 2
+                            </span>
+                          </td>
+                          <td>0.02% daily</td>
+                          <td>0.20% daily</td>
+                          <td>1.00% daily</td>
+                          <td>1.50% daily</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <span className="level-badge-team level-3-team">
+                              Level 3
+                            </span>
+                          </td>
+                          <td>0.03% daily</td>
+                          <td>0.30% daily</td>
+                          <td>1.50% daily</td>
+                          <td>2.00% daily</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <span className="level-badge-team level-4-team">
+                              Level 4
+                            </span>
+                          </td>
+                          <td>0.05% daily</td>
+                          <td>0.50% daily</td>
+                          <td>2.00% daily</td>
+                          <td>3.00% daily</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div className="rewards-info-features">
+                    <div className="rewards-feature-item">
+                      <div className="feature-icon purchase-icon">
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path d="M21 15V6" />
+                          <path d="M3 15V6" />
+                          <path d="M21 21H3" />
+                          <path d="M21 3H3" />
+                          <path d="M12 8v8" />
+                          <path d="M8 12h8" />
+                        </svg>
+                      </div>
+                      <div className="feature-content">
+                        <h4>Investment Plan Purchase/Upgrade</h4>
+                        <p>
+                          When a team member purchases or upgrades their
+                          investment plan,
+                          <strong> rewards are posted immediately</strong> to
+                          your account based on your commission level.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="rewards-feature-item">
+                      <div className="feature-icon team-icon">
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <circle cx="12" cy="8" r="5" />
+                          <path d="M20 21a8 8 0 0 0-16 0" />
+                          <path d="M12 13v8" />
+                          <path d="M8 17l4-4 4 4" />
+                        </svg>
+                      </div>
+                      <div className="feature-content">
+                        <h4>Instant Team Addition</h4>
+                        <p>
+                          Team members are added to your affiliate network
+                          <strong> immediately upon registration</strong> using
+                          your referral link - no waiting period required.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="rewards-feature-item">
+                      <div className="feature-icon automatic-icon">
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <circle cx="12" cy="12" r="3" />
+                          <path d="M12 1v6m0 6v6" />
+                          <path d="M21 12h-6m-6 0H3" />
+                          <path d="M18.364 5.636L15.536 8.464" />
+                          <path d="M8.464 15.536L5.636 18.364" />
+                          <path d="M18.364 18.364L15.536 15.536" />
+                          <path d="M8.464 8.464L5.636 5.636" />
+                        </svg>
+                      </div>
+                      <div className="feature-content">
+                        <h4>Automated Commission System</h4>
+                        <p>
+                          Our automated system calculates and distributes
+                          commissions
+                          <strong> in real-time</strong> across all levels of
+                          your affiliate network.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -780,67 +890,182 @@ const Team = () => {
             </div>
 
             {/* Level Benefits */}
-            <div className="level-benefits-section" ref={benefitsRef}>
-              <div className="team-commission-section">
-                <h2>Affiliate Commission Rates</h2>
-                <div className="commission-table-container">
-                  <table className="commission-table">
-                    <thead>
-                      <tr>
-                        <th>Your Account Level</th>
-                        <th>Level 1 Referrals</th>
-                        <th>Level 2 Referrals</th>
-                        <th>Level 3 Referrals</th>
-                        <th>Level 4 Referrals</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>
-                          <span className="level-badge-team level-1-team">
-                            Level 1
-                          </span>
-                        </td>
-                        <td>0.01$ daily</td>
-                        <td>0.10% daily</td>
-                        <td>0.50% daily</td>
-                        <td>1.00% daily</td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <span className="level-badge-team level-2-team">
-                            Level 2
-                          </span>
-                        </td>
-                        <td>0.02$ daily</td>
-                        <td>0.20% daily</td>
-                        <td>1.00% daily</td>
-                        <td>1.50% daily</td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <span className="level-badge-team level-3-team">
-                            Level 3
-                          </span>
-                        </td>
-                        <td>0.03$ daily</td>
-                        <td>0.30% daily</td>
-                        <td>1.50% daily</td>
-                        <td>2.00% daily</td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <span className="level-badge-team level-4-team">
-                            Level 4
-                          </span>
-                        </td>
-                        <td>0.05$ daily</td>
-                        <td>0.50% daily</td>
-                        <td>2.00% daily</td>
-                        <td>3.00% daily</td>
-                      </tr>
-                    </tbody>
-                  </table>
+            <div
+              className="rewards-info-section level-benefits-section"
+              ref={benefitsRef}
+            >
+              <div className="rewards-info-container">
+                <div className="rewards-info-content">
+                  <div className="rewards-info-header">
+                    <div className="rewards-info-icon">
+                      <svg
+                        width="48"
+                        height="48"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                        <path d="M2 17l10 5 10-5" />
+                        <path d="M2 12l10 5 10-5" />
+                      </svg>
+                    </div>
+                    <div className="rewards-info-text team-commission-section">
+                      <h2>Affiliate Commission Rates</h2>
+                      <p className="section-description">
+                        Start earning immediately when your referrals take
+                        action! <br /> Here's how our system works:
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="commission-table-container">
+                    <table className="commission-table">
+                      <thead>
+                        <tr>
+                          <th>Your Account Level</th>
+                          <th>Level 1 Referrals</th>
+                          <th>Level 2 Referrals</th>
+                          <th>Level 3 Referrals</th>
+                          <th>Level 4 Referrals</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <span className="level-badge-team level-1-team">
+                              Level 1
+                            </span>
+                          </td>
+                          <td>0.01% daily</td>
+                          <td>0.10% daily</td>
+                          <td>0.50% daily</td>
+                          <td>1.00% daily</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <span className="level-badge-team level-2-team">
+                              Level 2
+                            </span>
+                          </td>
+                          <td>0.02% daily</td>
+                          <td>0.20% daily</td>
+                          <td>1.00% daily</td>
+                          <td>1.50% daily</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <span className="level-badge-team level-3-team">
+                              Level 3
+                            </span>
+                          </td>
+                          <td>0.03% daily</td>
+                          <td>0.30% daily</td>
+                          <td>1.50% daily</td>
+                          <td>2.00% daily</td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <span className="level-badge-team level-4-team">
+                              Level 4
+                            </span>
+                          </td>
+                          <td>0.05% daily</td>
+                          <td>0.50% daily</td>
+                          <td>2.00% daily</td>
+                          <td>3.00% daily</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div className="rewards-info-features">
+                    <div className="rewards-feature-item">
+                      <div className="feature-icon purchase-icon">
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path d="M21 15V6" />
+                          <path d="M3 15V6" />
+                          <path d="M21 21H3" />
+                          <path d="M21 3H3" />
+                          <path d="M12 8v8" />
+                          <path d="M8 12h8" />
+                        </svg>
+                      </div>
+                      <div className="feature-content">
+                        <h4>Investment Plan Purchase/Upgrade</h4>
+                        <p>
+                          When a team member purchases or upgrades their
+                          investment plan,
+                          <strong> rewards are posted immediately</strong> to
+                          your account based on your commission level.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="rewards-feature-item">
+                      <div className="feature-icon team-icon">
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <circle cx="12" cy="8" r="5" />
+                          <path d="M20 21a8 8 0 0 0-16 0" />
+                          <path d="M12 13v8" />
+                          <path d="M8 17l4-4 4 4" />
+                        </svg>
+                      </div>
+                      <div className="feature-content">
+                        <h4>Instant Team Addition</h4>
+                        <p>
+                          Team members are added to your affiliate network
+                          <strong> immediately upon registration</strong> using
+                          your referral link - no waiting period required.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="rewards-feature-item">
+                      <div className="feature-icon automatic-icon">
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <circle cx="12" cy="12" r="3" />
+                          <path d="M12 1v6m0 6v6" />
+                          <path d="M21 12h-6m-6 0H3" />
+                          <path d="M18.364 5.636L15.536 8.464" />
+                          <path d="M8.464 15.536L5.636 18.364" />
+                          <path d="M18.364 18.364L15.536 15.536" />
+                          <path d="M8.464 8.464L5.636 5.636" />
+                        </svg>
+                      </div>
+                      <div className="feature-content">
+                        <h4>Automated Commission System</h4>
+                        <p>
+                          Our automated system calculates and distributes
+                          commissions
+                          <strong> in real-time</strong> across all levels of
+                          your affiliate network.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
