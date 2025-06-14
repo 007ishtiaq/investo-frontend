@@ -29,10 +29,28 @@ export const getUserLevel = async (authtoken) => {
       },
     });
 
-    return res.data.level || 1;
+    return res.data.level;
   } catch (error) {
     console.error("Get user level error:", error);
     return 1; // Default to level 1 if there's an error
+  }
+};
+
+// Get user investments
+export const getUserInvestments = async (authtoken) => {
+  try {
+    const response = await axios.get(
+      `${process.env.REACT_APP_API}/user/investments`,
+      {
+        headers: {
+          authtoken,
+        },
+      }
+    );
+    return response.data.investments;
+  } catch (error) {
+    console.error("Error fetching user investments:", error);
+    throw error;
   }
 };
 

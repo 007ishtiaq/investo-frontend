@@ -29,10 +29,8 @@ export const upgradePlan = async (authtoken, { planId, investmentAmount }) => {
         },
       }
     );
-
     return response.data;
   } catch (error) {
-    console.error("Plan upgrade error:", error);
     throw error;
   }
 };

@@ -1,3 +1,4 @@
+// components/InvestmentCard/InvestmentCard.js
 import React from "react";
 import { Link } from "react-router-dom";
 import { EthereumIcon } from "../../utils/icons";
@@ -5,25 +6,39 @@ import { EthereumIcon } from "../../utils/icons";
 /**
  * Investment Card component for displaying investment plans
  */
-const InvestmentCard = ({ plan, userLevel, user, onNetworkError }) => {
-  // Calculate daily and total profit
+const InvestmentCard = ({
+  id,
+  name,
+  level,
+  dailyRoi,
+  duration,
+  minAmount,
+  maxAmount,
+  featured,
+  additionalFeatures,
+  description,
+  returnRate,
+  userLevel,
+  userBalance,
+  currency,
+  userInvestments, // Array of user's investments
+  onUpgrade,
+  onOpenDepositModal,
+  onNetworkError,
+}) => {
+  // Calculate daily and total profit based on backend data
   const calculateProfit = () => {
-    // Calculate profit normally for all plans (including first plan)
     let dailyProfit = 0;
-
-    // For the first (Basic) plan, we need to handle minAmount=0 special case
-    if (plan.minAmount === 0) {
-      // Use a base investment amount of 100 for calculation purposes
-      // (since multiplying by 0 would always give 0)
+    // Use minAmount for calculation, handle special case where minAmount might be 0
+    if (minAmount === 0) {
+      // For plans with minAmount 0, use a base amount for display calculation
       const baseAmount = 100;
-      dailyProfit = baseAmount * (plan.dailyRoi / 100);
+      dailyProfit = baseAmount * (dailyRoi / 100);
     } else {
-      dailyProfit = plan.minAmount * (plan.dailyRoi / 100);
+      dailyProfit = minAmount * (dailyRoi / 100);
     }
-
     // Total profit calculation (365 days for annual profit)
     const totalProfit = dailyProfit * 365;
-
     return {
       daily: dailyProfit.toFixed(2),
       total: totalProfit.toFixed(2),
@@ -32,25 +47,32 @@ const InvestmentCard = ({ plan, userLevel, user, onNetworkError }) => {
 
   const profit = calculateProfit();
 
-  // Is user logged in (userLevel will be undefined if not logged in)
-  const isLoggedIn = user && user.token !== undefined;
+  // Check if user is logged in
+  const isLoggedIn = userLevel !== undefined && userLevel !== null;
+
+  // Check if user has purchased this plan before
+  const hasPurchasedPlan = userInvestments?.some(
+    (investment) => investment.plan._id === id || investment.plan === id
+  );
 
   // Check if this plan matches the user's level
-  const isUserLevel = isLoggedIn && plan.level === userLevel;
-
-  // Check if the plan is available to the user based on their level
-  const isAvailable = isLoggedIn && userLevel >= plan.level;
+  const isUserLevel = isLoggedIn && level === userLevel;
 
   // Check if this plan is higher than user's level (for upgrade button)
-  const isHigherLevel = isLoggedIn && plan.level > userLevel;
+  const isHigherLevel = isLoggedIn && level > userLevel;
+
+  // Check if this plan is lower than user's level
+  const isLowerLevel = isLoggedIn && level < userLevel;
+
+  // Check if user has level 0 (no plan purchased)
+  const hasNoPlan = isLoggedIn && userLevel === 0;
 
   // Determine if this is the first (Basic) plan based on level and minAmount
-  const isBasicPlan = plan.level === 1 && plan.minAmount === 0;
+  const isBasicPlan = level === 1 && minAmount === 0;
 
   // Handler for plan upgrade button with network checking
   const handleUpgradeClick = (e) => {
     e.preventDefault();
-
     // Check network status before proceeding
     if (!navigator.onLine) {
       // Call the network error handler passed from parent
@@ -59,15 +81,14 @@ const InvestmentCard = ({ plan, userLevel, user, onNetworkError }) => {
       }
       return;
     }
-
     // Use the onUpgrade handler from props
-    if (plan.onUpgrade) {
-      plan.onUpgrade();
+    if (onUpgrade) {
+      onUpgrade();
     }
   };
 
   // Determine ROI display ($ or %)
-  const roiDisplay = isBasicPlan ? `$${plan.dailyRoi}` : `${plan.dailyRoi}%`;
+  const roiDisplay = isBasicPlan ? `$${dailyRoi}` : `${dailyRoi}%`;
 
   // Determine ROI label
   const roiLabel = isBasicPlan ? "Daily Reward" : "Daily ROI";
@@ -79,16 +100,18 @@ const InvestmentCard = ({ plan, userLevel, user, onNetworkError }) => {
   return (
     <div
       className={`investment-card ${
-        !isLoggedIn && plan.featured ? "featured-card" : ""
-      } ${isLoggedIn && isUserLevel ? "your-level-card" : ""}`}
+        !isLoggedIn && featured ? "featured-card" : ""
+      } ${isLoggedIn && isUserLevel ? "your-level-card" : ""} ${
+        hasNoPlan ? "no-plan-card" : ""
+      } ${hasPurchasedPlan ? "purchased-card" : ""}`}
     >
       {/* Only show "Most Popular" if no user is logged in OR user is logged in but this isn't their level */}
-      {!isLoggedIn && plan.featured && (
+      {!isLoggedIn && featured && (
         <div className="card-badge">Most Popular</div>
       )}
 
       {/* Only show "Your Level" if user is logged in and this is their level */}
-      {isLoggedIn && isUserLevel && (
+      {isLoggedIn && isUserLevel && userLevel > 0 && (
         <div className="card-badge your-level-badge">Your Account Level</div>
       )}
 
@@ -96,11 +119,14 @@ const InvestmentCard = ({ plan, userLevel, user, onNetworkError }) => {
         <div
           className={`level-tag ${
             isLoggedIn && isUserLevel ? "your-level-tag" : ""
+          } ${hasNoPlan ? "no-plan-level-tag" : ""} ${
+            hasPurchasedPlan ? "purchased-level-tag" : ""
           }`}
         >
-          Level {plan.level}
+          Level {level}
         </div>
-        <h3 className="plan-name">{plan.name}</h3>
+        <h3 className="plan-name">{name}</h3>
+        {description && <p className="plan-description">{description}</p>}
       </div>
 
       <div className="daily-roi">
@@ -113,9 +139,19 @@ const InvestmentCard = ({ plan, userLevel, user, onNetworkError }) => {
           <div className="detail-label">Minimum to Invest</div>
           <div className="detail-value">
             <EthereumIcon size={14} />
-            <span>{plan.minAmount} USD</span>
+            <span>{minAmount} USD</span>
           </div>
         </div>
+
+        {maxAmount && (
+          <div className="detail-item-plancard">
+            <div className="detail-label">Maximum to Invest</div>
+            <div className="detail-value">
+              <EthereumIcon size={14} />
+              <span>{maxAmount} USD</span>
+            </div>
+          </div>
+        )}
 
         <div className="detail-item-plancard">
           <div className="detail-label">{dailyProfitLabel}</div>
@@ -132,22 +168,44 @@ const InvestmentCard = ({ plan, userLevel, user, onNetworkError }) => {
             <span>{profit.total} USD</span>
           </div>
         </div>
+
+        {duration && (
+          <div className="detail-item-plancard">
+            <div className="detail-label">Duration</div>
+            <div className="detail-value">
+              <span>{duration}</span>
+            </div>
+          </div>
+        )}
       </div>
 
-      <div className="additional-features">
-        <h4 className="features-title">Features</h4>
-        <ul className="features-list">
-          {plan.additionalFeatures.map((feature, index) => (
-            <li key={index} className="feature-item-plancard">
-              <span className="feature-icon-plancard">✓</span>
-              <span className="feature-text-plancard">{feature}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
+      {additionalFeatures && additionalFeatures.length > 0 && (
+        <div className="additional-features">
+          <h4 className="features-title">Features</h4>
+          <ul className="features-list">
+            {additionalFeatures.map((feature, index) => (
+              <li key={index} className="feature-item-plancard">
+                <span className="feature-icon-plancard">✓</span>
+                <span className="feature-text-plancard">{feature}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
+      {/* Button Logic */}
       {isLoggedIn ? (
-        isHigherLevel ? (
+        hasNoPlan ? (
+          // For level 0 users - show "Purchase Now" on all plans
+          <div>
+            <button
+              onClick={handleUpgradeClick}
+              className="invest-button purchase-button"
+            >
+              Purchase Now
+            </button>
+          </div>
+        ) : isHigherLevel ? (
           // Show "Upgrade Now" button for plans higher than the user's level
           <div>
             <button onClick={handleUpgradeClick} className="invest-button">
@@ -157,8 +215,22 @@ const InvestmentCard = ({ plan, userLevel, user, onNetworkError }) => {
         ) : isUserLevel ? (
           // Show "Current Plan" for user's current level
           <div className="current-plan-message">Current Plan</div>
+        ) : isLowerLevel ? (
+          // For plans below user's level - check if purchased
+          hasPurchasedPlan ? (
+            <div className="purchased-plan-message">Purchased</div>
+          ) : (
+            <div>
+              <button
+                onClick={handleUpgradeClick}
+                className="invest-button purchase-button"
+              >
+                Purchase Now
+              </button>
+            </div>
+          )
         ) : (
-          // Show "Base Plan" for levels below the user's current level
+          // Fallback
           <div className="base-plan-message">Base Plan</div>
         )
       ) : (
@@ -178,10 +250,6 @@ const InvestmentCard = ({ plan, userLevel, user, onNetworkError }) => {
 };
 
 export default InvestmentCard;
-
-// Styling remains the same
-
-// Styling remains the same
 
 // Add styling for the InvestmentCard component
 document.head.appendChild(document.createElement("style")).textContent = `
@@ -211,6 +279,16 @@ document.head.appendChild(document.createElement("style")).textContent = `
   box-shadow: 0 0 15px rgba(0, 208, 255, 0.3);
 }
 
+.no-plan-card {
+  border: 2px solid #e5e7eb;
+  box-shadow: 0 0 15px #eeeeee;
+}
+
+.purchased-card {
+  border: 2px solid #00d0ff;
+  box-shadow: 0 0 15px rgba(0, 208, 255, 0.3);
+}
+
 .card-badge {
   position: absolute;
   top: -10px;
@@ -230,6 +308,18 @@ document.head.appendChild(document.createElement("style")).textContent = `
   right: auto;
 }
 
+.purchased-badge {
+  background: linear-gradient(45deg, #8b5cf6, #a78bfa);
+  left: 1.5rem;
+  right: auto;
+}
+
+.available-badge {
+  background: linear-gradient(45deg, #8b5cf6, #a78bfa);
+  left: 1.5rem;
+  right: auto;
+}
+
 .card-header-investment {
   text-align: center;
   margin-bottom: 1.25rem;
@@ -241,6 +331,13 @@ document.head.appendChild(document.createElement("style")).textContent = `
   color: var(--color-text-primary);
   margin-bottom: 0.25rem;
   margin-top: 1rem;
+}
+
+.plan-description {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin: 0.5rem 0 0 0;
+  line-height: 1.4;
 }
 
 .plan-duration {
@@ -264,6 +361,16 @@ document.head.appendChild(document.createElement("style")).textContent = `
   background: linear-gradient(45deg, #00c3ff, #00e5ff);
   font-weight: 700;
   transform: scale(1.05);
+}
+
+.no-plan-level-tag {
+  background: linear-gradient(45deg, #8b5cf6, #a78bfa);
+  font-weight: 600;
+}
+
+.purchased-level-tag {
+  background: linear-gradient(45deg, #8b5cf6, #a78bfa);
+  font-weight: 600;
 }
 
 .daily-roi {
@@ -368,10 +475,22 @@ document.head.appendChild(document.createElement("style")).textContent = `
   transition: opacity var(--transition-fast);
   text-decoration: none;
   margin-top: auto;
+  border: none;
+  cursor: pointer;
 }
 
 .invest-button:hover {
   opacity: 0.9;
+}
+
+.purchase-button {
+  background: var(--gradient-button);
+  font-weight: 600;
+}
+
+.purchase-button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
 }
 
 .locked-message {
@@ -398,7 +517,8 @@ document.head.appendChild(document.createElement("style")).textContent = `
 }
 
 .current-plan-message,
-.base-plan-message {
+.base-plan-message,
+.purchased-plan-message {
   display: block;
   padding: 0.75rem;
   background-color: var(--color-background-hover);
@@ -407,5 +527,25 @@ document.head.appendChild(document.createElement("style")).textContent = `
   border-radius: 0.5rem;
   font-weight: 500;
   margin-top: auto;
+}
+
+.purchased-plan-message {
+  background-color: #f3f4f6;
+  color: #8b5cf6;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .investment-card {
+    padding: 1.25rem 0.875rem 0.875rem;
+  }
+  
+  .plan-name {
+    font-size: 1.125rem;
+  }
+  
+  .roi-value {
+    font-size: 1.5rem;
+  }
 }
 `;
