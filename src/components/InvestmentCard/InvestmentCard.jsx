@@ -1,8 +1,8 @@
 // components/InvestmentCard/InvestmentCard.js
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { EthereumIcon } from "../../utils/icons";
-
 /**
  * Investment Card component for displaying investment plans
  */
@@ -26,6 +26,8 @@ const InvestmentCard = ({
   onOpenDepositModal,
   onNetworkError,
 }) => {
+  const history = useHistory();
+  const { user } = useSelector((state) => ({ ...state })); // Get user from Redux
   // Calculate daily and total profit based on backend data
   const calculateProfit = () => {
     let dailyProfit = 0;
@@ -44,35 +46,32 @@ const InvestmentCard = ({
       total: totalProfit.toFixed(2),
     };
   };
-
   const profit = calculateProfit();
-
-  // Check if user is logged in
-  const isLoggedIn = userLevel !== undefined && userLevel !== null;
-
+  // Check if user is logged in using Redux state
+  const isLoggedIn = user && user.token;
   // Check if user has purchased this plan before
   const hasPurchasedPlan = userInvestments?.some(
     (investment) => investment.plan._id === id || investment.plan === id
   );
-
   // Check if this plan matches the user's level
   const isUserLevel = isLoggedIn && level === userLevel;
-
   // Check if this plan is higher than user's level (for upgrade button)
   const isHigherLevel = isLoggedIn && level > userLevel;
-
   // Check if this plan is lower than user's level
   const isLowerLevel = isLoggedIn && level < userLevel;
-
   // Check if user has level 0 (no plan purchased)
   const hasNoPlan = isLoggedIn && userLevel === 0;
-
   // Determine if this is the first (Basic) plan based on level and minAmount
   const isBasicPlan = level === 1 && minAmount === 0;
-
   // Handler for plan upgrade button with network checking
   const handleUpgradeClick = (e) => {
     e.preventDefault();
+
+    // If user is not logged in, redirect to login
+    if (!isLoggedIn) {
+      history.push("/login");
+      return;
+    }
     // Check network status before proceeding
     if (!navigator.onLine) {
       // Call the network error handler passed from parent
@@ -81,22 +80,24 @@ const InvestmentCard = ({
       }
       return;
     }
+
     // Use the onUpgrade handler from props
     if (onUpgrade) {
       onUpgrade();
     }
   };
-
+  // Handler for invest now button (for non-logged in users)
+  const handleInvestNowClick = (e) => {
+    e.preventDefault();
+    history.push("/login");
+  };
   // Determine ROI display ($ or %)
   const roiDisplay = isBasicPlan ? `$${dailyRoi}` : `${dailyRoi}%`;
-
   // Determine ROI label
   const roiLabel = isBasicPlan ? "Daily Reward" : "Daily ROI";
-
   // Determine profit labels - all plans show Annual Profit
   const dailyProfitLabel = "Daily Profit";
   const totalProfitLabel = "Annual Profit";
-
   return (
     <div
       className={`investment-card ${
@@ -109,7 +110,6 @@ const InvestmentCard = ({
       {!isLoggedIn && featured && (
         <div className="card-badge">Most Popular</div>
       )}
-
       {/* Only show "Your Level" if user is logged in and this is their level */}
       {isLoggedIn && isUserLevel && userLevel > 0 && (
         <div className="card-badge your-level-badge">Your Account Level</div>
@@ -128,12 +128,10 @@ const InvestmentCard = ({
         <h3 className="plan-name">{name}</h3>
         {description && <p className="plan-description">{description}</p>}
       </div>
-
       <div className="daily-roi">
         <span className="roi-value">{roiDisplay}</span>
         <span className="roi-label">{roiLabel}</span>
       </div>
-
       <div className="plan-details">
         <div className="detail-item-plancard">
           <div className="detail-label">Minimum to Invest</div>
@@ -142,7 +140,6 @@ const InvestmentCard = ({
             <span>{minAmount} USD</span>
           </div>
         </div>
-
         {maxAmount && (
           <div className="detail-item-plancard">
             <div className="detail-label">Maximum to Invest</div>
@@ -152,7 +149,6 @@ const InvestmentCard = ({
             </div>
           </div>
         )}
-
         <div className="detail-item-plancard">
           <div className="detail-label">{dailyProfitLabel}</div>
           <div className="detail-value">
@@ -160,7 +156,6 @@ const InvestmentCard = ({
             <span>{profit.daily} USD</span>
           </div>
         </div>
-
         <div className="detail-item-plancard">
           <div className="detail-label">{totalProfitLabel}</div>
           <div className="detail-value">
@@ -168,7 +163,6 @@ const InvestmentCard = ({
             <span>{profit.total} USD</span>
           </div>
         </div>
-
         {duration && (
           <div className="detail-item-plancard">
             <div className="detail-label">Duration</div>
@@ -178,7 +172,6 @@ const InvestmentCard = ({
           </div>
         )}
       </div>
-
       {additionalFeatures && additionalFeatures.length > 0 && (
         <div className="additional-features">
           <h4 className="features-title">Features</h4>
@@ -192,7 +185,6 @@ const InvestmentCard = ({
           </ul>
         </div>
       )}
-
       {/* Button Logic */}
       {isLoggedIn ? (
         hasNoPlan ? (
@@ -234,21 +226,20 @@ const InvestmentCard = ({
           <div className="base-plan-message">Base Plan</div>
         )
       ) : (
-        // For non-logged in users: Basic Plan gets "Base Plan", others get "Invest Now"
+        // For non-logged in users: All plans redirect to login
         <div>
           {isBasicPlan ? (
             <div className="base-plan-message">Base Plan</div>
           ) : (
-            <Link to={`/login`} className="invest-button">
+            <button onClick={handleInvestNowClick} className="invest-button">
               Invest Now
-            </Link>
+            </button>
           )}
         </div>
       )}
     </div>
   );
 };
-
 export default InvestmentCard;
 
 // Add styling for the InvestmentCard component
@@ -358,7 +349,7 @@ document.head.appendChild(document.createElement("style")).textContent = `
 }
 
 .your-level-tag {
-  background: linear-gradient(45deg, #00c3ff, #00e5ff);
+  background: linear-gradient(45deg, #00d0ff, #00d0ff);
   font-weight: 700;
   transform: scale(1.05);
 }
