@@ -1,7 +1,6 @@
-// components/InvestmentPlans/InvestmentPlans.js
 import React, { useState, useEffect } from "react";
 import { getInvestmentPlans } from "../../functions/investmentplans";
-import { getUserLevel, getUserInvestments } from "../../functions/user";
+import { getUserLevel } from "../../functions/user";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import "./InvestmentPlans.css";
@@ -21,7 +20,6 @@ const PlanItem = ({
   plan,
   walletBalance,
   userLevel,
-  userInvestments,
   detailed = false,
   onOpenDepositModal,
 }) => {
@@ -32,15 +30,6 @@ const PlanItem = ({
   const minAmount = parseFloat(plan.minAmount);
   const dailyRate = parseFloat(plan.dailyIncome);
   const parsedWalletBalance = parseFloat(walletBalance || 0);
-
-  // Check if user is logged in
-  const isLoggedIn = user && user.token;
-
-  // Check if user has purchased this plan before
-  const hasPurchasedPlan = userInvestments?.some(
-    (investment) =>
-      investment.plan._id === plan._id || investment.plan === plan._id
-  );
 
   // Check if user has enough balance for this plan
   const hasEnoughBalance = parsedWalletBalance >= minAmount;
@@ -53,9 +42,6 @@ const PlanItem = ({
 
   // Check if this plan requires a higher level than the user's current level
   const isHigherLevel = plan.minLevel > userLevel;
-
-  // Check if this plan is lower than user's level
-  const isLowerLevel = plan.minLevel < userLevel;
 
   // Check if the plan is available for upgrade (higher level AND enough balance)
   const isAvailableForUpgrade = isHigherLevel && hasEnoughBalance;
@@ -71,98 +57,30 @@ const PlanItem = ({
   const yearlyReturn = (dailyRate * 365).toFixed(1);
 
   const handleUpgradeClick = () => {
-    if (!isLoggedIn) {
-      // Redirect to login if not logged in
-      window.location.href = "/login";
-      return;
-    }
     setShowUpgradeModal(true);
-  };
-
-  // Determine plan status and button display
-  const getPlanStatus = () => {
-    if (!isLoggedIn) {
-      return { status: "Available", className: "plan-status-available" };
-    }
-
-    if (isCurrentLevel) {
-      return { status: "Current", className: "plan-status-active" };
-    }
-
-    if (isLowerLevel) {
-      if (hasPurchasedPlan) {
-        return { status: "Purchased", className: "plan-status-purchased" };
-      } else {
-        return { status: "Available", className: "plan-status-available" };
-      }
-    }
-
-    if (isHigherLevel) {
-      if (hasEnoughBalance) {
-        return { status: "Available", className: "plan-status-available" };
-      } else {
-        return { status: "Locked", className: "plan-status-locked" };
-      }
-    }
-
-    return { status: "Base", className: "plan-status-base" };
-  };
-
-  const planStatus = getPlanStatus();
-
-  // Determine if upgrade button should be shown
-  const shouldShowUpgradeButton = () => {
-    if (!isLoggedIn) {
-      return false; // Don't show upgrade button for non-logged users
-    }
-
-    if (isCurrentLevel) {
-      return false; // Don't show for current level
-    }
-
-    if (isLowerLevel && hasPurchasedPlan) {
-      return false; // Don't show for purchased lower level plans
-    }
-
-    if (isLowerLevel && !hasPurchasedPlan) {
-      return true; // Show "Purchase Now" for unpurchased lower level plans
-    }
-
-    if (isHigherLevel) {
-      return true; // Show for higher level plans
-    }
-
-    return false;
-  };
-
-  // Get button text
-  const getButtonText = () => {
-    if (isHigherLevel) {
-      return "Upgrade Plan";
-    }
-    if (isLowerLevel && !hasPurchasedPlan) {
-      return "Purchase Now";
-    }
-    return "Upgrade Plan";
   };
 
   return (
     <>
       <div
         className={`plan-item ${isCurrentLevel ? "plan-item-active" : ""} ${
-          isAvailableForUpgrade || (isLowerLevel && !hasPurchasedPlan)
-            ? "plan-item-available"
-            : ""
-        } ${hasPurchasedPlan ? "plan-item-purchased" : ""}`}
+          isAvailableForUpgrade ? "plan-item-available" : ""
+        }`}
       >
         <div className="plan-header">
           <div>
             <h3 className="plan-title">{plan.name}</h3>
             <p className="plan-description">{plan.description}</p>
           </div>
-          <span className={`plan-status ${planStatus.className}`}>
-            {planStatus.status}
-          </span>
+          {isCurrentLevel ? (
+            <span className="plan-status plan-status-active">Current</span>
+          ) : isCurrentOrLower ? (
+            <span className="plan-status plan-status-base">Base</span>
+          ) : isAvailableForUpgrade ? (
+            <span className="plan-status plan-status-available">Available</span>
+          ) : (
+            <span className="plan-status plan-status-locked">Locked</span>
+          )}
         </div>
 
         {detailed && (
@@ -199,25 +117,21 @@ const PlanItem = ({
               style={{ width: `${percentComplete}%` }}
             ></div>
           </div>
-          {isLoggedIn && (
-            <div className="plan-balance-text">
-              Your balance: ${parsedWalletBalance.toFixed(2)}
-            </div>
-          )}
+          <div className="plan-balance-text">
+            Your balance: ${parsedWalletBalance.toFixed(2)}
+          </div>
         </div>
 
-        {/* Show the upgrade button based on logic */}
-        {shouldShowUpgradeButton() && (
+        {/* Show the upgrade button only for higher-level plans */}
+        {isHigherLevel && (
           <Button
             className={`plan-upgrade-button ${
-              hasEnoughBalance || (isLowerLevel && !hasPurchasedPlan)
-                ? "plan-upgrade-button-available"
-                : ""
+              hasEnoughBalance ? "plan-upgrade-button-available" : ""
             }`}
             size="sm"
             onClick={handleUpgradeClick}
           >
-            <ArrowUp className="plan-upgrade-icon" /> {getButtonText()}
+            <ArrowUp className="plan-upgrade-icon" /> Upgrade Plan
           </Button>
         )}
       </div>
@@ -230,7 +144,7 @@ const PlanItem = ({
         walletBalance={parsedWalletBalance}
         walletCurrency={walletCurrency || "USD"}
         userToken={user?.token}
-        onOpenDepositModal={onOpenDepositModal}
+        onOpenDepositModal={onOpenDepositModal} // Pass the prop down
       />
     </>
   );
@@ -245,32 +159,25 @@ const InvestmentPlans = ({
 }) => {
   const { user } = useSelector((state) => ({ ...state }));
   const { walletBalance } = useWallet();
-  const [userLevel, setUserLevel] = useState(0);
-  const [userInvestments, setUserInvestments] = useState([]);
+  const [userLevel, setUserLevel] = useState(1);
   const [loading, setLoading] = useState(true);
   const [plans, setPlans] = useState([]);
 
-  // Fetch user level and investments from backend
+  // Fetch user level from backend
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchUserLevel = async () => {
       if (user && user.token) {
         try {
-          // Fetch user level
           const level = await getUserLevel(user.token);
           setUserLevel(level);
-
-          // Fetch user investments
-          const investments = await getUserInvestments(user.token);
-          setUserInvestments(investments || []);
         } catch (error) {
-          console.error("Error fetching user data:", error);
-          setUserLevel(0);
-          setUserInvestments([]);
+          console.error("Error fetching user level:", error);
+          setUserLevel(1);
         }
       }
     };
 
-    fetchUserData();
+    fetchUserLevel();
   }, [user]);
 
   // Fetch investment plans from backend
@@ -374,9 +281,8 @@ const InvestmentPlans = ({
               plan={plan}
               walletBalance={walletBalance || "0"}
               userLevel={userLevel}
-              userInvestments={userInvestments}
               detailed={showDetailed}
-              onOpenDepositModal={onOpenDepositModal}
+              onOpenDepositModal={onOpenDepositModal} // Pass the prop down
             />
           ))}
         </div>

@@ -291,6 +291,49 @@
   color: white;
 }
 
+/* Add these new styles to your existing InvestmentPlans.css */
+
+/* Purchased plan styling */
+.plan-item-purchased {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.3);
+}
+
+.plan-status-purchased {
+  background-color: #8b5cf6;
+  color: white;
+}
+
+/* Update existing button styles */
+.plan-upgrade-button {
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.plan-upgrade-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.plan-upgrade-button-available {
+  background-color: #10b981;
+  color: white;
+}
+
+.plan-upgrade-button-available:hover {
+  background-color: #059669;
+}
+
+/* For higher level upgrade buttons */
+.plan-upgrade-button:not(.plan-upgrade-button-available) {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.plan-upgrade-button:not(.plan-upgrade-button-available):hover {
+  background-color: #2563eb;
+}
+
 /* Dark mode adjustments */
 @media (prefers-color-scheme: dark) {
   .plan-item {
