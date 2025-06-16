@@ -72,7 +72,7 @@ const Tasks = () => {
   const [videoWatchComplete, setVideoWatchComplete] = useState(false);
   const youtubePlayerRef = useRef(null);
   const videoIntervalRef = useRef(null);
-  const [userLevel, setUserLevel] = useState(1); // Default user level to 1
+  const [userLevel, setUserLevel] = useState(0); // Default user level to 1
   const [walletBalance, setWalletBalance] = useState(0);
   const [noNetModal, setNoNetModal] = useState(false);
 
@@ -118,14 +118,14 @@ const Tasks = () => {
     try {
       const res = await getUserWallet(user.token);
       setWalletBalance(res.data.balance || 0);
-      console.log("res.data.level", res.data.level);
+      // console.log("res.data.level", res.data.level);
 
       // Set user level from the response
       if (res.data.level) {
         setUserLevel(res.data.level);
       } else {
-        // Default to level 1 if no level is found
-        setUserLevel(1);
+        // Default to level 0 if no level is found
+        setUserLevel(0);
       }
     } catch (err) {
       console.error("Error loading wallet balance:", err);
@@ -210,11 +210,7 @@ const Tasks = () => {
   // Add this function to check if user has purchased a specific level plan
   const hasUserPurchasedLevel = (level) => {
     if (!userInvestments || userInvestments.length === 0) return false;
-
-    // Level 1 is always accessible (free)
-    if (level === 1) return true;
-
-    // Check if user has purchased a plan that corresponds to this level
+    // No level is free anymore - all levels require investment plans
     return userInvestments.some((investment) => {
       const planLevel = investment.plan?.minLevel || investment.plan?.level;
       return planLevel === level; // Exact level match, not >= level
@@ -859,7 +855,7 @@ const Tasks = () => {
               </h3>
               <div className="level-info-grid">
                 {[1, 2, 3, 4].map((level) => {
-                  // Use the same logic as InvestmentPlans
+                  // Check if user has purchased this specific level plan
                   const hasPurchasedThisLevel = userInvestments?.some(
                     (investment) => {
                       const planLevel =
@@ -870,9 +866,8 @@ const Tasks = () => {
 
                   const isCurrentLevel = userLevel === level;
 
-                  // Level 1 is always "purchased" (free access)
-                  const isPurchased =
-                    level === 1 ? true : hasPurchasedThisLevel;
+                  // ALL levels require purchase now - no special treatment for Level 1
+                  const isPurchased = hasPurchasedThisLevel;
                   return (
                     <div
                       key={level}
@@ -886,12 +881,7 @@ const Tasks = () => {
                           <span>Level {level}</span>
                         </div>
                         <div className="level-status">
-                          {level === 1 ? (
-                            <span className="purchased-badge">
-                              <CheckIcon size={14} />
-                              Purchased
-                            </span>
-                          ) : isPurchased ? (
+                          {isPurchased ? (
                             <span className="purchased-badge">
                               <CheckIcon size={14} />
                               Purchased
@@ -899,15 +889,13 @@ const Tasks = () => {
                           ) : (
                             <span className="locked-badge">
                               <LockIcon size={14} />
-                              Tasks Locked
+                              Locked
                             </span>
                           )}
                         </div>
                       </div>
                       <div className="level-info-content">
-                        {level === 1 ? (
-                          <p>Easy access to basic tasks</p>
-                        ) : isPurchased ? (
+                        {isPurchased ? (
                           <p>Access to Level {level} tasks and rewards</p>
                         ) : (
                           <p>
@@ -919,43 +907,64 @@ const Tasks = () => {
                   );
                 })}
               </div>
-              {/* Show upgrade prompt for unpurchased levels */}
-              {(() => {
-                const unpurchasedLevels = [2, 3, 4].filter((level) => {
-                  const hasThisLevelPlan = userInvestments?.some(
-                    (investment) => {
-                      const planLevel =
-                        investment.plan?.minLevel || investment.plan?.level;
-                      return planLevel === level;
-                    }
-                  );
-                  return !hasThisLevelPlan;
-                });
 
-                return unpurchasedLevels.length > 0 ? (
-                  <div className="level-upgrade-prompt">
-                    <div className="upgrade-content">
-                      <h4>
-                        Unlock{" "}
-                        {unpurchasedLevels.length > 1
-                          ? "Premium"
-                          : `Level ${unpurchasedLevels[0]}`}{" "}
-                        Tasks
-                      </h4>
-                      <p>
-                        {unpurchasedLevels.length > 1
-                          ? `Purchase Level ${unpurchasedLevels.join(
-                              ", "
-                            )} investment plans to unlock all premium tasks and exclusive rewards.`
-                          : `Purchase Level ${unpurchasedLevels[0]} investment plan to access higher-paying tasks and exclusive rewards.`}
-                      </p>
-                      <Link to="/invest" className="upgrade-button">
-                        View Investment Plans
-                      </Link>
+              {/* Replace upgrade prompt with no-plan banner when user has no investments */}
+              {userLevel === 0 &&
+              (!userInvestments || userInvestments.length === 0) ? (
+                <div className="no-plan-banner">
+                  <div className="no-plan-content">
+                    <div className="no-plan-icon">
+                      <LockIcon size={48} />
                     </div>
+                    <h4>No Investment Plan Purchased</h4>
+                    <p>
+                      You need to purchase an investment plan to unlock tasks
+                      and start earning rewards.
+                    </p>
+                    <Link to="/invest" className="invest-redirect-button">
+                      View Investment Plans
+                    </Link>
                   </div>
-                ) : null;
-              })()}
+                </div>
+              ) : (
+                /* Show upgrade prompt for unpurchased levels */
+                (() => {
+                  // Find the lowest unpurchased level
+                  const unpurchasedLevels = [1, 2, 3, 4].filter((level) => {
+                    const hasThisLevelPlan = userInvestments?.some(
+                      (investment) => {
+                        const planLevel =
+                          investment.plan?.minLevel || investment.plan?.level;
+                        return planLevel === level;
+                      }
+                    );
+                    return !hasThisLevelPlan;
+                  });
+                  return unpurchasedLevels.length > 0 ? (
+                    <div className="level-upgrade-prompt">
+                      <div className="upgrade-content">
+                        <h4>
+                          Unlock{" "}
+                          {unpurchasedLevels.length > 1
+                            ? "Premium"
+                            : `Level ${unpurchasedLevels[0]}`}{" "}
+                          Tasks
+                        </h4>
+                        <p>
+                          {unpurchasedLevels.length > 1
+                            ? `Purchase Level ${unpurchasedLevels.join(
+                                ", "
+                              )} investment plans to unlock all tasks and exclusive rewards.`
+                            : `Purchase Level ${unpurchasedLevels[0]} investment plan to access tasks and exclusive rewards.`}
+                        </p>
+                        <Link to="/invest" className="upgrade-button">
+                          View Investment Plans
+                        </Link>
+                      </div>
+                    </div>
+                  ) : null;
+                })()
+              )}
             </div>
 
             <div className="tasks-filter-section">

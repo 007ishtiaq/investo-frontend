@@ -2791,7 +2791,7 @@
 }
 
 .level-info-item:first-child .locked-badge {
-  background-color: #10b981;
+  background-color: #ef4444;
 }
 
 .level-info-content {
@@ -2841,6 +2841,80 @@
 
 .upgrade-button:hover {
   background-color: #2563eb;
+}
+
+/* No Plan Banner Styles - matches existing upgrade prompt styling */
+.no-plan-banner {
+  background: linear-gradient(
+    135deg,
+    rgba(239, 68, 68, 0.1) 0%,
+    rgba(220, 38, 38, 0.1) 100%
+  );
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.no-plan-content h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #dc2626;
+  margin-bottom: 8px;
+}
+
+.no-plan-content p {
+  color: #7f1d1d;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+}
+
+.no-plan-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.no-plan-icon svg {
+  color: #ef4444;
+}
+
+.invest-redirect-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #ef4444;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.invest-redirect-button:hover {
+  background-color: #dc2626;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .no-plan-banner {
+    background: linear-gradient(
+      135deg,
+      rgba(239, 68, 68, 0.2) 0%,
+      rgba(220, 38, 38, 0.2) 100%
+    );
+    border-color: rgba(239, 68, 68, 0.3);
+  }
+
+  .no-plan-content h4 {
+    color: #fca5a5;
+  }
+
+  .no-plan-content p {
+    color: #f87171;
+  }
 }
 
 /* Responsive adjustments */
