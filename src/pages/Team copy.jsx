@@ -418,7 +418,7 @@ const Team = () => {
                               Level 1
                             </span>
                           </td>
-                          <td>10% of Plan investment</td>
+                          <td>0.01% daily</td>
                           <td>0.10% daily</td>
                           <td>0.50% daily</td>
                           <td>1.00% daily</td>
@@ -925,10 +925,10 @@ const Team = () => {
                       <thead>
                         <tr>
                           <th>Your Account Level</th>
-                          <th>Referral's Level 1</th>
-                          <th>Referral's Level 2</th>
-                          <th>Referral's Level 3</th>
-                          <th>Referral's Level 4</th>
+                          <th>Level 1 Referrals</th>
+                          <th>Level 2 Referrals</th>
+                          <th>Level 3 Referrals</th>
+                          <th>Level 4 Referrals</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -938,10 +938,10 @@ const Team = () => {
                               Level 1
                             </span>
                           </td>
-                          <td>10% of Investment</td>
-                          <td>15% of Investment</td>
-                          <td>20% of Investment</td>
-                          <td>25% of Investment</td>
+                          <td>0.01% daily</td>
+                          <td>0.10% daily</td>
+                          <td>0.50% daily</td>
+                          <td>1.00% daily</td>
                         </tr>
                         <tr>
                           <td>
@@ -949,10 +949,10 @@ const Team = () => {
                               Level 2
                             </span>
                           </td>
-                          <td>15% of Investment</td>
-                          <td>20% of Investment</td>
-                          <td>25% of Investment</td>
-                          <td>30% of Investment</td>
+                          <td>0.02% daily</td>
+                          <td>0.20% daily</td>
+                          <td>1.00% daily</td>
+                          <td>1.50% daily</td>
                         </tr>
                         <tr>
                           <td>
@@ -960,10 +960,10 @@ const Team = () => {
                               Level 3
                             </span>
                           </td>
-                          <td>20% of Investment</td>
-                          <td>25% of Investment</td>
-                          <td>30% of Investment</td>
-                          <td>35% of Investment</td>
+                          <td>0.03% daily</td>
+                          <td>0.30% daily</td>
+                          <td>1.50% daily</td>
+                          <td>2.00% daily</td>
                         </tr>
                         <tr>
                           <td>
@@ -971,10 +971,10 @@ const Team = () => {
                               Level 4
                             </span>
                           </td>
-                          <td>25% of Investment</td>
-                          <td>30% of Investment</td>
-                          <td>35% of Investment</td>
-                          <td>40% of Investment</td>
+                          <td>0.05% daily</td>
+                          <td>0.50% daily</td>
+                          <td>2.00% daily</td>
+                          <td>3.00% daily</td>
                         </tr>
                       </tbody>
                     </table>
@@ -1076,58 +1076,57 @@ const Team = () => {
               <div className="earnings-example-container">
                 <div className="earnings-scenario">
                   <div className="scenario-header">
-                    <h3>Level 3 Account with Purchase-Based Commissions</h3>
+                    <h3>Level 2 Account with 10 Direct Referrals</h3>
                   </div>
                   <div className="scenario-details">
                     <div className="scenario-row">
                       <div className="scenario-label">
-                        20 Direct Referrals buy Level 1 Plans ($9 each):
-                      </div>
-                      <div className="scenario-value">20 × $9 × 20% = $300</div>
-                    </div>
-                    <div className="scenario-row">
-                      <div className="scenario-label">
-                        10 Direct Referrals buy Level 2 Plans ($100 each):
+                        Level 1 (10 direct referrals):
                       </div>
                       <div className="scenario-value">
-                        10 × $100 × 25% = $300
+                        10 × $0.02 = $0.20 daily
                       </div>
                     </div>
                     <div className="scenario-row">
                       <div className="scenario-label">
-                        5 Direct Referrals buy Level 3 Plans ($400 each):
+                        Level 2 (50 indirect referrals averaging $100
+                        investment):
                       </div>
                       <div className="scenario-value">
-                        5 × $400 × 30% = $875
+                        50 × $100 × 0.20% = $10 daily
                       </div>
                     </div>
                     <div className="scenario-row">
                       <div className="scenario-label">
-                        2 Direct Referrals buy Level 4 Plans ($900 each):
+                        Level 3 (200 indirect referrals averaging $100
+                        investment):
                       </div>
                       <div className="scenario-value">
-                        2 × $900 × 35% = $1,200
+                        200 × $100 × 1.00% = $200 daily
                       </div>
                     </div>
-
+                    <div className="scenario-row">
+                      <div className="scenario-label">
+                        Level 4 (500 indirect referrals averaging $100
+                        investment):
+                      </div>
+                      <div className="scenario-value">
+                        500 × $100 × 1.50% = $750 daily
+                      </div>
+                    </div>
                     <div className="scenario-total">
-                      <div className="total-label">
-                        Total Purchases Potential:
-                      </div>
-                      <div className="total-value">$2,875</div>
+                      <div className="total-label">Total Daily Earnings:</div>
+                      <div className="total-value">$960.20</div>
+                    </div>
+                    <div className="scenario-total">
+                      <div className="total-label">Total Monthly Earnings:</div>
+                      <div className="total-value">$28,806.00</div>
                     </div>
                   </div>
                   <div className="scenario-note">
                     <p>
-                      * This example shows instant commissions earned when
-                      referrals purchase plans. Your actual earnings depend on
-                      the number of referrals and which plans they choose.
-                    </p>
-
-                    <p>
-                      * Higher account levels earn bigger commissions. Focus on
-                      helping referrals choose plans that match their investment
-                      goals for maximum mutual benefit.
+                      * This is just an example and actual earnings depend on
+                      your team's size, activity, and investment levels.
                     </p>
                   </div>
                 </div>
