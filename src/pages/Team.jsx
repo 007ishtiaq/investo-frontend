@@ -1076,45 +1076,47 @@ const Team = () => {
               <div className="earnings-example-container">
                 <div className="earnings-scenario">
                   <div className="scenario-header">
-                    <h3>Level 3 Account with Purchase-Based Commissions</h3>
+                    <h3>
+                      Example: Level 3 Account with Purchase-Based Commissions
+                    </h3>
                   </div>
                   <div className="scenario-details">
                     <div className="scenario-row">
                       <div className="scenario-label">
-                        20 Direct Referrals buy Level 1 Plans ($9 each):
+                        25 Direct Referrals buy Level 1 Plans ($9 each):
                       </div>
-                      <div className="scenario-value">20 × $9 × 20% = $300</div>
+                      <div className="scenario-value">25 × $9 × 20% = $45</div>
                     </div>
                     <div className="scenario-row">
                       <div className="scenario-label">
-                        10 Direct Referrals buy Level 2 Plans ($100 each):
+                        20 Direct Referrals buy Level 2 Plans ($100 each):
                       </div>
                       <div className="scenario-value">
-                        10 × $100 × 25% = $300
-                      </div>
-                    </div>
-                    <div className="scenario-row">
-                      <div className="scenario-label">
-                        5 Direct Referrals buy Level 3 Plans ($400 each):
-                      </div>
-                      <div className="scenario-value">
-                        5 × $400 × 30% = $875
+                        20 × $100 × 25% = $500
                       </div>
                     </div>
                     <div className="scenario-row">
                       <div className="scenario-label">
-                        2 Direct Referrals buy Level 4 Plans ($900 each):
+                        8 Direct Referrals buy Level 3 Plans ($400 each):
                       </div>
                       <div className="scenario-value">
-                        2 × $900 × 35% = $1,200
+                        8 × $400 × 30% = $960
+                      </div>
+                    </div>
+                    <div className="scenario-row">
+                      <div className="scenario-label">
+                        3 Direct Referrals buy Level 4 Plans ($900 each):
+                      </div>
+                      <div className="scenario-value">
+                        3 × $900 × 35% = $945
                       </div>
                     </div>
 
                     <div className="scenario-total">
                       <div className="total-label">
-                        Total Purchases Potential:
+                        Total Purchases Commission Potential:
                       </div>
-                      <div className="total-value">$2,875</div>
+                      <div className="total-value">$2,450</div>
                     </div>
                   </div>
                   <div className="scenario-note">
