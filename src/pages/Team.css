@@ -2102,6 +2102,175 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Team Table Styles */
+.team-table-container {
+  padding: 20px;
+}
+
+.team-table-wrapper {
+  overflow-x: auto;
+}
+
+.team-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.team-table th {
+  background: var(--bg-tertiary);
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-secondary);
+  border-bottom: 2px solid var(--border-color);
+}
+
+.team-table td {
+  padding: 15px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.member-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.member-avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.member-name {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.member-email {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.level-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.level-0 {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+.level-1 {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+.level-2 {
+  background: #dcfce7;
+  color: #16a34a;
+}
+.level-3 {
+  background: #fed7aa;
+  color: #ea580c;
+}
+.level-4 {
+  background: #fde2e8;
+  color: #be185d;
+}
+
+.join-date,
+.investment-date {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.no-investment {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.earned-commission {
+  color: var(--color-success);
+  font-weight: 600;
+}
+
+.no-commission {
+  color: var(--text-muted);
+}
+
+/* Team Summary */
+.team-summary {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+  gap: 60px;
+  padding: 15px 0;
+  border-top: 1px solid var(--border-color);
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.summary-label {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.summary-value {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.investment-value {
+  color: var(--color-primary);
+  font-weight: 600;
+  background: rgba(59, 130, 246, 0.1);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.no-investment {
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .team-table th,
+  .team-table td {
+    padding: 10px 8px;
+    font-size: 0.9rem;
+  }
+
+  .member-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .team-summary {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
   .rewards-info-content {

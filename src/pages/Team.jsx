@@ -556,57 +556,60 @@ const Team = () => {
               <div className="earnings-example-container">
                 <div className="earnings-scenario">
                   <div className="scenario-header">
-                    <h3>Level 2 Account with 10 Direct Referrals</h3>
+                    <h3>
+                      Example: Level 3 Account with Purchase-Based Commissions
+                    </h3>
                   </div>
                   <div className="scenario-details">
                     <div className="scenario-row">
                       <div className="scenario-label">
-                        Level 1 (10 direct referrals):
+                        25 Direct Referrals buy Level 1 Plans ($9 each):
+                      </div>
+                      <div className="scenario-value">25 × $9 × 20% = $45</div>
+                    </div>
+                    <div className="scenario-row">
+                      <div className="scenario-label">
+                        20 Direct Referrals buy Level 2 Plans ($100 each):
                       </div>
                       <div className="scenario-value">
-                        10 × $0.02 = $0.20 daily
+                        20 × $100 × 25% = $500
                       </div>
                     </div>
                     <div className="scenario-row">
                       <div className="scenario-label">
-                        Level 2 (50 indirect referrals averaging $100
-                        investment):
+                        8 Direct Referrals buy Level 3 Plans ($400 each):
                       </div>
                       <div className="scenario-value">
-                        50 × $100 × 0.20% = $10 daily
+                        8 × $400 × 30% = $960
                       </div>
                     </div>
                     <div className="scenario-row">
                       <div className="scenario-label">
-                        Level 3 (200 indirect referrals averaging $100
-                        investment):
+                        3 Direct Referrals buy Level 4 Plans ($900 each):
                       </div>
                       <div className="scenario-value">
-                        200 × $100 × 1.00% = $200 daily
+                        3 × $900 × 35% = $945
                       </div>
                     </div>
-                    <div className="scenario-row">
-                      <div className="scenario-label">
-                        Level 4 (500 indirect referrals averaging $100
-                        investment):
-                      </div>
-                      <div className="scenario-value">
-                        500 × $100 × 1.50% = $750 daily
-                      </div>
-                    </div>
+
                     <div className="scenario-total">
-                      <div className="total-label">Total Daily Earnings:</div>
-                      <div className="total-value">$960.20</div>
-                    </div>
-                    <div className="scenario-total">
-                      <div className="total-label">Total Monthly Earnings:</div>
-                      <div className="total-value">$28,806.00</div>
+                      <div className="total-label">
+                        Total Purchases Commission Potential:
+                      </div>
+                      <div className="total-value">$2,450</div>
                     </div>
                   </div>
                   <div className="scenario-note">
                     <p>
-                      * This is just an example and actual earnings depend on
-                      your team's size, activity, and investment levels.
+                      * This example shows instant commissions earned when
+                      referrals purchase plans. Your actual earnings depend on
+                      the number of referrals and which plans they choose.
+                    </p>
+
+                    <p>
+                      * Higher account levels earn bigger commissions. Focus on
+                      helping referrals choose plans that match their investment
+                      goals for maximum mutual benefit.
                     </p>
                   </div>
                 </div>
@@ -791,100 +794,120 @@ const Team = () => {
               </div>
             </div>
 
-            {/* Team Members Table */}
+            {/* Team Members Section */}
             <div className="team-members-section">
               <h2>Your Team Members</h2>
+              {teamMembers.length > 0 ? (
+                <div className="team-table-container">
+                  <div className="team-table-wrapper">
+                    <table className="team-table">
+                      <thead>
+                        <tr>
+                          <th>Member</th>
+                          <th>Email</th>
+                          <th>Level</th>
+                          <th>Joined Date</th>
+                          <th>First Investment</th>
+                          <th>Your Commission</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {teamMembers.map((member, index) => (
+                          <tr key={index}>
+                            <td>
+                              <div className="member-info">
+                                <div className="member-avatar">
+                                  {member.name.charAt(0).toUpperCase()}
+                                </div>
+                                <span className="member-name">
+                                  {member.name}
+                                </span>
+                              </div>
+                            </td>
+                            <td>
+                              <span className="member-email">
+                                {member.email}
+                              </span>
+                            </td>
+                            <td>
+                              <span
+                                className={`level-badge level-${member.level}`}
+                              >
+                                Level {member.level}
+                              </span>
+                            </td>
+                            <td>
+                              <span className="join-date">
+                                {new Date(member.createdAt).toLocaleDateString(
+                                  "en-US",
+                                  {
+                                    year: "numeric",
+                                    month: "short",
+                                    day: "numeric",
+                                  }
+                                )}
+                              </span>
+                            </td>
+                            <td>
+                              <span className="investment-amount">
+                                {member.firstInvestmentAmount !== null ? (
+                                  <span className="investment-value">
+                                    {formatBalance(
+                                      member.firstInvestmentAmount
+                                    )}
+                                  </span>
+                                ) : (
+                                  <span className="no-investment">
+                                    No investment yet
+                                  </span>
+                                )}
+                              </span>
+                            </td>
+                            <td>
+                              <span className="commission-amount">
+                                {member.commissionEarned > 0 ? (
+                                  <span className="earned-commission">
+                                    {formatBalance(member.commissionEarned)}
+                                  </span>
+                                ) : (
+                                  <span className="no-commission">$0.00</span>
+                                )}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
 
-              {loading ? (
-                <div className="loading">
-                  <LoadingSpinner />
-                </div>
-              ) : teamMembers.length === 0 ? (
-                // Show network error UI if there was a network error, otherwise show normal empty state
-                networkError ? (
-                  <div className="network-error-container-team">
-                    <div className="network-error-content">
-                      <div className="network-error-icon">
-                        <div className="wifi-icon">
-                          <div className="wifi-circle wifi-circle-1"></div>
-                          <div className="wifi-circle wifi-circle-2"></div>
-                          <div className="wifi-circle wifi-circle-3"></div>
-                          <div className="wifi-base"></div>
-                          <div className="wifi-slash"></div>
-                        </div>
-                      </div>
-                      <div className="network-error-text">
-                        <h3>Failed to Load Team Members</h3>
-                        <p>
-                          It looks like you're not connected to the internet.
-                          Please check your connection and try again.
-                        </p>
-                      </div>
-                      <div className="network-error-actions">
-                        <button
-                          className="retry-btn"
-                          onClick={() => window.location.reload()}
-                        >
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          >
-                            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
-                            <path d="M21 3v5h-5" />
-                            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
-                            <path d="M3 21v-5h5" />
-                          </svg>
-                          Try Again
-                        </button>
-                        <button
-                          className="offline-mode-btn"
-                          onClick={() =>
-                            toast.info(
-                              "Offline mode - Some features may be limited"
-                            )
-                          }
-                        >
-                          Continue Offline
-                        </button>
-                      </div>
+                  {/* Summary Section */}
+                  <div className="team-summary">
+                    <div className="summary-item">
+                      <span className="summary-label">Total Team Members:</span>
+                      <span className="summary-value">
+                        {stats.totalMembers}
+                      </span>
+                    </div>
+                    <div className="summary-item">
+                      <span className="summary-label">Active Members:</span>
+                      <span className="summary-value">
+                        {stats.activeMembers}
+                      </span>
+                    </div>
+                    <div className="summary-item">
+                      <span className="summary-label">Total Commissions:</span>
+                      <span className="summary-value earned-commission">
+                        {formatBalance(stats.affiliateEarnings)}
+                      </span>
                     </div>
                   </div>
-                ) : (
-                  <div className="no-members">
-                    <p>
-                      You don't have any team members yet. Share your affiliate
-                      link to start building your team!
-                    </p>
-                  </div>
-                )
+                </div>
               ) : (
-                <div className="team-table-container">
-                  <table className="team-table">
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Level</th>
-                        <th>Joined</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {teamMembers.map((member) => (
-                        <tr key={member._id}>
-                          <td>{member.name || "Anonymous"}</td>
-                          <td>{member.email}</td>
-                          <td>Level {member.level}</td>
-                          <td>
-                            {new Date(member.createdAt).toLocaleDateString()}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="no-members">
+                  <p>
+                    You don't have any team members yet. Share your affiliate
+                    link to start building your team!
+                  </p>
                 </div>
               )}
             </div>
