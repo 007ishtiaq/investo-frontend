@@ -9,6 +9,7 @@ import { Copy, Edit2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import NoNetModal from "../../components/NoNetModal/NoNetModal"; // Your existing import
+import DepositModal from "../../components/DepositModal/DepositModal";
 import "./Dashboard.css";
 
 const Dashboard = () => {
@@ -16,6 +17,7 @@ const Dashboard = () => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [noNetModal, setNoNetModal] = useState(false);
+  const [showDepositModal, setShowDepositModal] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -66,6 +68,20 @@ const Dashboard = () => {
     }
 
     window.location.href = "/login";
+  };
+
+  const handleOpenDepositModal = () => {
+    // Check network status before opening deposit modal
+    if (!navigator.onLine) {
+      setNoNetModal(true);
+      return;
+    }
+
+    setShowDepositModal(true);
+  };
+
+  const handleCloseDepositModal = () => {
+    setShowDepositModal(false);
   };
 
   const loadUserData = async () => {
@@ -246,8 +262,17 @@ const Dashboard = () => {
 
       <div className="dashboard-grid margin-top">
         <RecentTransactions />
-        <InvestmentPlans />
+        <InvestmentPlans onOpenDepositModal={handleOpenDepositModal} />
       </div>
+
+      {/* Deposit Modal */}
+      {showDepositModal && (
+        <DepositModal
+          isOpen={showDepositModal}
+          onClose={handleCloseDepositModal}
+          onNetworkError={() => setNoNetModal(true)}
+        />
+      )}
 
       {/* Using your existing NoNetModal with correct props */}
       <NoNetModal

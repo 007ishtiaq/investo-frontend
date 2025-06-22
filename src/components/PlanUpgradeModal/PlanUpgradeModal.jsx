@@ -166,6 +166,7 @@ const PlanUpgradeModal = ({
 
     // Close the current modal and trigger parent to open deposit modal
     onClose();
+
     if (onOpenDepositModal) {
       onOpenDepositModal();
     }

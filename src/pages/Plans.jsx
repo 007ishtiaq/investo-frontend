@@ -473,6 +473,7 @@ const Plans = () => {
       {/* Deposit Modal */}
       {showDepositModal && (
         <DepositModal
+          isOpen={showDepositModal}
           onClose={handleCloseDepositModal}
           onNetworkError={() => setNoNetModal(true)}
         />
