@@ -169,10 +169,6 @@ const AdminDeposits = () => {
       return toast.error("Please search for a user first");
     }
 
-    if (!manualDepositPlanId) {
-      return toast.error("Please select an investment plan");
-    }
-
     if (!manualDepositAmount || parseFloat(manualDepositAmount) <= 0) {
       return toast.error("Please enter a valid amount");
     }
@@ -311,7 +307,6 @@ const AdminDeposits = () => {
                     id="manualDepositPlan"
                     value={manualDepositPlanId}
                     onChange={(e) => setManualDepositPlanId(e.target.value)}
-                    required
                   >
                     <option value="">-- Select Plan --</option>
                     {investmentPlans.map((plan) => (
