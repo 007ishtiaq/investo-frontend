@@ -96,11 +96,15 @@ const TransactionItem = ({ transaction }) => {
     } else {
       title = "Deposit";
     }
-  } else if (transaction.type === "debit") {
+  } else if (transaction.source === "withdrawal") {
+    // Only show "Withdrawal" for actual withdrawals
     title =
       transaction.status === "failed" || transaction.status === "rejected"
         ? "Rejected Withdrawal"
         : "Withdrawal";
+  } else if (transaction.type === "debit" && transaction.source === "other") {
+    // Plan purchases and other debit transactions show as "Transaction"
+    title = "Transaction";
   } else if (transaction.source === "task_reward") {
     title = "Task Reward";
   } else if (transaction.source === "referral") {
