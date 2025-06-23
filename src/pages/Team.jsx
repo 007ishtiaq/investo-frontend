@@ -805,7 +805,7 @@ const Team = () => {
                         <tr>
                           <th>Member</th>
                           <th>Email</th>
-                          <th>Level</th>
+                          <th>First Level</th>
                           <th>Joined Date</th>
                           <th>First Investment</th>
                           <th>Your Commission</th>
