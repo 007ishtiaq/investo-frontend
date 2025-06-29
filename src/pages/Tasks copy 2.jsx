@@ -83,8 +83,8 @@ const Tasks = () => {
   // Level colors and configurations
   const levelConfig = {
     1: { color: "#e3f2fd", borderColor: "#2196f3", rewardPercentage: 0.5 },
-    2: { color: "#e8f5e8", borderColor: "#b5e1b7", rewardPercentage: 2.0 },
-    3: { color: "#fff3e0", borderColor: "#ffdaa3", rewardPercentage: 3.0 },
+    2: { color: "#e8f5e8", borderColor: "#4caf50", rewardPercentage: 2.0 },
+    3: { color: "#fff3e0", borderColor: "#ff9800", rewardPercentage: 3.0 },
     4: { color: "#fce4ec", borderColor: "#e91e63", rewardPercentage: 4.0 },
   };
 
@@ -552,6 +552,8 @@ const Tasks = () => {
         }`}
         onClick={() => !isLocked && handleTaskClick(task)}
         style={{
+          backgroundColor: levelColors.color,
+          borderLeft: `4px solid ${levelColors.borderColor}`,
           opacity: isLocked ? 0.6 : 1,
           cursor: isLocked ? "not-allowed" : "pointer",
         }}
@@ -1132,8 +1134,219 @@ const Tasks = () => {
               )}
             </div>
 
+            <div className="tasks-filter-section">
+              <div className="filter-label">Filter Tasks:</div>
+              <div className="filter-options">
+                <button
+                  className={`filter-option ${
+                    filterOption === "all" ? "active" : ""
+                  }`}
+                  onClick={() => setFilterOption("all")}
+                >
+                  All Tasks
+                </button>
+                <button
+                  className={`filter-option ${
+                    filterOption === "pending" ? "active" : ""
+                  }`}
+                  onClick={() => setFilterOption("pending")}
+                >
+                  Pending
+                </button>
+                <button
+                  className={`filter-option ${
+                    filterOption === "completed" ? "active" : ""
+                  }`}
+                  onClick={() => setFilterOption("completed")}
+                >
+                  Completed
+                </button>
+                <button
+                  className={`filter-option ${
+                    filterOption === "rejected" ? "active" : ""
+                  }`}
+                  onClick={() => setFilterOption("rejected")}
+                >
+                  Rejected
+                </button>
+              </div>
+            </div>
+
             {error && <div className="error-message">{error}</div>}
 
+            {loading ? (
+              <div className="loading-indicator">
+                <LoadingSpinner />
+              </div>
+            ) : filteredTasks.length === 0 ? (
+              // Show network error UI when filter is "all" and no tasks, otherwise show normal empty state
+              filterOption === "all" && tasks.length === 0 ? (
+                <div className="network-error-container-tasks">
+                  <div className="network-error-content">
+                    <div className="network-error-icon">
+                      <div className="wifi-icon">
+                        <div className="wifi-circle wifi-circle-1"></div>
+                        <div className="wifi-circle wifi-circle-2"></div>
+                        <div className="wifi-circle wifi-circle-3"></div>
+                        <div className="wifi-base"></div>
+                        <div className="wifi-slash"></div>
+                      </div>
+                    </div>
+                    <div className="network-error-text">
+                      <h3>Failed to Load Tasks</h3>
+                      <p>
+                        It looks like you're not connected to the internet.
+                        Please check your connection and try again.
+                      </p>
+                    </div>
+                    <div className="network-error-actions">
+                      <button
+                        className="retry-btn"
+                        onClick={() => window.location.reload()}
+                      >
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+                          <path d="M21 3v5h-5" />
+                          <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+                          <path d="M3 21v-5h5" />
+                        </svg>
+                        Try Again
+                      </button>
+                      <button
+                        className="offline-mode-btn"
+                        onClick={() =>
+                          toast.info(
+                            "Offline mode - Some features may be limited"
+                          )
+                        }
+                      >
+                        Continue Offline
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <EmptyState
+                  message={
+                    filterOption === "all"
+                      ? "No tasks available at the moment."
+                      : `No ${filterOption} tasks found.`
+                  }
+                  filterOption={filterOption}
+                  onReset={() => setFilterOption("all")}
+                />
+              )
+            ) : (
+              <div className="tasks-list">
+                {loading ? (
+                  <div className="loading-container loading-container-grid">
+                    <LoadingSpinner />
+                  </div>
+                ) : filteredTasks.length === 0 ? (
+                  <EmptyState
+                    message={
+                      filterOption === "completed"
+                        ? "You haven't completed any tasks yet."
+                        : filterOption === "pending"
+                        ? "No pending tasks found."
+                        : filterOption === "rejected"
+                        ? "You don't have any rejected tasks."
+                        : "No tasks available at the moment."
+                    }
+                    filterOption={filterOption}
+                    onReset={resetFilter}
+                  />
+                ) : (
+                  filteredTasks.map((task) => (
+                    <div
+                      key={task._id}
+                      className={`task-card ${
+                        task.completed ? "completed" : ""
+                      } ${
+                        task.status === "pending_verification"
+                          ? "pending-verification"
+                          : ""
+                      } ${task.status === "rejected" ? "rejected" : ""}`}
+                    >
+                      <div className="task-status">
+                        {task.completed ? (
+                          <div className="completed-badge">
+                            <CheckIcon size={16} />
+                            <span>Completed</span>
+                          </div>
+                        ) : task.status === "pending_verification" ? (
+                          <div className="pending-verification-badge">
+                            <ClockIcon size={16} />
+                            <span>Under Verification</span>
+                          </div>
+                        ) : task.status === "rejected" ? (
+                          <div className="rejected-badge">
+                            <AlertTriangle size={16} />
+                            <span>Rejected</span>
+                          </div>
+                        ) : (
+                          <div className="reward-badge">
+                            <EthereumIcon size={16} />
+                            <span>{task.reward.toFixed(3)} USD</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <h3 className="task-title">{task.title}</h3>
+                      <p className="task-description">{task.description}</p>
+
+                      {task.status === "rejected" && task.rejectionReason && (
+                        <div className="task-rejection-info">
+                          <div className="rejection-label">
+                            Reason for rejection:
+                          </div>
+                          <div className="rejection-reason">
+                            {task.rejectionReason}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="task-meta">
+                        <div
+                          className="difficulty-tag"
+                          style={{ color: difficultyColors[task.difficulty] }}
+                        >
+                          {task.difficulty.charAt(0).toUpperCase() +
+                            task.difficulty.slice(1)}
+                        </div>
+
+                        <div className="time-estimate">
+                          <ClockIcon size={14} />
+                          <span>{task.estimatedTime}</span>
+                        </div>
+                      </div>
+
+                      <button
+                        className="view-task-button"
+                        onClick={() => openTaskDetails(task)}
+                      >
+                        {task.completed
+                          ? "View Details"
+                          : task.status === "pending_verification"
+                          ? "View Progress"
+                          : task.status === "rejected"
+                          ? "View Details"
+                          : "Complete Task"}
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+
+            {/* new code here */}
             {/* Filter Section */}
             <div className="tasks-filter-section">
               <div className="filter-label">Filter:</div>
@@ -1185,9 +1398,7 @@ const Tasks = () => {
                     className="level-header"
                     style={{
                       backgroundColor: levelColors.color,
-                      borderTop: `2px solid ${levelColors.borderColor}`,
-                      borderLeft: `2px solid ${levelColors.borderColor}`,
-                      borderRight: `2px solid ${levelColors.borderColor}`,
+                      borderLeft: `4px solid ${levelColors.borderColor}`,
                     }}
                   >
                     <div className="level-info">
@@ -1203,7 +1414,7 @@ const Tasks = () => {
                               3
                             )} total (${
                               levelConfig[levelNum].rewardPercentage
-                            }% of your invested amount on the Plan)`}
+                            }% of your investment)`}
                       </p>
                     </div>
                     {!isLevelLocked && (
@@ -1256,8 +1467,11 @@ const Tasks = () => {
                     <div className="task-reward">
                       <EthereumIcon size={16} />
                       <span>
-                        {calculateTaskReward(activeTask.minLevel).toFixed(3)}
+                        {calculateTaskReward(activeTask).toFixed(3)} USD{" "}
                       </span>
+                      <small>
+                        ({activeTask.rewardPercentage}% of plan investment)
+                      </small>
                     </div>
                   </div>
 
@@ -1365,7 +1579,7 @@ const Tasks = () => {
                         </div>
                         <p>
                           You've successfully completed this task and earned{" "}
-                          {/* <strong>{activeTask.reward.toFixed(3)} USD</strong>! */}
+                          <strong>{activeTask.reward.toFixed(3)} USD</strong>!
                         </p>
                       </div>
                     )}

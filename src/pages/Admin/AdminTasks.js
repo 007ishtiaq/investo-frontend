@@ -21,7 +21,7 @@ const AdminTasks = () => {
     title: "",
     description: "",
     steps: [""],
-    reward: 0.001,
+    rewardPercentage: 0.5,
     type: "custom",
     externalUrl: "",
     difficulty: "easy",
@@ -94,7 +94,7 @@ const AdminTasks = () => {
       title: "",
       description: "",
       steps: [""],
-      reward: 0.001,
+      rewardPercentage: 0.5,
       type: "custom",
       externalUrl: "",
       difficulty: "easy",
@@ -120,15 +120,12 @@ const AdminTasks = () => {
   // Update handleEditTask to include these fields
   const handleEditTask = (task) => {
     setEditingTask(task);
-
-    // Format the date for the form if it exists
     const displayDate = task.displayDate ? new Date(task.displayDate) : "";
-
     setFormValues({
       title: task.title,
       description: task.description,
       steps: Array.isArray(task.steps) && task.steps.length ? task.steps : [""],
-      reward: task.reward,
+      rewardPercentage: task.rewardPercentage || 0.5, // Changed from reward
       type: task.type,
       externalUrl: task.externalUrl || "",
       difficulty: task.difficulty,
@@ -339,15 +336,18 @@ const AdminTasks = () => {
               </div>
               <div className="form-row">
                 <div className="form-group">
-                  <label htmlFor="reward">Reward (USD)*</label>
+                  <label htmlFor="rewardPercentage">
+                    Reward Percentage (%)*
+                  </label>
                   <input
                     type="number"
-                    id="reward"
-                    name="reward"
-                    value={formValues.reward}
+                    id="rewardPercentage"
+                    name="rewardPercentage"
+                    value={formValues.rewardPercentage}
                     onChange={handleChange}
-                    step="0.001"
-                    min="0.001"
+                    step="0.1"
+                    min="0.1"
+                    max="100"
                     required
                   />
                 </div>
@@ -606,7 +606,7 @@ const AdminTasks = () => {
                             {task.type.replace("_", " ")}
                           </div>
                           <div className="task-cell">
-                            {task.reward.toFixed(3)} USD
+                            {task.rewardPercentage}%
                           </div>
                           <div className="task-cell">{task.difficulty}</div>
                           <div className="task-cell">
