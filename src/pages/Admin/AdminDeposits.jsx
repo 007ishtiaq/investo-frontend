@@ -28,6 +28,8 @@ const AdminDeposits = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const itemsPerPage = 10;
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [modalImageUrl, setModalImageUrl] = useState("");
 
   // Manual deposit state
   const [showManualDepositForm, setShowManualDepositForm] = useState(false);
@@ -51,6 +53,7 @@ const AdminDeposits = () => {
         // For pending deposits, load without pagination
         const data = await getDeposits(user.token, filter);
         setDeposits(data);
+        console.log("all deposits", data);
       } else {
         // For all deposits, load with pagination
         const data = await getDeposits(
@@ -97,10 +100,6 @@ const AdminDeposits = () => {
   };
 
   const handleReviewSubmit = async (status) => {
-    if (status === "approved" && !selectedPlanId) {
-      return toast.error("Please select an investment plan");
-    }
-
     // Validate amount
     if (editedAmount <= 0) {
       return toast.error("Amount must be greater than zero");
@@ -481,18 +480,40 @@ const AdminDeposits = () => {
                         activeDeposit.status.slice(1)}
                     </span>
                   </div>
-                  {activeDeposit.proofOfPayment && (
+                  {activeDeposit.screenshotUrl && (
                     <div className="proof-of-payment">
                       <h3>Proof of Payment</h3>
                       <div className="payment-proof-container">
-                        <a
-                          href={activeDeposit.proofOfPayment}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="payment-proof-link"
-                        >
-                          View Payment Proof
-                        </a>
+                        <div className="payment-proof-preview">
+                          <img
+                            src={activeDeposit.screenshotUrl}
+                            alt="Payment Proof Preview"
+                            className="payment-proof-thumbnail"
+                            onClick={() => {
+                              setModalImageUrl(activeDeposit.screenshotUrl);
+                              setShowImageModal(true);
+                            }}
+                          />
+                          <div className="payment-proof-actions">
+                            <button
+                              className="view-full-button"
+                              onClick={() => {
+                                setModalImageUrl(activeDeposit.screenshotUrl);
+                                setShowImageModal(true);
+                              }}
+                            >
+                              View Full Size
+                            </button>
+                            <a
+                              href={activeDeposit.screenshotUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="download-proof-link"
+                            >
+                              Open in New Tab
+                            </a>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -543,24 +564,7 @@ const AdminDeposits = () => {
                         You can adjust the amount if needed
                       </p>
                     </div>
-                    <div className="form-group">
-                      <label htmlFor="investmentPlan">
-                        Select Investment Plan
-                      </label>
-                      <select
-                        id="investmentPlan"
-                        value={selectedPlanId}
-                        onChange={(e) => setSelectedPlanId(e.target.value)}
-                      >
-                        <option value="">-- Select Plan --</option>
-                        {investmentPlans.map((plan) => (
-                          <option key={plan._id} value={plan._id}>
-                            {plan.name} - {plan.returnRate}% (Level{" "}
-                            {plan.minLevel})
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+
                     <div className="form-group">
                       <label htmlFor="adminNotes">Admin Notes (Optional)</label>
                       <textarea
@@ -594,6 +598,51 @@ const AdminDeposits = () => {
           </div>
         )}
       </div>
+
+      {showImageModal && (
+        <div
+          className="image-modal-overlay"
+          onClick={() => setShowImageModal(false)}
+        >
+          <div
+            className="image-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="image-modal-header">
+              <h3>Payment Proof</h3>
+              <button
+                className="close-modal-button"
+                onClick={() => setShowImageModal(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="image-modal-body">
+              <img
+                src={modalImageUrl}
+                alt="Payment Proof Full Size"
+                className="modal-image"
+              />
+            </div>
+            <div className="image-modal-footer">
+              <a
+                href={modalImageUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="download-button"
+              >
+                Download Image
+              </a>
+              <button
+                className="close-button"
+                onClick={() => setShowImageModal(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

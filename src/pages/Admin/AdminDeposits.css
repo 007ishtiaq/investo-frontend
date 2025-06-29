@@ -483,3 +483,223 @@
   font-size: 0.875rem;
   color: var(--text-secondary, #6b7280);
 }
+
+/* Payment Proof Styles */
+.payment-proof-container {
+  margin-top: 10px;
+}
+
+.payment-proof-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.payment-proof-thumbnail {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #e1e5e9;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.payment-proof-thumbnail:hover {
+  border-color: #007bff;
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
+}
+
+.payment-proof-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.view-full-button {
+  padding: 8px 16px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.view-full-button:hover {
+  background: #0056b3;
+}
+
+.download-proof-link {
+  padding: 8px 16px;
+  background: #28a745;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.download-proof-link:hover {
+  background: #1e7e34;
+  color: white;
+}
+
+/* Image Modal Styles */
+.image-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.image-modal-content {
+  background: white;
+  border-radius: 12px;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.image-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #e1e5e9;
+  background: #f8f9fa;
+}
+
+.image-modal-header h3 {
+  margin: 0;
+  color: #333;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.close-modal-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.close-modal-button:hover {
+  background: #e9ecef;
+  color: #333;
+}
+
+.image-modal-body {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  overflow: auto;
+}
+
+.modal-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.image-modal-footer {
+  display: flex;
+  gap: 10px;
+  padding: 20px;
+  border-top: 1px solid #e1e5e9;
+  background: #f8f9fa;
+  justify-content: flex-end;
+}
+
+.download-button {
+  padding: 10px 20px;
+  background: #28a745;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background: #1e7e34;
+  color: white;
+}
+
+.close-button {
+  padding: 10px 20px;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.close-button:hover {
+  background: #545b62;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .payment-proof-thumbnail {
+    width: 120px;
+    height: 120px;
+  }
+
+  .payment-proof-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .view-full-button,
+  .download-proof-link {
+    text-align: center;
+  }
+
+  .image-modal-content {
+    margin: 10px;
+    max-width: calc(100vw - 20px);
+    max-height: calc(100vh - 20px);
+  }
+
+  .image-modal-footer {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .download-button,
+  .close-button {
+    width: 100%;
+    text-align: center;
+  }
+}
