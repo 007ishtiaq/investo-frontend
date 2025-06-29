@@ -240,6 +240,23 @@ const Tasks = () => {
       return planLevel === level;
     });
   };
+
+  // Add this function to calculate total available rewards across all investment plans
+  const calculateTotalAvailableRewards = () => {
+    if (!userInvestments || userInvestments.length === 0) return 0;
+
+    let totalRewards = 0;
+
+    userInvestments.forEach((investment) => {
+      const planLevel = investment.plan?.minLevel || investment.plan?.level;
+      const levelPercentage = levelConfig[planLevel]?.rewardPercentage || 0;
+      const levelTotalReward = (investment.amount * levelPercentage) / 100;
+      totalRewards += levelTotalReward;
+    });
+
+    return totalRewards;
+  };
+
   // Calculate total reward for completing all tasks in a level
   const calculateLevelTotalReward = (level) => {
     const investment = getUserInvestmentForLevel(level);
@@ -955,7 +972,7 @@ const Tasks = () => {
                 <div className="stat-title-tasks">Total Available Rewards</div>
                 <div className="stat-value">
                   <EthereumIcon size={18} />
-                  <span>{totalRewards.toFixed(3)} USD</span>
+                  <span>{calculateTotalAvailableRewards().toFixed(3)} USD</span>
                 </div>
               </div>
 
