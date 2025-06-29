@@ -155,7 +155,7 @@ const PlanItem = ({
             : ""
         } ${hasPurchasedPlan ? "plan-item-purchased" : ""}`}
       >
-        <div className="plan-header">
+        <div className="plan-header-invest">
           <div>
             <h3 className="plan-title">{plan.name}</h3>
             <p className="plan-description">{plan.description}</p>
@@ -367,7 +367,9 @@ const InvestmentPlans = ({
         </div>
       </CardHeader>
       <CardContent>
-        <div className={`plans-grid ${showAll ? "plans-grid-full" : ""}`}>
+        <div
+          className={`plans-grid-invest ${showAll ? "plans-grid-full" : ""}`}
+        >
           {displayedPlans.map((plan) => (
             <PlanItem
               key={plan._id}

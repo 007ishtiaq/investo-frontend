@@ -27,7 +27,7 @@
 }
 
 /* Plans grid layout */
-.plans-grid {
+.plans-grid-invest {
   display: grid;
   grid-template-columns: 1fr;
   gap: 1rem;
@@ -50,7 +50,7 @@
 }
 
 /* Plan Header */
-.plan-header {
+.plan-header-invest {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;

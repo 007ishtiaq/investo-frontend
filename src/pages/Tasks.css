@@ -2863,13 +2863,13 @@
   font-size: 0.9rem;
 }
 
-.no-plan-icon {
+.no-plan-icon-tasks {
   display: flex;
   justify-content: center;
   margin-bottom: 15px;
 }
 
-.no-plan-icon svg {
+.no-plan-icon-tasks svg {
   color: #ef4444;
 }
 
@@ -3024,6 +3024,7 @@
 .no-plan-content {
   display: flex;
   align-items: center;
+  flex-direction: column;
   gap: 15px;
 }
 

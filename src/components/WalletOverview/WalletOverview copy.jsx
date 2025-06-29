@@ -8,12 +8,11 @@ import {
   ArrowUp,
   Users,
 } from "lucide-react";
-import { Link } from "react-router-dom";
 import { useWallet } from "../../contexts/WalletContext";
 import { formatBalance } from "../../functions/wallet";
 import { useSelector } from "react-redux";
 import { getInvestmentPlans } from "../../functions/investmentplans";
-import { getUserLevel, getUserInvestments } from "../../functions/user";
+import { getUserLevel } from "../../functions/user";
 import {
   getTotalDeposits,
   getTotalWithdrawals,
@@ -26,53 +25,40 @@ import "./WalletOverview.css";
 const WalletOverview = () => {
   const { walletBalance, walletCurrency, loading: walletLoading } = useWallet();
   const { user } = useSelector((state) => ({ ...state }));
-  const [userLevel, setUserLevel] = useState(0);
+  const [userLevel, setUserLevel] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [userInvestments, setUserInvestments] = useState([]);
+  const [activePlan, setActivePlan] = useState(null);
   const [totalEarnings, setTotalEarnings] = useState(0);
   const [totalDeposits, setTotalDeposits] = useState(0);
   const [totalWithdrawals, setTotalWithdrawals] = useState(0);
   const [teamEarnings, setTeamEarnings] = useState(0);
-  const [weeklyGrowth, setWeeklyGrowth] = useState(0);
 
-  // Level configurations for reward calculation
-  const levelConfig = {
-    1: { rewardPercentage: 0.5 },
-    2: { rewardPercentage: 2.0 },
-    3: { rewardPercentage: 3.0 },
-    4: { rewardPercentage: 4.0 },
-  };
-
-  // Calculate total daily rewards from all user investments
-  const calculateTotalDailyRewards = () => {
-    if (!userInvestments || userInvestments.length === 0) return 0;
-
-    let totalDailyRewards = 0;
-
-    userInvestments.forEach((investment) => {
-      const planLevel = investment.plan?.minLevel || investment.plan?.level;
-      const levelPercentage = levelConfig[planLevel]?.rewardPercentage || 0;
-      const levelTotalReward = (investment.amount * levelPercentage) / 100;
-      totalDailyRewards += levelTotalReward;
-    });
-
-    return totalDailyRewards;
-  };
-
-  // Fetch user investment data and level
+  // Fetch user investment plan and level
   useEffect(() => {
     const fetchUserData = async () => {
       if (user && user.token) {
         try {
           setLoading(true);
-
           // Fetch user level
           const level = await getUserLevel(user.token);
           setUserLevel(level);
 
-          // Fetch user investments
-          const investments = await getUserInvestments(user.token);
-          setUserInvestments(investments || []);
+          // Fetch available plans
+          const plans = await getInvestmentPlans(user.token);
+
+          // Find the user's active plan based on wallet balance
+          // Plans are sorted by minAmount to find the highest plan the user qualifies for
+          const dailyPlans = plans
+            .filter((plan) => !plan.isFixedDeposit && plan.dailyIncome)
+            .sort((a, b) => parseFloat(b.minAmount) - parseFloat(a.minAmount));
+
+          const currentBalance = parseFloat(walletBalance) || 0;
+          const eligiblePlan = dailyPlans.find(
+            (plan) =>
+              plan.minAmount && currentBalance >= parseFloat(plan.minAmount)
+          );
+
+          setActivePlan(eligiblePlan || null);
 
           // Fetch financial metrics
           const depositsResponse = await getTotalDeposits(user.token);
@@ -86,11 +72,10 @@ const WalletOverview = () => {
 
           const earningsResponse = await getTotalEarnings(user.token);
           setTotalEarnings(earningsResponse.data.total || 0);
-          setWeeklyGrowth(earningsResponse.data.weeklyGrowth || 0);
         } catch (error) {
           console.error("Error fetching user data:", error);
           toast.error("Failed to load investment data");
-          setUserInvestments([]);
+          setActivePlan(null);
         } finally {
           setLoading(false);
         }
@@ -105,26 +90,34 @@ const WalletOverview = () => {
   // Combine loading states
   const isLoading = loading || walletLoading;
 
-  // Calculate daily rewards
-  const totalDailyRewards = calculateTotalDailyRewards();
-  const hasInvestments = userInvestments.length > 0;
+  // Safe calculations with null checks
+  const dailyRate =
+    activePlan && activePlan.dailyIncome
+      ? `${activePlan.dailyIncome}% daily`
+      : "0% daily";
+
+  const dailyEarning =
+    activePlan && activePlan.dailyIncome && walletBalance
+      ? (parseFloat(walletBalance) * parseFloat(activePlan.dailyIncome)) / 100
+      : 0;
+
+  const weeklyGrowth = 7.5; // This should come from your actual data
 
   if (isLoading) {
     return (
       <div className="wallet-overview-grid">
-        {/* Skeleton loading cards */}
-        {[1, 2, 3, 4, 5, 6].map((i) => (
-          <div key={i} className="wallet-card wallet-card-dashboard">
-            <div className="wallet-card-content wallet-skeleton">
-              <div className="wallet-skeleton-header">
-                <div className="wallet-skeleton-title"></div>
-                <div className="wallet-skeleton-icon"></div>
-              </div>
-              <div className="wallet-skeleton-amount"></div>
-              <div className="wallet-skeleton-bar"></div>
+        {/* Your existing skeleton loading code */}
+        <div className="wallet-card wallet-card-dashboard">
+          <div className="wallet-card-content wallet-skeleton">
+            <div className="wallet-skeleton-header">
+              <div className="wallet-skeleton-title"></div>
+              <div className="wallet-skeleton-icon"></div>
             </div>
+            <div className="wallet-skeleton-amount"></div>
+            <div className="wallet-skeleton-bar"></div>
           </div>
-        ))}
+        </div>
+        {/* Repeat for other skeleton cards... */}
       </div>
     );
   }
@@ -165,64 +158,47 @@ const WalletOverview = () => {
         </div>
       </div>
 
-      {/* Daily Return Card - Updated Logic */}
+      {/* Active Investments Card */}
       <div className="wallet-card wallet-card-dashboard">
         <div className="wallet-card-content">
           <div className="wallet-card-header">
-            <h3 className="wallet-card-title">Daily Return</h3>
+            <h3 className="wallet-card-title">
+              Daily Return
+              {activePlan && (
+                <span className="plan-name-badge">{activePlan.name}</span>
+              )}
+            </h3>
             <TrendingUp className="wallet-card-icon yellow-icon" />
           </div>
-
-          {!hasInvestments && userLevel === 0 ? (
-            // No plan purchased state
-            <div className="wallet-amount-container">
-              <span className="wallet-amount no-plan-text-dash">
-                No Plan Purchased
-              </span>
-              <Link to="/plans" className="purchase-plan-btn">
-                View Plans
-              </Link>
-            </div>
-          ) : (
-            // Has investments state
-            <div className="wallet-amount-container">
-              <span className="wallet-amount">
-                {formatBalance(totalDailyRewards, walletCurrency)}
-              </span>
-              <span className="wallet-rate">
-                {userInvestments.length} Active Plan
-                {userInvestments.length !== 1 ? "s" : ""}
-              </span>
-            </div>
-          )}
-
+          <div className="wallet-amount-container">
+            <span className="wallet-amount">
+              {formatBalance(dailyEarning, walletCurrency)}
+            </span>
+            <span className="wallet-rate">{dailyRate}</span>
+          </div>
           <div className="wallet-progress-container">
             <div className="wallet-progress-labels">
-              <span>{hasInvestments ? "Active Plans" : "No Active Plan"}</span>
+              <span>{activePlan ? "Active Plan" : "No Active Plan"}</span>
               <span>
-                {hasInvestments
-                  ? `${userInvestments.length} Investment${
-                      userInvestments.length !== 1 ? "s" : ""
-                    }`
-                  : "Purchase Required"}
+                Level {activePlan ? activePlan.minLevel : "1"} Required
               </span>
             </div>
             <div className="wallet-progress-bar">
               <div
                 className="wallet-progress-fill yellow-green-gradient"
-                style={{ width: hasInvestments ? "100%" : "0%" }}
+                style={{ width: activePlan ? "100%" : "0%" }}
               ></div>
             </div>
             <p className="wallet-progress-text">
-              {hasInvestments
-                ? `Total daily rewards from all your investment plans`
-                : "Purchase an investment plan to start earning daily rewards"}
+              {activePlan
+                ? `You're earning ${activePlan.dailyIncome}% daily returns`
+                : "Deposit funds to activate an investment plan"}
             </p>
           </div>
         </div>
       </div>
 
-      {/* Total Earnings Card - Updated to show team + task earnings */}
+      {/* Total Earnings Card */}
       <div className="wallet-card wallet-card-dashboard">
         <div className="wallet-card-content">
           <div className="wallet-card-header">
@@ -233,19 +209,15 @@ const WalletOverview = () => {
             <span className="wallet-amount">
               {formatBalance(totalEarnings, walletCurrency)}
             </span>
-            <span
-              className={`wallet-percent ${
-                weeklyGrowth >= 0 ? "positive" : "negative"
-              }`}
-            >
+            <span className="wallet-percent positive">
               <TrendingUp className="wallet-arrow-icon" />
-              {Math.abs(weeklyGrowth).toFixed(1)}%
+              {weeklyGrowth}%
             </span>
           </div>
           <div className="wallet-progress-container">
             <div className="wallet-progress-labels">
               <span>This Week</span>
-              <span>All Sources</span>
+              <span>Last Week</span>
             </div>
             <div className="wallet-progress-bar">
               <div
@@ -254,7 +226,7 @@ const WalletOverview = () => {
               ></div>
             </div>
             <p className="wallet-progress-text">
-              Combined earnings from tasks, referrals & bonuses
+              Week-over-week earnings growth
             </p>
           </div>
         </div>

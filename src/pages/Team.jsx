@@ -326,49 +326,6 @@ const Team = () => {
               </div>
             </div>
 
-            {/* Benefits Section */}
-            <div className="benefits-section" ref={benefitsRef}>
-              <h2 className="section-title">
-                Benefits of Our Affiliate Program
-              </h2>
-              <div className="benefits-grid">
-                <div className="benefit-card">
-                  <div className="benefit-icon passive-icon"></div>
-                  <h3>Passive Income</h3>
-                  <p>Earn money 24/7 even when you're not actively working.</p>
-                </div>
-                <div className="benefit-card">
-                  <div className="benefit-icon multi-level-icon"></div>
-                  <h3>Multi-Level Structure</h3>
-                  <p>Earn from up to 4 levels deep in your referral network.</p>
-                </div>
-                <div className="benefit-card">
-                  <div className="benefit-icon daily-icon"></div>
-                  <h3>Daily Payouts</h3>
-                  <p>
-                    Receive commissions daily directly to your account balance.
-                  </p>
-                </div>
-                <div className="benefit-card">
-                  <div className="benefit-icon easy-icon"></div>
-                  <h3>Easy to Start</h3>
-                  <p>No technical skills required - just share your link.</p>
-                </div>
-                <div className="benefit-card">
-                  <div className="benefit-icon growth-icon"></div>
-                  <h3>Exponential Growth</h3>
-                  <p>Your earnings grow exponentially as your team expands.</p>
-                </div>
-                <div className="benefit-card">
-                  <div className="benefit-icon levels-icon"></div>
-                  <h3>Account Level Benefits</h3>
-                  <p>
-                    Higher account levels unlock increased commission rates.
-                  </p>
-                </div>
-              </div>
-            </div>
-
             {/* Rewards Information Section */}
             <div
               className="rewards-info-section level-benefits-section"
@@ -405,10 +362,10 @@ const Team = () => {
                       <thead>
                         <tr>
                           <th>Your Account Level</th>
-                          <th>Level 1 Referrals</th>
-                          <th>Level 2 Referrals</th>
-                          <th>Level 3 Referrals</th>
-                          <th>Level 4 Referrals</th>
+                          <th>Referral's Level 1</th>
+                          <th>Referral's Level 2</th>
+                          <th>Referral's Level 3</th>
+                          <th>Referral's Level 4</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -418,10 +375,10 @@ const Team = () => {
                               Level 1
                             </span>
                           </td>
-                          <td>10% of Plan investment</td>
-                          <td>0.10% daily</td>
-                          <td>0.50% daily</td>
-                          <td>1.00% daily</td>
+                          <td>10% of Investment</td>
+                          <td>15% of Investment</td>
+                          <td>20% of Investment</td>
+                          <td>25% of Investment</td>
                         </tr>
                         <tr>
                           <td>
@@ -429,10 +386,10 @@ const Team = () => {
                               Level 2
                             </span>
                           </td>
-                          <td>0.02% daily</td>
-                          <td>0.20% daily</td>
-                          <td>1.00% daily</td>
-                          <td>1.50% daily</td>
+                          <td>15% of Investment</td>
+                          <td>20% of Investment</td>
+                          <td>25% of Investment</td>
+                          <td>30% of Investment</td>
                         </tr>
                         <tr>
                           <td>
@@ -440,10 +397,10 @@ const Team = () => {
                               Level 3
                             </span>
                           </td>
-                          <td>0.03% daily</td>
-                          <td>0.30% daily</td>
-                          <td>1.50% daily</td>
-                          <td>2.00% daily</td>
+                          <td>20% of Investment</td>
+                          <td>25% of Investment</td>
+                          <td>30% of Investment</td>
+                          <td>35% of Investment</td>
                         </tr>
                         <tr>
                           <td>
@@ -451,10 +408,10 @@ const Team = () => {
                               Level 4
                             </span>
                           </td>
-                          <td>0.05% daily</td>
-                          <td>0.50% daily</td>
-                          <td>2.00% daily</td>
-                          <td>3.00% daily</td>
+                          <td>25% of Investment</td>
+                          <td>30% of Investment</td>
+                          <td>35% of Investment</td>
+                          <td>40% of Investment</td>
                         </tr>
                       </tbody>
                     </table>
@@ -612,6 +569,49 @@ const Team = () => {
                       goals for maximum mutual benefit.
                     </p>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Benefits Section */}
+            <div className="benefits-section" ref={benefitsRef}>
+              <h2 className="section-title">
+                Benefits of Our Affiliate Program
+              </h2>
+              <div className="benefits-grid">
+                <div className="benefit-card">
+                  <div className="benefit-icon passive-icon"></div>
+                  <h3>Passive Income</h3>
+                  <p>Earn money 24/7 even when you're not actively working.</p>
+                </div>
+                <div className="benefit-card">
+                  <div className="benefit-icon multi-level-icon"></div>
+                  <h3>Multi-Level Structure</h3>
+                  <p>Earn from up to 4 levels deep in your referral network.</p>
+                </div>
+                <div className="benefit-card">
+                  <div className="benefit-icon daily-icon"></div>
+                  <h3>Daily Payouts</h3>
+                  <p>
+                    Receive commissions daily directly to your account balance.
+                  </p>
+                </div>
+                <div className="benefit-card">
+                  <div className="benefit-icon easy-icon"></div>
+                  <h3>Easy to Start</h3>
+                  <p>No technical skills required - just share your link.</p>
+                </div>
+                <div className="benefit-card">
+                  <div className="benefit-icon growth-icon"></div>
+                  <h3>Exponential Growth</h3>
+                  <p>Your earnings grow exponentially as your team expands.</p>
+                </div>
+                <div className="benefit-card">
+                  <div className="benefit-icon levels-icon"></div>
+                  <h3>Account Level Benefits</h3>
+                  <p>
+                    Higher account levels unlock increased commission rates.
+                  </p>
                 </div>
               </div>
             </div>

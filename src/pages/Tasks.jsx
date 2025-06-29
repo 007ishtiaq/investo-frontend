@@ -677,7 +677,7 @@ const Tasks = () => {
     setIsStartingTask(true);
     try {
       await startTask(taskId, user.token);
-      toast.success("Task started successfully!");
+      // toast.success("Task started successfully!");
 
       // Update the activeTask directly with startedAt property
       setActiveTask((prevTask) => ({
@@ -840,14 +840,7 @@ const Tasks = () => {
       );
 
       setVerificationStatus("success");
-      toast.success("Task verification submitted successfully!");
-
-      if (response.data.autoVerified) {
-        toast.success("Task automatically verified and reward credited!");
-        refreshWalletBalance();
-      } else {
-        toast.success("Task submitted for verification by admin.");
-      }
+      toast.success("Task submitted successfully!");
 
       // Update task status in the tasks array
       const updatedTasks = tasks.map((task) => {
@@ -1095,7 +1088,7 @@ const Tasks = () => {
               (!userInvestments || userInvestments.length === 0) ? (
                 <div className="no-plan-banner">
                   <div className="no-plan-content">
-                    <div className="no-plan-icon">
+                    <div className="no-plan-icon-tasks">
                       <LockIcon size={48} />
                     </div>
                     <h4>No Investment Plan Purchased</h4>

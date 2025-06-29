@@ -58,6 +58,7 @@
 .wallet-amount-container {
   display: flex;
   align-items: baseline;
+  justify-content: space-between;
 }
 
 .wallet-amount {
@@ -256,6 +257,41 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
+}
+
+/* Add these styles to WalletOverview.css */
+
+.no-plan-text-dash {
+  color: #666;
+  font-size: 0.9rem !important;
+}
+
+.purchase-plan-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  margin-top: 8px;
+}
+
+.purchase-plan-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+  color: white;
+  text-decoration: none;
+}
+
+.wallet-percent.negative {
+  color: #ef4444;
+}
+
+.wallet-percent.positive {
+  color: #10b981;
 }
 
 @media (max-width: 1200px) {
