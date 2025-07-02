@@ -95,8 +95,6 @@ const RegisterComplete = () => {
       const storedRefCode = window.localStorage.getItem("referralCode");
       if (storedRefCode) {
         setAffiliateCode(storedRefCode);
-        // Optionally remove from localStorage after using
-        // window.localStorage.removeItem("referralCode");
       }
     }
   }, [location]);
@@ -183,6 +181,9 @@ const RegisterComplete = () => {
                         toast.error("Note: Could not register affiliate code");
                       });
                   }
+
+                  // Remove referral code from localStorage after successful registration
+                  window.localStorage.removeItem("referralCode");
 
                   // Show success message
                   toast.success(`Registration successful. Welcome, ${name}!`);

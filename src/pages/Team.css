@@ -1981,6 +1981,7 @@
   color: #64748b;
   margin: 0;
   line-height: 1.6;
+  align-items: self-start;
 }
 
 .rewards-info-features {
@@ -2628,6 +2629,71 @@
 
 .retry-btn:hover svg {
   animation-duration: 0.5s;
+}
+
+/* Common styles */
+.section-description-container {
+  position: relative;
+  display: inline-block;
+}
+
+.section-description {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Tooltip Option Styles */
+.info-icon-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  margin-left: 6px;
+}
+
+.info-icon {
+  margin-top: 0.3rem;
+  color: #ff1e1e;
+  transition: color 0.2s ease;
+}
+
+.info-icon:hover {
+  color: #3b82f6;
+}
+
+.tooltip {
+  position: absolute;
+  bottom: 100%;
+  width: 500px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 8px;
+  z-index: 1000;
+  white-space: nowrap;
+}
+
+.tooltip-content {
+  background-color: #1f2937;
+  color: white;
+  padding: 12px 13px;
+  border-radius: 8px;
+  font-size: 14px;
+  max-width: 280px;
+  white-space: normal;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.tooltip-arrow {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #1f2937;
 }
 
 @keyframes spin {

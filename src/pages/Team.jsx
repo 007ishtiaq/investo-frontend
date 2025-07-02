@@ -9,6 +9,7 @@ import { getUserLevel } from "../functions/user";
 import NoNetModal from "../components/NoNetModal/NoNetModal";
 import LoadingSpinner from "../hooks/LoadingSpinner";
 import "./Team.css";
+import { Info } from "lucide-react";
 
 const Team = () => {
   const { user } = useSelector((state) => ({ ...state }));
@@ -19,6 +20,7 @@ const Team = () => {
     affiliateEarnings: 0,
   });
 
+  const [showTooltip, setShowTooltip] = useState(false);
   const [affiliateCode, setAffiliateCode] = useState("");
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
@@ -350,10 +352,30 @@ const Team = () => {
                     </div>
                     <div className="rewards-info-text team-commission-section">
                       <h2>Affiliate Commission Rates</h2>
-                      <p className="section-description">
-                        Start earning immediately when your referrals take
-                        action! <br /> Here's how our system works:
-                      </p>
+                      <div className="section-description-container">
+                        <p className="section-description">
+                          Start earning immediately when your referrals take
+                          action! <br />
+                          Here's how our system works:
+                          <span
+                            className="info-icon-container"
+                            onMouseEnter={() => setShowTooltip(true)}
+                            onMouseLeave={() => setShowTooltip(false)}
+                          >
+                            <Info size={16} className="info-icon" />
+                            {showTooltip && (
+                              <div className="tooltip">
+                                <div className="tooltip-content">
+                                  <strong>Important:</strong> You must purchase
+                                  a plan to be eligible for affiliate
+                                  commissions.
+                                </div>
+                                <div className="tooltip-arrow"></div>
+                              </div>
+                            )}
+                          </span>
+                        </p>
+                      </div>
                     </div>
                   </div>
 
@@ -936,10 +958,30 @@ const Team = () => {
                     </div>
                     <div className="rewards-info-text team-commission-section">
                       <h2>Affiliate Commission Rates</h2>
-                      <p className="section-description">
-                        Start earning immediately when your referrals take
-                        action! <br /> Here's how our system works:
-                      </p>
+                      <div className="section-description-container">
+                        <p className="section-description">
+                          Start earning immediately when your referrals take
+                          action! <br />
+                          Here's how our system works:
+                          <span
+                            className="info-icon-container"
+                            onMouseEnter={() => setShowTooltip(true)}
+                            onMouseLeave={() => setShowTooltip(false)}
+                          >
+                            <Info size={16} className="info-icon" />
+                            {showTooltip && (
+                              <div className="tooltip">
+                                <div className="tooltip-content">
+                                  <strong>Important:</strong> You must purchase
+                                  a plan to be eligible for affiliate
+                                  commissions.
+                                </div>
+                                <div className="tooltip-arrow"></div>
+                              </div>
+                            )}
+                          </span>
+                        </p>
+                      </div>
                     </div>
                   </div>
 

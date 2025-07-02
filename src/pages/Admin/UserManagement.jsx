@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import { getUsers, updateUserLevel } from "../../functions/user";
+import { getUsers } from "../../functions/user";
 import { formatBalance } from "../../functions/wallet";
 import "./UserManagement.css";
 
@@ -11,13 +11,11 @@ const UserManagement = () => {
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeUser, setActiveUser] = useState(null);
-  const [selectedLevel, setSelectedLevel] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const [debounceTimeout, setDebounceTimeout] = useState(null);
-  const itemsPerPage = 10;
+  const itemsPerPage = 20;
 
   useEffect(() => {
     loadUsers(currentPage, searchTerm);
@@ -62,33 +60,6 @@ const UserManagement = () => {
     setCurrentPage(page);
   };
 
-  const openUserModal = (user) => {
-    setActiveUser(user);
-    setSelectedLevel(user.level || 1);
-  };
-
-  const closeUserModal = () => {
-    setActiveUser(null);
-  };
-
-  const handleLevelUpdate = async () => {
-    try {
-      setLoading(true);
-      await updateUserLevel(activeUser._id, selectedLevel, user.token);
-      // Update local user data
-      const updatedUsers = users.map((u) =>
-        u._id === activeUser._id ? { ...u, level: selectedLevel } : u
-      );
-      setUsers(updatedUsers);
-      toast.success(`User level updated to ${selectedLevel}`);
-      closeUserModal();
-      setLoading(false);
-    } catch (error) {
-      toast.error(error.message || "Failed to update user level");
-      setLoading(false);
-    }
-  };
-
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString();
   };
@@ -101,8 +72,11 @@ const UserManagement = () => {
         return "level-3";
       case 2:
         return "level-2";
-      default:
+      case 1:
         return "level-1";
+      case 0:
+      default:
+        return "level-0"; // Added level-0 class for level 0 users
     }
   };
 
@@ -143,9 +117,9 @@ const UserManagement = () => {
                   <th>Email</th>
                   <th>Level</th>
                   <th>Balance</th>
+                  <th>Total Investment</th>
                   <th>Team</th>
                   <th>Joined</th>
-                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -156,10 +130,11 @@ const UserManagement = () => {
                     <td>
                       <span
                         className={`level-badge-user ${getLevelBadgeClass(
-                          u.level || 1
+                          u.level !== undefined ? u.level : 0 // Default to 0 if level is undefined
                         )}`}
                       >
-                        Level {u.level || 1}
+                        {u.purchasedLevels ||
+                          `Level ${u.level !== undefined ? u.level : 0}`}
                       </span>
                     </td>
                     <td
@@ -169,18 +144,13 @@ const UserManagement = () => {
                     >
                       {formatBalance(u.wallet?.balance || 0, "USD")}
                     </td>
+                    <td className="investment-cell">
+                      {formatBalance(u.totalInvestment || 0, "USD")}
+                    </td>
                     <td className="team-cell">
                       <span className="team-count">{u.team?.count || 0}</span>
                     </td>
                     <td>{formatDate(u.createdAt)}</td>
-                    <td className="actions-cell">
-                      <button
-                        className="edit-button"
-                        onClick={() => openUserModal(u)}
-                      >
-                        Edit Level
-                      </button>
-                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -208,151 +178,6 @@ const UserManagement = () => {
                 </button>
               </div>
             )}
-          </div>
-        )}
-
-        {activeUser && (
-          <div className="modal-overlay">
-            <div className="user-edit-modal">
-              <div className="modal-header">
-                <h2>Edit User Level</h2>
-                <button className="close-button" onClick={closeUserModal}>
-                  ×
-                </button>
-              </div>
-
-              <div className="modal-content">
-                <div className="user-details">
-                  <div className="detail-row">
-                    <span className="detail-label">Username:</span>
-                    <span className="detail-value">
-                      {activeUser.name || "-"}
-                    </span>
-                  </div>
-                  <div className="detail-row">
-                    <span className="detail-label">Email:</span>
-                    <span className="detail-value">{activeUser.email}</span>
-                  </div>
-                  <div className="detail-row">
-                    <span className="detail-label">Current Level:</span>
-                    <span
-                      className={`level-badge-user ${getLevelBadgeClass(
-                        activeUser.level || 1
-                      )}`}
-                    >
-                      Level {activeUser.level || 1}
-                    </span>
-                  </div>
-                  <div className="detail-row">
-                    <span className="detail-label">Wallet Balance:</span>
-                    <span
-                      className={`detail-value ${getBalanceClass(
-                        activeUser.wallet?.balance || 0
-                      )}`}
-                    >
-                      {formatBalance(activeUser.wallet?.balance || 0, "USD")}
-                    </span>
-                  </div>
-                  <div className="detail-row">
-                    <span className="detail-label">Team Members:</span>
-                    <span className="detail-value">
-                      {activeUser.team?.count || 0}
-                    </span>
-                  </div>
-                  {activeUser.team?.members &&
-                    activeUser.team.members.length > 0 && (
-                      <div className="team-members-list">
-                        <h4>Team Members</h4>
-                        <ul>
-                          {activeUser.team.members.map((member) => (
-                            <li key={member._id} className="team-member">
-                              <span className="member-name">{member.name}</span>
-                              <span className="member-email">
-                                {member.email}
-                              </span>
-                              <span
-                                className={`member-level ${getLevelBadgeClass(
-                                  member.level
-                                )}`}
-                              >
-                                Level {member.level}
-                              </span>
-                            </li>
-                          ))}
-                          {activeUser.team.count >
-                            activeUser.team.members.length && (
-                            <li className="more-members">
-                              +
-                              {activeUser.team.count -
-                                activeUser.team.members.length}{" "}
-                              more members
-                            </li>
-                          )}
-                        </ul>
-                      </div>
-                    )}
-                </div>
-
-                <div className="level-selection">
-                  <h3>Select New Level</h3>
-                  <div className="level-buttons">
-                    {[1, 2, 3, 4].map((level) => (
-                      <button
-                        key={level}
-                        className={`level-button ${
-                          selectedLevel === level ? "selected" : ""
-                        } level-${level}`}
-                        onClick={() => setSelectedLevel(level)}
-                      >
-                        Level {level}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="level-benefits">
-                  <h3>Level {selectedLevel} Benefits</h3>
-                  <ul className="benefits-list">
-                    {selectedLevel >= 1 && (
-                      <li>Access to basic investment plans</li>
-                    )}
-                    {selectedLevel >= 2 && (
-                      <li>Access to standard investment plans</li>
-                    )}
-                    {selectedLevel >= 3 && (
-                      <li>Access to premium investment plans</li>
-                    )}
-                    {selectedLevel >= 4 && (
-                      <li>Access to elite investment plans</li>
-                    )}
-                    {selectedLevel >= 2 && <li>Higher daily profits</li>}
-                    {selectedLevel >= 3 && (
-                      <li>Priority customer support access</li>
-                    )}
-                    {selectedLevel >= 4 && (
-                      <li>VIP investment opportunities</li>
-                    )}
-                  </ul>
-                </div>
-
-                <div className="modal-actions">
-                  <button
-                    className="cancel-button"
-                    onClick={closeUserModal}
-                    disabled={loading}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    className="save-button"
-                    onClick={handleLevelUpdate}
-                    disabled={loading || selectedLevel === activeUser.level}
-                  >
-                    {loading ? "Updating..." : "Update Level"}
-                  </button>
-                </div>
-              </div>
-            </div>
           </div>
         )}
       </div>

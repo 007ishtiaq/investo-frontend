@@ -375,14 +375,12 @@ const AdminDashboard = () => {
                 )}
                 icon={DollarSign}
                 color="green"
-                change={analytics.financial.investmentChange}
               />
               <StatCard
                 title="Total Deposits"
                 value={formatBalance(analytics.financial.totalDeposits, "USD")}
                 icon={ArrowDown}
                 color="blue"
-                change={analytics.financial.depositChange}
               />
               <StatCard
                 title="Total Withdrawals"
@@ -392,14 +390,12 @@ const AdminDashboard = () => {
                 )}
                 icon={ArrowUp}
                 color="purple"
-                change={analytics.financial.withdrawalChange}
               />
               <StatCard
                 title="Total Rewards"
                 value={formatBalance(analytics.financial.totalRewards, "USD")}
                 icon={Award}
                 color="gold"
-                change={analytics.financial.rewardChange}
               />
             </div>
           </div>

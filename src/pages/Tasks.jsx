@@ -1096,7 +1096,7 @@ const Tasks = () => {
                       You need to purchase an investment plan to unlock tasks
                       and start earning rewards.
                     </p>
-                    <Link to="/invest" className="invest-redirect-button">
+                    <Link to="/plans" className="invest-redirect-button">
                       View Investment Plans
                     </Link>
                   </div>

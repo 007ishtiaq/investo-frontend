@@ -445,3 +445,229 @@
   font-size: 0.875rem;
   color: var(--text-secondary, #6b7280);
 }
+/* client/src/pages/admin/UserManagement.css */
+.user-management-page {
+  padding: 3rem 0;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.page-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.search-container {
+  flex: 1;
+  max-width: 400px;
+  margin-left: auto;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.1);
+}
+
+.no-users {
+  text-align: center;
+  padding: 3rem;
+  background-color: var(--color-card-bg);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-sm);
+  color: var(--color-text-secondary);
+}
+
+.users-table-container {
+  background-color: var(--color-card-bg);
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.users-table th {
+  background-color: rgba(var(--color-primary-rgb), 0.05);
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.users-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+}
+
+.users-table tr:last-child td {
+  border-bottom: none;
+}
+
+.level-badge-user {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 5px 15px;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  position: relative;
+  background-color: #f1f8e9;
+}
+
+.level-1 {
+  background-color: #f1f8e9;
+  color: #558b2f;
+}
+
+.level-2 {
+  background-color: #e1f5fe;
+  color: #0277bd;
+}
+
+.level-3 {
+  background-color: #fff3e0;
+  color: #ef6c00;
+}
+
+.level-4 {
+  background-color: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.balance-zero {
+  color: #6b7280;
+}
+
+.balance-positive {
+  color: #0ea5e9;
+}
+
+.balance-high {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.user-balance.user-balance-manage {
+  border: 0;
+}
+
+/* Investment cell styling */
+.investment-cell {
+  font-weight: 500;
+  color: #059669;
+}
+
+/* Team cell styling */
+.team-cell {
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.team-count {
+  font-weight: 500;
+  margin-right: 6px;
+}
+
+/* Pagination styles */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1.5rem;
+  gap: 1rem;
+  padding: 1rem 0;
+}
+
+.page-button {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-card-bg);
+  color: var(--color-text-primary);
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.page-button:hover:not(:disabled) {
+  background-color: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+
+.page-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.page-info {
+  font-size: 0.875rem;
+  color: var(--text-secondary, #6b7280);
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+  background-color: var(--color-card-bg);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-sm);
+}
+/* Add this to your existing CSS file */
+.level-0 {
+  background-color: #f3f4f6;
+  color: #4b5563;
+}
+
+/* Update existing level styles to be more specific if needed */
+.level-badge-user.level-0 {
+  background-color: #f3f4f6;
+  color: #4b5563;
+}
+
+.level-badge-user.level-1 {
+  background-color: #f1f8e9;
+  color: #558b2f;
+}
+
+.level-badge-user.level-2 {
+  background-color: #e1f5fe;
+  color: #0277bd;
+}
+
+.level-badge-user.level-3 {
+  background-color: #fff3e0;
+  color: #ef6c00;
+}
+
+.level-badge-user.level-4 {
+  background-color: #f3e5f5;
+  color: #7b1fa2;
+}
