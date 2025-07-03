@@ -2696,6 +2696,47 @@
   border-top: 6px solid #1f2937;
 }
 
+/* Main user level styling (special highlighting) */
+.level-badge.main-user-level-0 {
+  background-color: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #f87171;
+}
+
+.level-badge.main-user-level-1 {
+  background-color: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #22c55e;
+  box-shadow: 0 1px 3px rgba(34, 197, 94, 0.2);
+}
+
+.level-badge.main-user-level-2 {
+  background-color: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #3b82f6;
+  box-shadow: 0 1px 3px rgba(59, 130, 246, 0.2);
+}
+
+.level-badge.main-user-level-3 {
+  background-color: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #f97316;
+  box-shadow: 0 1px 3px rgba(249, 115, 22, 0.2);
+}
+
+.level-badge.main-user-level-4 {
+  background-color: #faf5ff;
+  color: #7c3aed;
+  border: 1px solid #a855f7;
+  box-shadow: 0 1px 3px rgba(168, 85, 247, 0.2);
+}
+
+/* Add a subtle glow to emphasize the main user level */
+.level-badge[class*="main-user-level-"] {
+  font-weight: 700;
+  position: relative;
+}
+
 @keyframes spin {
   from {
     transform: rotate(0deg);

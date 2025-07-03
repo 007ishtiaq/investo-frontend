@@ -819,6 +819,7 @@ const Team = () => {
             {/* Team Members Section */}
             <div className="team-members-section">
               <h2>Your Team Members</h2>
+
               {teamMembers.length > 0 ? (
                 <div className="team-table-container">
                   <div className="team-table-wrapper">
@@ -827,10 +828,11 @@ const Team = () => {
                         <tr>
                           <th>Member</th>
                           <th>Email</th>
-                          <th>First Level</th>
-                          <th>Joined Date</th>
+                          <th>Your Account</th>
+                          <th>Member First Level</th>
                           <th>First Investment</th>
                           <th>Your Commission</th>
+                          <th>Joined Date</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -853,23 +855,19 @@ const Team = () => {
                             </td>
                             <td>
                               <span
+                                className={`level-badge main-user-level-${member.mainUserLevelAtPurchase}`}
+                              >
+                                Level {member.mainUserLevelAtPurchase}
+                              </span>
+                            </td>
+                            <td>
+                              <span
                                 className={`level-badge-team level-${member.level}-team`}
                               >
                                 Level {member.level}
                               </span>
                             </td>
-                            <td>
-                              <span className="join-date">
-                                {new Date(member.createdAt).toLocaleDateString(
-                                  "en-US",
-                                  {
-                                    year: "numeric",
-                                    month: "short",
-                                    day: "numeric",
-                                  }
-                                )}
-                              </span>
-                            </td>
+
                             <td>
                               <span className="investment-amount">
                                 {member.firstInvestmentAmount !== null ? (
@@ -893,6 +891,18 @@ const Team = () => {
                                   </span>
                                 ) : (
                                   <span className="no-commission">$0.00</span>
+                                )}
+                              </span>
+                            </td>
+                            <td>
+                              <span className="join-date">
+                                {new Date(member.createdAt).toLocaleDateString(
+                                  "en-US",
+                                  {
+                                    year: "numeric",
+                                    month: "short",
+                                    day: "numeric",
+                                  }
                                 )}
                               </span>
                             </td>
