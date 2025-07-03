@@ -76,7 +76,7 @@ const UserManagement = () => {
         return "level-1";
       case 0:
       default:
-        return "level-0"; // Added level-0 class for level 0 users
+        return "level-0";
     }
   };
 
@@ -84,6 +84,12 @@ const UserManagement = () => {
     if (balance === 0) return "balance-zero";
     if (balance >= 1000) return "balance-high";
     return "balance-positive";
+  };
+
+  const getAmountClass = (amount) => {
+    if (amount === 0) return "amount-zero";
+    if (amount >= 500) return "amount-high";
+    return "amount-positive";
   };
 
   return (
@@ -118,6 +124,10 @@ const UserManagement = () => {
                   <th>Level</th>
                   <th>Balance</th>
                   <th>Total Investment</th>
+                  <th>Total Deposits</th>
+                  <th>Total Withdrawals</th>
+                  <th>Task Earnings</th>
+                  <th>Team Earnings</th>
                   <th>Team</th>
                   <th>Joined</th>
                 </tr>
@@ -130,7 +140,7 @@ const UserManagement = () => {
                     <td>
                       <span
                         className={`level-badge-user ${getLevelBadgeClass(
-                          u.level !== undefined ? u.level : 0 // Default to 0 if level is undefined
+                          u.level !== undefined ? u.level : 0
                         )}`}
                       >
                         {u.purchasedLevels ||
@@ -146,6 +156,34 @@ const UserManagement = () => {
                     </td>
                     <td className="investment-cell">
                       {formatBalance(u.totalInvestment || 0, "USD")}
+                    </td>
+                    <td
+                      className={`deposits-cell ${getAmountClass(
+                        u.totalDeposits || 0
+                      )}`}
+                    >
+                      {formatBalance(u.totalDeposits || 0, "USD")}
+                    </td>
+                    <td
+                      className={`withdrawals-cell ${getAmountClass(
+                        u.totalWithdrawals || 0
+                      )}`}
+                    >
+                      {formatBalance(u.totalWithdrawals || 0, "USD")}
+                    </td>
+                    <td
+                      className={`task-earnings-cell ${getAmountClass(
+                        u.taskEarnings || 0
+                      )}`}
+                    >
+                      {formatBalance(u.taskEarnings || 0, "USD")}
+                    </td>
+                    <td
+                      className={`team-earnings-cell ${getAmountClass(
+                        u.teamEarnings || 0
+                      )}`}
+                    >
+                      {formatBalance(u.teamEarnings || 0, "USD")}
                     </td>
                     <td className="team-cell">
                       <span className="team-count">{u.team?.count || 0}</span>
