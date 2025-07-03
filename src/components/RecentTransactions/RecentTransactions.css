@@ -222,6 +222,85 @@
   color: #f6c050 !important;
   opacity: 0.8;
 }
+/* Status badges */
+.transaction-status-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  margin-left: 6px;
+}
+
+.transaction-status-badge.pending {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.transaction-status-badge.rejected {
+  background-color: #fecaca;
+  color: #b91c1c;
+}
+
+/* Updated amount styling */
+.transaction-amount.amount-rejected {
+  color: #dc2626 !important;
+  font-weight: 600;
+}
+
+.transaction-amount.amount-negative {
+  color: #dc2626;
+}
+
+.transaction-amount.amount-positive {
+  color: #16a34a;
+}
+
+.transaction-amount.amount-pending {
+  color: #d97706;
+}
+
+/* Icon styling for rejected transactions */
+.transaction-icon.rejected-deposit-icon {
+  background-color: #fecaca;
+  color: #dc2626;
+}
+
+.transaction-icon.rejected-withdrawal-icon {
+  background-color: #fed7aa;
+  color: #ea580c;
+}
+
+.transaction-icon.rejected-icon {
+  background-color: #fecaca;
+  color: #dc2626;
+}
+
+/* Existing styles remain the same */
+.transaction-icon.pending-icon {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.transaction-icon.deposit-icon {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+.transaction-icon.withdraw-icon {
+  background-color: #fecaca;
+  color: #dc2626;
+}
+
+.transaction-icon.referral-icon {
+  background-color: #e0e7ff;
+  color: #4f46e5;
+}
+
+.transaction-icon.earning-icon {
+  background-color: #fef3c7;
+  color: #d97706;
+}
 
 /* Dark mode adjustments */
 @media (prefers-color-scheme: dark) {

@@ -14,6 +14,7 @@ import {
   Users,
   XCircle,
   Clock,
+  AlertTriangle,
 } from "lucide-react";
 import { useSelector } from "react-redux";
 import { getTransactionHistory } from "../../functions/wallet";
@@ -30,13 +31,27 @@ const TransactionIcon = ({ type, source, status }) => {
     );
   }
 
-  // For rejected transactions (both deposit and withdrawal)
+  // For rejected transactions
   if (status === "failed" || status === "rejected") {
-    return (
-      <div className="transaction-icon rejected-icon">
-        <XCircle className="icon-inner" />
-      </div>
-    );
+    if (source === "deposit") {
+      return (
+        <div className="transaction-icon rejected-deposit-icon">
+          <XCircle className="icon-inner" />
+        </div>
+      );
+    } else if (source === "withdrawal") {
+      return (
+        <div className="transaction-icon rejected-withdrawal-icon">
+          <AlertTriangle className="icon-inner" />
+        </div>
+      );
+    } else {
+      return (
+        <div className="transaction-icon rejected-icon">
+          <XCircle className="icon-inner" />
+        </div>
+      );
+    }
   }
 
   // For normal transactions (existing logic)
@@ -81,8 +96,25 @@ const formatDate = (dateString) => {
 
 const TransactionItem = ({ transaction }) => {
   const amount = parseFloat(transaction.amount);
-  const isPositive = transaction.type === "credit";
   const isPending = transaction.status === "pending";
+  const isRejected =
+    transaction.status === "failed" || transaction.status === "rejected";
+
+  // Updated logic for amount styling - same as History.jsx
+  let isPositive;
+
+  // For rejected deposits, treat as negative (show red)
+  if (isRejected && transaction.source === "deposit") {
+    isPositive = false;
+  }
+  // For rejected withdrawals, also treat as negative (show red)
+  else if (isRejected && transaction.source === "withdrawal") {
+    isPositive = false;
+  }
+  // For normal transactions, use the original logic
+  else {
+    isPositive = transaction.type === "credit";
+  }
 
   let title = "Transaction";
   if (transaction.source === "deposit") {
@@ -97,11 +129,16 @@ const TransactionItem = ({ transaction }) => {
       title = "Deposit";
     }
   } else if (transaction.source === "withdrawal") {
-    // Only show "Withdrawal" for actual withdrawals
-    title =
-      transaction.status === "failed" || transaction.status === "rejected"
-        ? "Rejected Withdrawal"
-        : "Withdrawal";
+    if (transaction.status === "pending") {
+      title = "Withdrawal Under Verification";
+    } else if (
+      transaction.status === "failed" ||
+      transaction.status === "rejected"
+    ) {
+      title = "Rejected Withdrawal";
+    } else {
+      title = "Withdrawal";
+    }
   } else if (transaction.type === "debit" && transaction.source === "other") {
     // Plan purchases and other debit transactions show as "Transaction"
     title = "Transaction";
@@ -146,7 +183,9 @@ const TransactionItem = ({ transaction }) => {
           <span
             className={`transaction-amount ${
               isPositive ? "amount-positive" : "amount-negative"
-            } ${isPending ? "amount-pending" : ""}`}
+            } ${isPending ? "amount-pending" : ""} ${
+              isRejected ? "amount-rejected" : ""
+            }`}
           >
             {isPositive ? "+" : "-"}
             {Math.abs(amount).toFixed(3)}
