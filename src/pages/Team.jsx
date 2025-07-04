@@ -855,7 +855,7 @@ const Team = () => {
                             </td>
                             <td>
                               <span
-                                className={`level-badge main-user-level-${member.mainUserLevelAtPurchase}`}
+                                className={`level-badge-team2 main-user-level-${member.mainUserLevelAtPurchase}`}
                               >
                                 Level {member.mainUserLevelAtPurchase}
                               </span>
