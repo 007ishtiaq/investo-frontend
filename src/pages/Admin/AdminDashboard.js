@@ -422,7 +422,7 @@ const AdminDashboard = () => {
                 title="Pending Deposits"
                 value={analytics.pendingDeposits}
                 icon={Clock}
-                color="amber"
+                color="emerald"
                 linkTo="/admin/deposits"
               />
               <StatCard
@@ -436,7 +436,7 @@ const AdminDashboard = () => {
                 title="Pending Verification Tasks"
                 value={analytics.pendingTasks}
                 icon={FileText}
-                color="emerald"
+                color="amber"
                 linkTo="/admin/taskverification"
               />
               <StatCard
