@@ -6,6 +6,7 @@ import { getUsers } from "../../functions/user";
 import { formatBalance } from "../../functions/wallet";
 import TeamEarningsDetail from "../../components/TeamEarningsDetail/TeamEarningsDetail";
 import "./UserManagement.css";
+import InvestmentDetail from "../../components/InvestmentDetail/InvestmentDetail";
 
 const UserManagement = () => {
   const { user } = useSelector((state) => ({ ...state }));
@@ -17,6 +18,8 @@ const UserManagement = () => {
   const [totalItems, setTotalItems] = useState(0);
   const [debounceTimeout, setDebounceTimeout] = useState(null);
   const [selectedUserForEarnings, setSelectedUserForEarnings] = useState(null);
+  const [selectedUserForInvestments, setSelectedUserForInvestments] =
+    useState(null);
   const itemsPerPage = 20;
 
   useEffect(() => {
@@ -56,6 +59,14 @@ const UserManagement = () => {
       toast.error(error.message || "Error loading users");
       setLoading(false);
     }
+  };
+
+  // Add these handler functions
+  const handleInvestmentClick = (selectedUser) => {
+    setSelectedUserForInvestments(selectedUser);
+  };
+  const handleCloseInvestmentDetail = () => {
+    setSelectedUserForInvestments(null);
   };
 
   const handlePageChange = (page) => {
@@ -164,7 +175,11 @@ const UserManagement = () => {
                     >
                       {formatBalance(u.wallet?.balance || 0, "USD")}
                     </td>
-                    <td className="investment-cell">
+                    <td
+                      className={`investment-cell clickable`}
+                      onClick={() => handleInvestmentClick(u)}
+                      title="Click to view investment details"
+                    >
                       {formatBalance(u.totalInvestment || 0, "USD")}
                     </td>
                     <td
@@ -237,6 +252,13 @@ const UserManagement = () => {
         <TeamEarningsDetail
           selectedUser={selectedUserForEarnings}
           onClose={handleCloseEarningsDetail}
+        />
+      )}
+      {/* Investment Detail Modal */}
+      {selectedUserForInvestments && (
+        <InvestmentDetail
+          selectedUser={selectedUserForInvestments}
+          onClose={handleCloseInvestmentDetail}
         />
       )}
     </div>

@@ -141,3 +141,37 @@ export const addContactNote = async (id, text, authtoken) => {
     }
   );
 };
+
+export const getUserInvestments = async (token, userId) => {
+  try {
+    const response = await axios.get(
+      `${process.env.REACT_APP_API}/investments/user/${userId}`,
+      {
+        headers: {
+          authtoken: token,
+        },
+      }
+    );
+    return response;
+  } catch (error) {
+    console.error("Error in getUserInvestments:", error);
+    throw error;
+  }
+};
+
+export const getInvestmentsByUser = async (token) => {
+  try {
+    const response = await axios.get(
+      `${process.env.REACT_APP_API}/investments/my-investments`,
+      {
+        headers: {
+          authtoken: token,
+        },
+      }
+    );
+    return response;
+  } catch (error) {
+    console.error("Error in getInvestmentsByUser:", error);
+    throw error;
+  }
+};

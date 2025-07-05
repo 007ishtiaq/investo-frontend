@@ -766,3 +766,24 @@
   background-color: rgba(168, 85, 247, 0.05);
   border-left: 3px solid #a855f7;
 }
+
+.investment-cell.clickable {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.investment-cell.clickable:hover {
+  background-color: #f3f4f6;
+  color: #059669;
+  font-weight: 600;
+}
+
+.investment-cell.clickable:hover::after {
+  content: "📊";
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+}
