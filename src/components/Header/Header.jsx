@@ -94,6 +94,9 @@ const Header = () => {
             <Link to="/team" className="nav-link">
               My Team
             </Link>
+            <Link to="/contact" className="nav-link">
+              Contact
+            </Link>
           </nav>
         )}
 
