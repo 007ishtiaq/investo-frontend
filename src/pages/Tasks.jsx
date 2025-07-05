@@ -840,40 +840,33 @@ const Tasks = () => {
       );
 
       setVerificationStatus("success");
-      toast.success("Task submitted successfully!");
 
-      // Update task status in the tasks array
-      const updatedTasks = tasks.map((task) => {
-        if (task._id === taskId) {
-          return {
-            ...task,
-            status: response.data.autoVerified
-              ? "verified"
-              : "pending_verification",
-            completed: response.data.autoVerified,
-          };
+      // Show appropriate success message based on response
+      if (response.data.success) {
+        toast.success(response.data.message || "Task submitted successfully!");
+
+        // Reload tasks data to get updated statuses
+        await loadTasks();
+
+        // Reload wallet balance if reward was credited
+        if (response.data.reward) {
+          await loadWalletBalance();
+          await refreshWalletBalance();
         }
-        return task;
-      });
 
-      setTasks(updatedTasks);
-
-      // Close modal after a short delay
-      setTimeout(() => {
-        closeTaskDetails();
-        refreshWalletBalance();
-      }, 2000);
+        // Close modal after a short delay
+        setTimeout(() => {
+          closeTaskDetails();
+        }, 1500);
+      }
     } catch (err) {
       console.error("Error verifying task:", err);
       setVerificationStatus("idle");
-      setError(
+      const errorMessage =
         err.response?.data?.message ||
-          "Failed to verify task. Please try again."
-      );
-      toast.error(
-        err.response?.data?.message ||
-          "Failed to verify task. Please try again."
-      );
+        "Failed to verify task. Please try again.";
+      setError(errorMessage);
+      toast.error(errorMessage);
     }
   };
 
