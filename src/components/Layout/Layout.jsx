@@ -10,10 +10,10 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import DepositModal from "../../components/DepositModal/DepositModal";
-import WithdrawModal from "../../components/WithdrawModal/WithdrawModal"; // Import the WithdrawModal
+import WithdrawModal from "../../components/WithdrawModal/WithdrawModal";
 import "./Layout.css";
 
-const Layout = ({ children }) => {
+const Layout = ({ children, onTransactionUpdate }) => {
   const location = useLocation();
   const [showDepositModal, setShowDepositModal] = useState(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
@@ -32,6 +32,26 @@ const Layout = ({ children }) => {
 
   const handleCloseWithdrawModal = () => {
     setShowWithdrawModal(false);
+  };
+
+  // Handle successful transactions
+  const handleTransactionSuccess = () => {
+    console.log("Layout: Transaction success");
+
+    // Call the App.js callback
+    if (onTransactionUpdate) {
+      onTransactionUpdate();
+    }
+
+    // Directly call Dashboard's update function
+    if (window.dashboardTransactionUpdate) {
+      window.dashboardTransactionUpdate();
+    }
+
+    // Directly call Wallet's update function
+    if (window.walletTransactionUpdate) {
+      window.walletTransactionUpdate();
+    }
   };
 
   return (
@@ -170,8 +190,10 @@ const Layout = ({ children }) => {
               </div>
             </div>
 
-            {/* Main Content */}
-            <div className="main-page-content">{children}</div>
+            {/* Main Content - Pass onTransactionUpdate to children */}
+            <div className="main-page-content">
+              {React.cloneElement(children, { onTransactionUpdate })}
+            </div>
           </div>
 
           {/* Mobile Quick Actions */}
@@ -201,12 +223,14 @@ const Layout = ({ children }) => {
       <DepositModal
         isOpen={showDepositModal}
         onClose={handleCloseDepositModal}
+        onSuccess={handleTransactionSuccess}
       />
 
       {/* Withdraw Modal */}
       <WithdrawModal
         isOpen={showWithdrawModal}
         onClose={handleCloseWithdrawModal}
+        onSuccess={handleTransactionSuccess}
       />
     </div>
   );

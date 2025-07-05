@@ -84,7 +84,7 @@ const formatDate = (dateString) => {
   });
 };
 
-const Wallet = () => {
+const Wallet = ({ onTransactionUpdate }) => {
   const { user } = useSelector((state) => ({ ...state }));
   const [wallet, setWallet] = useState(null);
   const [transactions, setTransactions] = useState([]);
@@ -126,6 +126,25 @@ const Wallet = () => {
     loadWallet();
     loadTransactions(1);
   }, [user]);
+
+  // Watch for transaction updates from Layout modals
+  useEffect(() => {
+    if (onTransactionUpdate) {
+      // Create a wrapper function that refreshes wallet data
+      const handleExternalUpdate = () => {
+        console.log("Wallet: External transaction update received");
+
+        // Refresh both wallet balance and transactions
+        if (user && user.token) {
+          loadWallet();
+          loadTransactions(currentPage);
+        }
+      };
+
+      // Store the function reference so Layout can call it
+      window.walletTransactionUpdate = handleExternalUpdate;
+    }
+  }, [onTransactionUpdate, user, currentPage]);
 
   const loadWallet = async () => {
     // Check network status before making API call

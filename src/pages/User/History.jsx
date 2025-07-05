@@ -98,7 +98,7 @@ const formatDate = (dateString) => {
   });
 };
 
-const History = () => {
+const History = ({ refreshTrigger }) => {
   const { user } = useSelector((state) => ({ ...state }));
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -141,6 +141,13 @@ const History = () => {
       loadTransactions(currentPage);
     }
   }, [user, currentPage, filter, search]);
+
+  // Add this to History.js
+  useEffect(() => {
+    if (refreshTrigger > 0) {
+      loadTransactions(currentPage);
+    }
+  }, [refreshTrigger]);
 
   // Reset to page 1 when filter or search changes
   useEffect(() => {

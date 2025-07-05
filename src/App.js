@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useEffect } from "react";
+import React, { Suspense, lazy, useEffect, useState } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Header from "./components/Header/Header";
 import Home from "./pages/Home";
@@ -52,8 +52,16 @@ const ContactMessages = lazy(() => import("./pages/Admin/ContactMessages"));
 function App() {
   const { user } = useSelector((state) => ({ ...state }));
 
+  // State for transaction updates
+  const [transactionUpdateTrigger, setTransactionUpdateTrigger] = useState(0);
+
   // Use the token refresh hook (only one token refresh mechanism)
   useTokenRefresh();
+
+  // Handler for transaction updates
+  const handleTransactionUpdate = () => {
+    setTransactionUpdateTrigger((prev) => prev + 1);
+  };
 
   return (
     <Suspense fallback={<SuspenseLoading />}>
@@ -97,27 +105,27 @@ function App() {
           <Route exact path="/cookies" component={CookiePolicy} />
           {/* User Protected Routes */}
           <UserRoute exact path="/dashboard">
-            <Layout>
+            <Layout onTransactionUpdate={handleTransactionUpdate}>
               <Dashboard />
             </Layout>
           </UserRoute>
           <UserRoute exact path="/wallet">
-            <Layout>
+            <Layout onTransactionUpdate={handleTransactionUpdate}>
               <Wallet />
             </Layout>
           </UserRoute>
           <UserRoute exact path="/invest">
-            <Layout>
+            <Layout onTransactionUpdate={handleTransactionUpdate}>
               <Invest />
             </Layout>
           </UserRoute>
           <UserRoute exact path="/history">
-            <Layout>
-              <History />
+            <Layout onTransactionUpdate={handleTransactionUpdate}>
+              <History refreshTrigger={transactionUpdateTrigger} />
             </Layout>
           </UserRoute>
           <UserRoute exact path="/profile">
-            <Layout>
+            <Layout onTransactionUpdate={handleTransactionUpdate}>
               <Profile />
             </Layout>
           </UserRoute>

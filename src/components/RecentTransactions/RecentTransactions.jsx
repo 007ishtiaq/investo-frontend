@@ -1,4 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, {
+  useState,
+  useEffect,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
 import {
   Card,
   CardContent,
@@ -196,31 +201,47 @@ const TransactionItem = ({ transaction }) => {
   );
 };
 
-const RecentTransactions = () => {
+const RecentTransactions = forwardRef(({ refreshTrigger }, ref) => {
   const { user } = useSelector((state) => ({ ...state }));
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      if (user && user.token) {
-        try {
-          setLoading(true);
-          const res = await getTransactionHistory(user.token, 1, 6);
-          setTransactions(res.data.transactions);
-          setLoading(false);
-        } catch (err) {
-          console.error("Error loading transactions:", err);
-          toast.error("Failed to load recent transactions");
-          setLoading(false);
-        }
-      } else {
+  // Expose refresh method to parent components
+  useImperativeHandle(ref, () => ({
+    refreshTransactions: fetchTransactions,
+  }));
+
+  const fetchTransactions = async () => {
+    if (user && user.token) {
+      try {
+        setLoading(true);
+        const res = await getTransactionHistory(user.token, 1, 6);
+        setTransactions(res.data.transactions);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error loading transactions:", err);
+        toast.error("Failed to load recent transactions");
         setLoading(false);
       }
-    };
+    } else {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchTransactions();
   }, [user]);
+
+  // Watch for refresh trigger changes
+  useEffect(() => {
+    if (refreshTrigger > 0) {
+      console.log(
+        "RecentTransactions: Refresh trigger activated",
+        refreshTrigger
+      );
+      fetchTransactions();
+    }
+  }, [refreshTrigger]);
 
   if (loading) {
     return (
@@ -279,6 +300,8 @@ const RecentTransactions = () => {
       </CardContent>
     </Card>
   );
-};
+});
+
+RecentTransactions.displayName = "RecentTransactions";
 
 export default RecentTransactions;

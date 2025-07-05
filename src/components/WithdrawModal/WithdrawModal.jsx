@@ -7,7 +7,7 @@ import { X } from "lucide-react";
 import NoNetModal from "../../components/NoNetModal/NoNetModal";
 import "./WithdrawModal.css";
 
-const WithdrawModal = ({ isOpen, onClose }) => {
+const WithdrawModal = ({ isOpen, onClose, onSuccess }) => {
   const { user } = useSelector((state) => ({ ...state }));
   const { walletBalance } = useWallet();
   const [amount, setAmount] = useState("");
@@ -139,6 +139,10 @@ const WithdrawModal = ({ isOpen, onClose }) => {
 
       toast.success("Withdrawal request submitted successfully");
       setLoading(false);
+      // Call the success callback if provided
+      if (onSuccess) {
+        onSuccess();
+      }
       handleClose(); // Use the animated close
     } catch (error) {
       console.error("Withdrawal submission error:", error);

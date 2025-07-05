@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Card, CardContent } from "../../components/ui/card";
 import WalletOverview from "../../components/WalletOverview/WalletOverview";
 import RecentTransactions from "../../components/RecentTransactions/RecentTransactions";
@@ -8,16 +8,20 @@ import { useSelector, useDispatch } from "react-redux";
 import { Copy, Edit2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
-import NoNetModal from "../../components/NoNetModal/NoNetModal"; // Your existing import
+import NoNetModal from "../../components/NoNetModal/NoNetModal";
 import DepositModal from "../../components/DepositModal/DepositModal";
 import "./Dashboard.css";
 
-const Dashboard = () => {
+const Dashboard = ({ onTransactionUpdate }) => {
   const { user } = useSelector((state) => ({ ...state }));
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [noNetModal, setNoNetModal] = useState(false);
   const [showDepositModal, setShowDepositModal] = useState(false);
+  const [transactionUpdateTrigger, setTransactionUpdateTrigger] = useState(0);
+
+  // Ref to access RecentTransactions component methods
+  const recentTransactionsRef = useRef(null);
 
   const dispatch = useDispatch();
 
@@ -57,6 +61,25 @@ const Dashboard = () => {
     }
   }, [user]);
 
+  // Watch for external transaction updates (from Layout modals)
+  useEffect(() => {
+    if (onTransactionUpdate) {
+      // Create a wrapper function that triggers our local state
+      const handleExternalUpdate = () => {
+        console.log("External transaction update received");
+        setTransactionUpdateTrigger((prev) => prev + 1);
+
+        // Also refresh user data
+        if (user && user.token) {
+          loadUserData();
+        }
+      };
+
+      // Store the function reference so Layout can call it
+      window.dashboardTransactionUpdate = handleExternalUpdate;
+    }
+  }, [onTransactionUpdate, user]);
+
   const handleLogout = () => {
     dispatch({
       type: "LOGOUT",
@@ -82,6 +105,18 @@ const Dashboard = () => {
 
   const handleCloseDepositModal = () => {
     setShowDepositModal(false);
+  };
+
+  // Handle successful transaction submissions
+  const handleTransactionSuccess = () => {
+    console.log("Dashboard: Local transaction success");
+    // Trigger RecentTransactions refresh using local state
+    setTransactionUpdateTrigger((prev) => prev + 1);
+
+    // Also refresh user data to update wallet balance
+    if (user && user.token) {
+      loadUserData();
+    }
   };
 
   const loadUserData = async () => {
@@ -160,12 +195,6 @@ const Dashboard = () => {
     }
   };
 
-  // Add a manual test button (remove this after testing)
-  const testModal = () => {
-    console.log("Test button clicked");
-    setNoNetModal(true);
-  };
-
   console.log("Rendering Dashboard, noNetModal:", noNetModal);
 
   if (loading || !userData) {
@@ -201,7 +230,6 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Using your existing NoNetModal with correct props */}
         <NoNetModal
           classDisplay={noNetModal ? "show" : ""}
           setNoNetModal={setNoNetModal}
@@ -261,7 +289,10 @@ const Dashboard = () => {
       <WalletOverview />
 
       <div className="dashboard-grid margin-top">
-        <RecentTransactions />
+        <RecentTransactions
+          ref={recentTransactionsRef}
+          refreshTrigger={transactionUpdateTrigger}
+        />
         <InvestmentPlans onOpenDepositModal={handleOpenDepositModal} />
       </div>
 
@@ -270,11 +301,11 @@ const Dashboard = () => {
         <DepositModal
           isOpen={showDepositModal}
           onClose={handleCloseDepositModal}
+          onSuccess={handleTransactionSuccess}
           onNetworkError={() => setNoNetModal(true)}
         />
       )}
 
-      {/* Using your existing NoNetModal with correct props */}
       <NoNetModal
         classDisplay={noNetModal ? "show" : ""}
         setNoNetModal={setNoNetModal}

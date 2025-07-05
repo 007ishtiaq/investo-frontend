@@ -7,7 +7,7 @@ import NoNetModal from "../../components/NoNetModal/NoNetModal";
 import "./DepositModal.css";
 import { InfoIcon } from "../../utils/icons";
 
-const DepositModal = ({ isOpen, onClose }) => {
+const DepositModal = ({ isOpen, onClose, onSuccess }) => {
   const { user } = useSelector((state) => ({ ...state }));
   const [amount, setAmount] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -123,6 +123,10 @@ const DepositModal = ({ isOpen, onClose }) => {
 
       toast.success("Deposit request submitted successfully");
       setLoading(false);
+      // Call the success callback if provided
+      if (onSuccess) {
+        onSuccess();
+      }
       handleClose(); // Use the animated close
     } catch (error) {
       console.error("Deposit submission error:", error);
