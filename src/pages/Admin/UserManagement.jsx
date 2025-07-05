@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { getUsers } from "../../functions/user";
 import { formatBalance } from "../../functions/wallet";
+import TeamEarningsDetail from "../../components/TeamEarningsDetail/TeamEarningsDetail";
 import "./UserManagement.css";
 
 const UserManagement = () => {
@@ -15,6 +16,7 @@ const UserManagement = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const [debounceTimeout, setDebounceTimeout] = useState(null);
+  const [selectedUserForEarnings, setSelectedUserForEarnings] = useState(null);
   const itemsPerPage = 20;
 
   useEffect(() => {
@@ -58,6 +60,14 @@ const UserManagement = () => {
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
+  };
+
+  const handleTeamEarningsClick = (selectedUser) => {
+    setSelectedUserForEarnings(selectedUser);
+  };
+
+  const handleCloseEarningsDetail = () => {
+    setSelectedUserForEarnings(null);
   };
 
   const formatDate = (dateString) => {
@@ -181,7 +191,9 @@ const UserManagement = () => {
                     <td
                       className={`team-earnings-cell ${getAmountClass(
                         u.teamEarnings || 0
-                      )}`}
+                      )} clickable`}
+                      onClick={() => handleTeamEarningsClick(u)}
+                      title="Click to view team earnings details"
                     >
                       {formatBalance(u.teamEarnings || 0, "USD")}
                     </td>
@@ -219,6 +231,14 @@ const UserManagement = () => {
           </div>
         )}
       </div>
+
+      {/* Team Earnings Detail Modal */}
+      {selectedUserForEarnings && (
+        <TeamEarningsDetail
+          selectedUser={selectedUserForEarnings}
+          onClose={handleCloseEarningsDetail}
+        />
+      )}
     </div>
   );
 };

@@ -582,7 +582,26 @@
   font-weight: 500;
   color: #059669;
 }
+.team-earnings-cell.clickable {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
 
+.team-earnings-cell.clickable:hover {
+  background-color: #f3f4f6;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.team-earnings-cell.clickable:hover::after {
+  content: "👁️";
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+}
 /* Team cell styling */
 .team-cell {
   align-items: center;

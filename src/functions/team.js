@@ -26,3 +26,21 @@ export const registerWithAffiliateCode = async (affiliateCode, userId) => {
     { affiliateCode, userId }
   );
 };
+
+// New function for getting team members by user ID
+export const getTeamMembersByUserId = async (token, userId) => {
+  try {
+    const response = await axios.get(
+      `${process.env.REACT_APP_API}/team/members/${userId}`,
+      {
+        headers: {
+          authtoken: token,
+        },
+      }
+    );
+    return response;
+  } catch (error) {
+    console.error("Error in getTeamMembersByUserId:", error);
+    throw error;
+  }
+};
