@@ -209,64 +209,45 @@ const WithdrawModal = ({ isOpen, onClose }) => {
             </span>
           </div>
 
-          {/* Withdrawal Verification Message */}
-          <div className="withdrawal-verification-message">
-            <div className="verification-icon">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="8" x2="12" y2="12"></line>
-                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-              </svg>
-            </div>
-            <div className="verification-content">
-              <h4>Verification Process</h4>
-              <p>
-                For your security, withdrawal requests undergo a verification
-                process that may take 24-48 hours to complete. You'll receive
-                confirmation via email once your funds have been dispatched.
-              </p>
-            </div>
-          </div>
-
           <form onSubmit={handleSubmit} className="withdraw-modal-form">
-            <div className="form-group">
-              <label htmlFor="amount">Amount (USD)*</label>
-              <input
-                type="number"
-                id="amount"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                placeholder="Enter withdrawal amount"
-                min="0.01"
-                step="0.01"
-                required
-              />
-            </div>
+            <div className="withdraw-form-row">
+              <div className="form-group">
+                <label htmlFor="amount">Amount (USD)*</label>
+                <input
+                  type="number"
+                  id="amount"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="Enter withdrawal amount"
+                  min="0.01"
+                  step="0.01"
+                  max={walletBalance} // Added max attribute for HTML5 validation
+                  required
+                />
+                {/* Optional: Show balance hint below input */}
+                {amount && parseFloat(amount) > walletBalance && (
+                  <div className="balance-error">
+                    Insufficient balance. Available:{" "}
+                    {formatBalance(walletBalance)}
+                  </div>
+                )}
+              </div>
 
-            <div className="form-group">
-              <label htmlFor="paymentMethod">Withdrawal Method*</label>
-              <select
-                id="paymentMethod"
-                value={paymentMethod}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-                required
-              >
-                <option value="">Select withdrawal method</option>
-                <option value="bitcoin">Bitcoin</option>
-                <option value="ethereum">Ethereum</option>
-                <option value="litecoin">Litecoin</option>
-                <option value="bank_transfer">Bank Transfer</option>
-              </select>
+              <div className="form-group">
+                <label htmlFor="paymentMethod">Withdrawal Method*</label>
+                <select
+                  id="paymentMethod"
+                  value={paymentMethod}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                  required
+                >
+                  <option value="">Select withdrawal method</option>
+                  <option value="bitcoin">Bitcoin</option>
+                  <option value="ethereum">Ethereum</option>
+                  <option value="litecoin">Litecoin</option>
+                  <option value="bank_transfer">Bank Transfer</option>
+                </select>
+              </div>
             </div>
 
             {/* Conditional fields based on payment method */}

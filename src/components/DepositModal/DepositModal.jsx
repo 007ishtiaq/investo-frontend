@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { X } from "lucide-react";
 import NoNetModal from "../../components/NoNetModal/NoNetModal";
 import "./DepositModal.css";
+import { InfoIcon } from "../../utils/icons";
 
 const DepositModal = ({ isOpen, onClose }) => {
   const { user } = useSelector((state) => ({ ...state }));
@@ -187,68 +188,71 @@ const DepositModal = ({ isOpen, onClose }) => {
           </div>
 
           <form onSubmit={handleSubmit} className="deposit-modal-form">
-            <div className="form-group">
-              <label htmlFor="amount">Amount (USD)*</label>
-              <input
-                type="number"
-                id="amount"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                placeholder="Enter deposit amount"
-                min="0.01"
-                step="0.01"
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="paymentMethod">Payment Method*</label>
-              <select
-                id="paymentMethod"
-                value={paymentMethod}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-                required
-              >
-                <option value="">Select payment method</option>
-                <option value="bitcoin">Bitcoin</option>
-                <option value="ethereum">Ethereum</option>
-                <option value="litecoin">Litecoin</option>
-                <option value="bank_transfer">Bank Transfer</option>
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="transactionId">Transaction ID/Reference</label>
-              <input
-                type="text"
-                id="transactionId"
-                value={transactionId}
-                onChange={(e) => setTransactionId(e.target.value)}
-                placeholder="Enter transaction ID or reference"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="screenshot">Payment Screenshot*</label>
-              <div className="file-upload-container">
+            <div className="deposit-form-row">
+              <div className="form-group">
+                <label htmlFor="amount">Amount (USD)*</label>
                 <input
-                  type="file"
-                  id="screenshot"
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                  accept="image/*"
-                  style={{ display: "none" }}
+                  type="number"
+                  id="amount"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="Enter deposit amount"
+                  min="0.01"
+                  step="0.01"
+                  required
                 />
-                <button
-                  type="button"
-                  className="file-upload-button"
-                  onClick={() => fileInputRef.current.click()}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="paymentMethod">Payment Method*</label>
+                <select
+                  id="paymentMethod"
+                  value={paymentMethod}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                  required
                 >
-                  Upload Screenshot
-                </button>
-                <span className="file-name">
-                  {screenshot ? screenshot.name : "No file chosen"}
-                </span>
+                  <option value="">Select payment method</option>
+                  <option value="bitcoin">Bitcoin</option>
+                  <option value="ethereum">Ethereum</option>
+                  <option value="litecoin">Litecoin</option>
+                  <option value="bank_transfer">Bank Transfer</option>
+                </select>
+              </div>
+            </div>
+            <div className="deposit-form-row">
+              <div className="form-group">
+                <label htmlFor="transactionId">Transaction ID/Reference</label>
+                <input
+                  type="text"
+                  id="transactionId"
+                  value={transactionId}
+                  onChange={(e) => setTransactionId(e.target.value)}
+                  placeholder="Enter transaction ID or reference"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="screenshot">Payment Screenshot*</label>
+                <div className="file-upload-container">
+                  <input
+                    type="file"
+                    id="screenshot"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    accept="image/*"
+                    style={{ display: "none" }}
+                  />
+                  <button
+                    type="button"
+                    className="file-upload-button"
+                    onClick={() => fileInputRef.current.click()}
+                  >
+                    Upload Screenshot
+                  </button>
+                  <span className="file-name">
+                    {screenshot ? screenshot.name : "No file chosen"}
+                  </span>
+                </div>
               </div>
             </div>
 

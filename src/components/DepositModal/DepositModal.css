@@ -12,36 +12,54 @@
   z-index: 1000;
   overflow-y: auto;
   padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  backdrop-filter: blur(4px);
+}
+
+.deposit-modal-overlay.visible {
+  opacity: 1;
+  visibility: visible;
 }
 
 .deposit-modal {
   background-color: var(--background, #ffffff);
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
   width: 100%;
-  max-width: 550px;
+  max-width: 800px; /* Increased from 550px */
   max-height: 90vh;
   overflow-y: auto;
   padding: 0;
   position: relative;
+  transform: translateY(20px);
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  border: 1px solid var(--border, #e2e8f0);
+}
+
+.deposit-modal.visible {
+  transform: translateY(0);
+  opacity: 1;
 }
 
 .deposit-modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 24px;
+  padding: 24px 32px;
   border-bottom: 1px solid var(--border, #e2e8f0);
   position: sticky;
   top: 0;
   background-color: var(--background, #ffffff);
   z-index: 10;
-  border-radius: 12px 12px 0 0;
+  border-radius: 16px 16px 0 0;
 }
 
 .deposit-modal-header h2 {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1.75rem;
+  font-weight: 700;
   margin: 0;
   color: var(--text, #1a202c);
 }
@@ -51,244 +69,349 @@
   border: none;
   color: var(--text-secondary, #718096);
   cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
+  padding: 8px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
 }
 
 .close-modal-button:hover {
   background-color: var(--background-hover, #f7fafc);
   color: var(--text, #1a202c);
+  transform: scale(1.1);
 }
 
 .deposit-instructions {
-  padding: 16px 24px;
+  padding: 24px 32px;
 }
 
 .instructions-card {
-  background-color: var(--background-card, #f8fafc);
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 16px;
+  background: linear-gradient(
+    135deg,
+    var(--background-card, #f8fafc) 0%,
+    #ffffff 100%
+  );
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
   border-left: 4px solid var(--primary, #3182ce);
+  border: 1px solid var(--border, #e2e8f0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .instructions-card h3 {
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   font-weight: 600;
-  margin: 0 0 12px 0;
+  margin: 0 0 16px 0;
   color: var(--text, #1a202c);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.instructions-card h3::before {
+  content: "💡";
+  font-size: 1.2rem;
 }
 
 .instructions-card ol {
   margin: 0;
-  padding-left: 20px;
+  padding-left: 0;
+  list-style: none;
+  counter-reset: step-counter;
 }
 
 .instructions-card li {
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   color: var(--text, #334155);
+  padding-left: 40px;
+  position: relative;
+  counter-increment: step-counter;
+  line-height: 1.5;
+}
+
+.instructions-card li::before {
+  content: counter(step-counter);
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: var(--primary, #3182ce);
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 600;
 }
 
 .instructions-note {
-  margin-top: 12px;
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 16px;
   font-size: 0.9rem;
   color: var(--text-secondary, #64748b);
-  padding-top: 12px;
-  border-top: 1px dashed var(--border, #e2e8f0);
+  padding: 12px 16px;
+  background-color: rgb(255 140 4 / 17%);
+  border-radius: 8px;
+  position: relative;
+}
+
+.instructions-note strong {
+  color: var(--primary, #ce7231);
+}
+
+.icon-note svg {
+  color: #ce7236;
 }
 
 .deposit-modal-form {
-  padding: 0 24px 24px 24px;
+  padding: 0 32px 32px 32px;
+}
+
+/* Desktop responsive form layout */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
 }
 
 .form-group {
-  margin-bottom: 16px;
+  width: 100%;
+  margin-bottom: 20px;
 }
 
 .form-group label {
   display: block;
-  font-size: 0.9rem;
-  font-weight: 500;
-  margin-bottom: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 8px;
   color: var(--text, #334155);
 }
 
 .form-group input,
 .form-group select {
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid var(--border, #cbd5e1);
-  border-radius: 6px;
+  padding: 12px 16px;
+  border: 2px solid var(--border, #cbd5e1);
+  border-radius: 8px;
   font-size: 1rem;
   background-color: var(--background-input, #ffffff);
   color: var(--text, #1a202c);
-  transition: border-color 0.2s;
+  transition: all 0.2s ease;
 }
 
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
   border-color: var(--primary, #3182ce);
-  box-shadow: 0 0 0 1px var(--primary, #3182ce);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  transform: translateY(-1px);
 }
 
 .file-upload-container {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 .file-upload-button {
-  background-color: var(--background-button, #f1f5f9);
+  background: linear-gradient(
+    135deg,
+    var(--background-button, #f1f5f9) 0%,
+    #ffffff 100%
+  );
   color: var(--text, #334155);
-  border: 1px solid var(--border, #cbd5e1);
-  border-radius: 6px;
-  padding: 8px 16px;
+  border: 2px solid var(--border, #cbd5e1);
+  border-radius: 8px;
+  padding: 12px 20px;
   font-size: 0.9rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .file-upload-button:hover {
-  background-color: var(--background-button-hover, #e2e8f0);
+  background: linear-gradient(
+    135deg,
+    var(--background-button-hover, #e2e8f0) 0%,
+    #f8fafc 100%
+  );
+  border-color: var(--primary, #3182ce);
+  transform: translateY(-1px);
 }
 
 .file-name {
   font-size: 0.9rem;
   color: var(--text-secondary, #64748b);
-  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 200px;
+  white-space: nowrap;
 }
 
 .screenshot-preview {
-  margin-bottom: 16px;
-  border-radius: 8px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  max-width: 300px;
   overflow: hidden;
-  border: 1px solid var(--border, #e2e8f0);
+  border: 2px solid var(--border, #e2e8f0);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .screenshot-preview img {
   width: 100%;
-  max-height: 200px;
+  max-height: 150px;
   object-fit: contain;
   background-color: var(--background-card, #f8fafc);
 }
 
 .payment-instructions {
-  background-color: var(--background-card, #f8fafc);
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 20px;
+  background: linear-gradient(
+    135deg,
+    var(--background-card, #f8fafc) 0%,
+    #ffffff 100%
+  );
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  border: 1px solid var(--border, #e2e8f0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .payment-instructions h3 {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 600;
-  margin: 0 0 12px 0;
+  margin: 0 0 16px 0;
   color: var(--text, #1a202c);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.payment-instructions h3::before {
+  content: "💳";
+  font-size: 1.2rem;
 }
 
 .payment-address,
 .bank-details {
-  margin-top: 12px;
+  margin-top: 16px;
 }
 
 .payment-address p,
 .bank-details p {
   margin: 0 0 8px 0;
   color: var(--text, #334155);
+  font-weight: 500;
 }
 
 code {
   display: block;
-  padding: 8px 12px;
-  background-color: var(--background, #ffffff);
-  border: 1px solid var(--border, #e2e8f0);
-  border-radius: 6px;
-  font-family: monospace;
+  padding: 12px 16px;
+  background: linear-gradient(
+    135deg,
+    var(--background, #ffffff) 0%,
+    #f8fafc 100%
+  );
+  border: 2px solid var(--border, #e2e8f0);
+  border-radius: 8px;
+  font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
   font-size: 0.9rem;
   overflow-wrap: break-word;
   word-wrap: break-word;
   word-break: break-all;
-  margin-top: 4px;
+  margin-top: 8px;
+  color: var(--primary, #3182ce);
+  font-weight: 500;
 }
 
 .submit-button {
   width: 100%;
-  padding: 12px;
-  background-color: var(--primary, #3182ce);
+  padding: 16px 24px;
+  background: linear-gradient(135deg, var(--primary, #3182ce) 0%, #2563eb 100%);
   color: white;
   border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: 500;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .submit-button:hover:not(:disabled) {
-  background-color: var(--primary-hover, #2c5282);
+  background: linear-gradient(
+    135deg,
+    var(--primary-hover, #2c5282) 0%,
+    #1d4ed8 100%
+  );
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
 }
 
 .submit-button:disabled {
-  background-color: var(--background-disabled, #a0aec0);
+  background: var(--background-disabled, #a0aec0);
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
-/* Add to DepositModal.css */
-
-/* Overlay animation */
-.deposit-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+.deposit-form-row {
   display: flex;
-  align-items: center;
   justify-content: center;
-  z-index: 1000;
-  overflow-y: auto;
-  padding: 20px;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
+  gap: 2rem;
 }
 
-.deposit-modal-overlay.visible {
-  opacity: 1;
-  visibility: visible;
+/* Tablet view */
+@media (max-width: 1024px) {
+  .deposit-modal {
+    max-width: 700px;
+  }
+
+  .deposit-modal-header,
+  .deposit-instructions,
+  .deposit-modal-form {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
 }
 
-/* Modal animation */
-.deposit-modal {
-  background-color: var(--background, #ffffff);
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 550px;
-  max-height: 90vh;
-  overflow-y: auto;
-  padding: 0;
-  position: relative;
-  transform: translateY(20px);
-  opacity: 0;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+/* Mobile view - Single column layout */
+@media (max-width: 768px) {
+  .deposit-form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  .deposit-modal {
+    max-width: 100%;
+    margin: 0 16px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .deposit-modal-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .instructions-card,
+  .payment-instructions {
+    padding: 20px;
+  }
 }
 
-.deposit-modal.visible {
-  transform: translateY(0);
-  opacity: 1;
-}
-
-/* Media queries for better mobile experience */
+/* Small mobile devices */
 @media (max-width: 640px) {
   .deposit-modal {
     width: 100%;
@@ -296,24 +419,73 @@ code {
     height: 100%;
     max-height: none;
     border-radius: 0;
+    margin: 0;
   }
 
   .deposit-modal-header {
     border-radius: 0;
+    padding: 20px;
   }
 
   .deposit-modal-overlay {
     padding: 0;
   }
+
+  .deposit-instructions,
+  .deposit-modal-form {
+    padding: 20px;
+  }
+
+  .instructions-card,
+  .payment-instructions {
+    padding: 16px;
+  }
+
+  .file-upload-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .file-upload-button {
+    width: 100%;
+    text-align: center;
+  }
 }
 
+/* Dark mode support */
 @media (prefers-color-scheme: dark) {
-  .instructions-card {
-    background-color: rgba(30, 41, 59, 0.5);
+  .instructions-card,
+  .payment-instructions {
+    background: linear-gradient(
+      135deg,
+      rgba(30, 41, 59, 0.5) 0%,
+      rgba(51, 65, 85, 0.3) 100%
+    );
+    border-color: rgba(71, 85, 105, 0.5);
   }
 
   code {
-    background-color: rgba(30, 41, 59, 0.8);
+    background: linear-gradient(
+      135deg,
+      rgba(30, 41, 59, 0.8) 0%,
+      rgba(51, 65, 85, 0.6) 100%
+    );
     border-color: rgba(71, 85, 105, 0.5);
   }
+
+  .instructions-note {
+    background-color: rgba(59, 130, 246, 0.1);
+  }
+}
+
+/* Focus states for accessibility */
+.close-modal-button:focus-visible {
+  outline: 2px solid var(--primary, #3182ce);
+  outline-offset: 2px;
+}
+
+.submit-button:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 2px;
 }

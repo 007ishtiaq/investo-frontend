@@ -12,36 +12,54 @@
   z-index: 1000;
   overflow-y: auto;
   padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  backdrop-filter: blur(4px);
+}
+
+.withdraw-modal-overlay.visible {
+  opacity: 1;
+  visibility: visible;
 }
 
 .withdraw-modal {
   background-color: var(--background, #ffffff);
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
   width: 100%;
-  max-width: 550px;
+  max-width: 800px; /* Increased from 550px to match DepositModal */
   max-height: 90vh;
   overflow-y: auto;
   padding: 0;
   position: relative;
+  transform: translateY(20px);
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  border: 1px solid var(--border, #e2e8f0);
+}
+
+.withdraw-modal.visible {
+  transform: translateY(0);
+  opacity: 1;
 }
 
 .withdraw-modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 24px;
+  padding: 24px 32px;
   border-bottom: 1px solid var(--border, #e2e8f0);
   position: sticky;
   top: 0;
   background-color: var(--background, #ffffff);
   z-index: 10;
-  border-radius: 12px 12px 0 0;
+  border-radius: 16px 16px 0 0;
 }
 
 .withdraw-modal-header h2 {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1.75rem;
+  font-weight: 700;
   margin: 0;
   color: var(--text, #1a202c);
 }
@@ -51,216 +69,145 @@
   border: none;
   color: var(--text-secondary, #718096);
   cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
+  padding: 8px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
 }
 
 .close-modal-button:hover {
   background-color: var(--background-hover, #f7fafc);
   color: var(--text, #1a202c);
+  transform: scale(1.1);
 }
 
 .withdraw-instructions {
-  padding: 16px 24px;
+  padding: 24px 32px;
 }
 
 .instructions-card {
-  background-color: var(--background-card, #f8fafc);
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 16px;
+  background: linear-gradient(
+    135deg,
+    var(--background-card, #f8fafc) 0%,
+    #ffffff 100%
+  );
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
   border-left: 4px solid var(--primary, #3182ce);
+  border: 1px solid var(--border, #e2e8f0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .instructions-card h3 {
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   font-weight: 600;
-  margin: 0 0 12px 0;
+  margin: 0 0 16px 0;
   color: var(--text, #1a202c);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.instructions-card h3::before {
+  content: "💰";
+  font-size: 1.2rem;
 }
 
 .instructions-card ol {
   margin: 0;
-  padding-left: 20px;
+  padding-left: 0;
+  list-style: none;
+  counter-reset: step-counter;
 }
 
 .instructions-card li {
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   color: var(--text, #334155);
+  padding-left: 40px;
+  position: relative;
+  counter-increment: step-counter;
+  line-height: 1.5;
 }
 
-.instructions-note {
-  margin-top: 12px;
-  font-size: 0.9rem;
-  color: var(--text-secondary, #64748b);
-  padding-top: 12px;
-  border-top: 1px dashed var(--border, #e2e8f0);
-}
-
-.wallet-balance-display {
-  padding: 0 24px 16px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: var(--background-card, #f8fafc);
-  border-radius: 8px;
-  margin: 0 24px 16px 24px;
-  padding: 12px 16px;
-  border: 1px solid var(--border, #e2e8f0);
-}
-
-.wallet-balance-display span {
-  font-size: 1rem;
-  color: var(--text, #334155);
-}
-
-.balance-amount {
-  font-weight: 600;
-  font-size: 1.2rem !important;
-  color: var(--primary, #3182ce) !important;
-}
-
-.withdraw-modal-form {
-  padding: 0 24px 24px 24px;
-}
-
-.form-group {
-  margin-bottom: 16px;
-}
-
-.form-group label {
-  display: block;
-  font-size: 0.9rem;
-  font-weight: 500;
-  margin-bottom: 6px;
-  color: var(--text, #334155);
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid var(--border, #cbd5e1);
-  border-radius: 6px;
-  font-size: 1rem;
-  background-color: var(--background-input, #ffffff);
-  color: var(--text, #1a202c);
-  transition: border-color 0.2s;
-  font-family: inherit;
-}
-
-.form-group textarea {
-  resize: vertical;
-  min-height: 80px;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: var(--primary, #3182ce);
-  box-shadow: 0 0 0 1px var(--primary, #3182ce);
-}
-
-.withdraw-notice {
-  background-color: var(--background-warning, #fffbeb);
-  border-radius: 6px;
-  padding: 12px 16px;
-  margin-bottom: 20px;
-  border-left: 4px solid var(--warning, #f59e0b);
-}
-
-.withdraw-notice p {
-  margin: 0;
-  font-size: 0.9rem;
-  color: var(--text-warning, #92400e);
-}
-
-.submit-button {
-  width: 100%;
-  padding: 12px;
-  background-color: var(--primary, #3182ce);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.submit-button:hover:not(:disabled) {
-  background-color: var(--primary-hover, #2c5282);
-}
-
-.submit-button:disabled {
-  background-color: var(--background-disabled, #a0aec0);
-  cursor: not-allowed;
-}
-
-/* Add to WithdrawModal.css */
-
-/* Overlay animation */
-.withdraw-modal-overlay {
-  position: fixed;
-  top: 0;
+.instructions-card li::before {
+  content: counter(step-counter);
+  position: absolute;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  top: 0;
+  background: var(--primary, #3182ce);
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
-  overflow-y: auto;
-  padding: 20px;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
+  font-size: 0.8rem;
+  font-weight: 600;
 }
 
-.withdraw-modal-overlay.visible {
-  opacity: 1;
-  visibility: visible;
-}
-
-/* Modal animation */
-.withdraw-modal {
-  background-color: var(--background, #ffffff);
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 550px;
-  max-height: 90vh;
-  overflow-y: auto;
-  padding: 0;
+.instructions-note {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 16px;
+  font-size: 0.9rem;
+  color: var(--text-secondary, #64748b);
+  padding: 12px 16px;
+  background-color: rgb(255 140 4 / 17%);
+  border-radius: 8px;
   position: relative;
-  transform: translateY(20px);
-  opacity: 0;
-  transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-.withdraw-modal.visible {
-  transform: translateY(0);
-  opacity: 1;
+.instructions-note strong {
+  color: var(--primary, #ce7231);
 }
 
-/* Withdrawal verification message styling */
+.wallet-balance-display {
+  margin: 0 32px 24px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(
+    135deg,
+    var(--background-card, #f8fafc) 0%,
+    #ffffff 100%
+  );
+  border-radius: 12px;
+  padding: 20px 24px;
+  border: 1px solid var(--border, #e2e8f0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.wallet-balance-display span {
+  font-size: 1.1rem;
+  color: var(--text, #334155);
+  font-weight: 500;
+}
+
+.balance-amount {
+  font-weight: 700 !important;
+  font-size: 1.5rem !important;
+  color: var(--primary, #3182ce) !important;
+}
+
 .withdrawal-verification-message {
-  margin: 20px 0;
-  padding: 16px;
-  background: rgba(59, 130, 246, 0.08);
+  margin: 0 32px 24px 32px;
+  padding: 20px 24px;
+  background: linear-gradient(
+    135deg,
+    rgba(59, 130, 246, 0.08) 0%,
+    rgba(59, 130, 246, 0.04) 100%
+  );
   border-left: 4px solid #3b82f6;
-  border-radius: 6px;
+  border-radius: 12px;
   display: flex;
   align-items: flex-start;
-  gap: 14px;
-  animation: fadeIn 0.5s ease-out;
+  gap: 16px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
 }
 
 .verification-icon {
@@ -270,28 +217,236 @@
 }
 
 .verification-content h4 {
-  margin: 0 0 6px 0;
-  font-size: 15px;
+  margin: 0 0 8px 0;
+  font-size: 1.1rem;
   font-weight: 600;
   color: #3b82f6;
 }
 
 .verification-content p {
   margin: 0;
-  font-size: 14px;
+  font-size: 0.95rem;
   line-height: 1.5;
   color: #4b5563;
 }
 
-/* Dark mode */
-@media (prefers-color-scheme: dark) {
-  .withdrawal-verification-message {
-    background: rgba(59, 130, 246, 0.1);
-    border-left-color: #60a5fa;
+.withdraw-modal-form {
+  padding: 0 32px 32px 32px;
+}
+
+.withdraw-form-row {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text, #334155);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--border, #cbd5e1);
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: var(--background-input, #ffffff);
+  color: var(--text, #1a202c);
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.5;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary, #3182ce);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  transform: translateY(-1px);
+}
+
+.withdraw-notice {
+  background: linear-gradient(
+    135deg,
+    var(--background-card, #f8fafc) 0%,
+    #ffffff 100%
+  );
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  border-left: 4px solid var(--warning, #f59e0b);
+  border: 1px solid var(--border, #e2e8f0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.withdraw-notice p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text, #334155);
+  line-height: 1.5;
+}
+
+.withdraw-notice strong {
+  color: var(--warning, #f59e0b);
+}
+
+.submit-button {
+  width: 100%;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, var(--primary, #3182ce) 0%, #2563eb 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.submit-button:hover:not(:disabled) {
+  background: linear-gradient(
+    135deg,
+    var(--primary-hover, #2c5282) 0%,
+    #1d4ed8 100%
+  );
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.submit-button:disabled {
+  background: var(--background-disabled, #a0aec0);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+/* Add this to your WithdrawModal.css */
+.balance-error {
+  color: #ef4444;
+  font-size: 0.85rem;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+/* Tablet view */
+@media (max-width: 1024px) {
+  .withdraw-modal {
+    max-width: 700px;
   }
 
-  .verification-icon {
-    color: #60a5fa;
+  .withdraw-modal-header,
+  .withdraw-instructions,
+  .withdraw-modal-form {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .wallet-balance-display,
+  .withdrawal-verification-message {
+    margin-left: 24px;
+    margin-right: 24px;
+  }
+}
+
+/* Mobile view - Single column layout */
+@media (max-width: 768px) {
+  .withdraw-form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .withdraw-modal {
+    max-width: 100%;
+    margin: 0 16px;
+  }
+
+  .withdraw-modal-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .instructions-card,
+  .withdrawal-verification-message,
+  .withdraw-notice {
+    padding: 20px;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 640px) {
+  .withdraw-modal {
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    border-radius: 0;
+    margin: 0;
+  }
+
+  .withdraw-modal-header {
+    border-radius: 0;
+    padding: 20px;
+  }
+
+  .withdraw-modal-overlay {
+    padding: 0;
+  }
+
+  .withdraw-instructions,
+  .withdraw-modal-form {
+    padding: 20px;
+  }
+
+  .wallet-balance-display,
+  .withdrawal-verification-message {
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+
+  .instructions-card,
+  .withdrawal-verification-message,
+  .withdraw-notice {
+    padding: 16px;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .instructions-card,
+  .wallet-balance-display,
+  .withdraw-notice {
+    background: linear-gradient(
+      135deg,
+      rgba(30, 41, 59, 0.5) 0%,
+      rgba(51, 65, 85, 0.3) 100%
+    );
+    border-color: rgba(71, 85, 105, 0.5);
+  }
+
+  .withdrawal-verification-message {
+    background: linear-gradient(
+      135deg,
+      rgba(59, 130, 246, 0.1) 0%,
+      rgba(59, 130, 246, 0.05) 100%
+    );
+    border-color: rgba(96, 165, 250, 0.3);
   }
 
   .verification-content h4 {
@@ -301,48 +456,23 @@
   .verification-content p {
     color: #9ca3af;
   }
-}
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
+  .verification-icon {
+    color: #60a5fa;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  .instructions-note {
+    background-color: rgba(59, 130, 246, 0.1);
   }
 }
 
-/* Media queries for better mobile experience */
-@media (max-width: 640px) {
-  .withdraw-modal {
-    width: 100%;
-    max-width: none;
-    height: 100%;
-    max-height: none;
-    border-radius: 0;
-  }
-
-  .withdraw-modal-header {
-    border-radius: 0;
-  }
-
-  .withdraw-modal-overlay {
-    padding: 0;
-  }
+/* Focus states for accessibility */
+.close-modal-button:focus-visible {
+  outline: 2px solid var(--primary, #3182ce);
+  outline-offset: 2px;
 }
 
-@media (prefers-color-scheme: dark) {
-  .instructions-card {
-    background-color: rgba(30, 41, 59, 0.5);
-  }
-
-  .withdraw-notice {
-    background-color: rgba(254, 252, 232, 0.1);
-  }
-
-  .wallet-balance-display {
-    background-color: rgba(30, 41, 59, 0.5);
-  }
+.submit-button:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 2px;
 }
