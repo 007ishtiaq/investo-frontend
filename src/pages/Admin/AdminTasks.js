@@ -29,7 +29,7 @@ const AdminTasks = () => {
     active: true,
     screenshotInstructions: "",
     screenshotRequired: false,
-    autoVerify: false, // Add this for YouTube watch auto-verification
+    autoVerify: true, // Add this for YouTube watch auto-verification
     videoDuration: "", // Add this to specify video duration in seconds
     minLevel: 1,
     displayDate: "",
@@ -102,7 +102,7 @@ const AdminTasks = () => {
       active: true,
       screenshotInstructions: "",
       screenshotRequired: false,
-      autoVerify: false,
+      autoVerify: true,
       videoDuration: "",
       minLevel: 1,
       displayDate: "",
