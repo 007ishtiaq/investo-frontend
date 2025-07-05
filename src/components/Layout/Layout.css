@@ -339,8 +339,8 @@
 }
 
 .sidebar-active {
-  color: var(--primary-color, #3b82f6);
-  background-color: var(--primary-light, #eff6ff);
+  color: var(--primary-color, #4f46e5);
+  background-color: var(--primary-light, #f3efff);
 }
 
 .sidebar-icon {
@@ -378,7 +378,7 @@
 .deposit-button-layout {
   width: 100%;
   padding: 0.5rem 1rem;
-  background-color: var(--primary-color, #3b82f6);
+  background: linear-gradient(90deg, #4f46e5, #7c3aed);
   color: white;
   border-radius: 0.375rem;
   display: flex;
@@ -395,8 +395,8 @@
 .withdraw-button {
   width: 100%;
   padding: 0.5rem 1rem;
-  border: 1px solid var(--primary-color, #3b82f6);
-  color: var(--primary-color, #3b82f6);
+  border: 1px solid var(--primary-color, #4f46e5);
+  color: var(--primary-color, #4f46e5);
   background-color: transparent;
   border-radius: 0.375rem;
   display: flex;

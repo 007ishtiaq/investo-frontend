@@ -167,6 +167,8 @@ const History = () => {
         search
       );
       setTransactions(res.data.transactions);
+      console.log("res.data.transactions", res.data.transactions);
+
       setCurrentPage(res.data.pagination.currentPage);
       setTotalPages(res.data.pagination.totalPages);
       setLoading(false);
