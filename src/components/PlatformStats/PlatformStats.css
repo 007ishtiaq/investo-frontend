@@ -1,4 +1,5 @@
 .platform-stats-container {
+  margin: 2rem 0;
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);
   border-radius: 1rem;
@@ -35,32 +36,35 @@
   border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
-.stats-grid {
+.stats-grid-platformstats {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 1.25rem;
   margin-bottom: 1.5rem;
 }
 
-.stat-card {
+.stat-card-platformstats {
   background: white;
   border-radius: 0.75rem;
   padding: 1.25rem;
   display: flex;
   align-items: center;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(226, 232, 240, 0.7);
   position: relative;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-.stat-card:hover {
+.stat-card-platformstats:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
 }
 
-.stat-card::before {
+.stat-card-platformstats::before {
   content: "";
   position: absolute;
   width: 100px;
@@ -105,7 +109,7 @@
   flex: 1;
 }
 
-.stat-value {
+.stat-value-platformstats {
   font-size: 1.5rem;
   font-weight: 700;
   color: #1e293b;
@@ -157,7 +161,7 @@
 }
 
 @media (max-width: 768px) {
-  .stats-grid {
+  .stats-grid-platformstats {
     grid-template-columns: 1fr;
     gap: 1rem;
   }

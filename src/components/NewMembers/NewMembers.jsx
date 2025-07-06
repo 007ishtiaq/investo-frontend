@@ -14,7 +14,7 @@ const NewMembers = ({ members = [] }) => {
           </div>
         </div>
         <div className="total-count">
-          <span className="count-number">{members.length}</span>
+          <span className="count-number">{178}</span>
           <span className="count-label">this week</span>
         </div>
       </div>

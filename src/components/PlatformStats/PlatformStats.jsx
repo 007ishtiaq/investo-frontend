@@ -40,13 +40,13 @@ const PlatformStats = ({ stats = {} }) => {
         <div className="platform-stats-badge">Live Data</div>
       </div>
 
-      <div className="stats-grid">
-        <div className="stat-card">
+      <div className="stats-grid-platformstats">
+        <div className="stat-card-platformstats">
           <div className="stat-icon-wrapper purple">
             <DollarSign size={20} className="stat-icon" />
           </div>
           <div className="stat-info">
-            <h3 className="stat-value">
+            <h3 className="stat-value-platformstats">
               $<Counter end={stats.totalInvested || 1250000} />
             </h3>
             <p className="stat-name">Total Invested</p>
@@ -56,12 +56,12 @@ const PlatformStats = ({ stats = {} }) => {
           </div>
         </div>
 
-        <div className="stat-card">
+        <div className="stat-card-platformstats">
           <div className="stat-icon-wrapper blue">
             <Users size={20} className="stat-icon" />
           </div>
           <div className="stat-info">
-            <h3 className="stat-value">
+            <h3 className="stat-value-platformstats">
               <Counter end={stats.totalUsers || 12574} />
             </h3>
             <p className="stat-name">Total Users</p>
@@ -71,12 +71,12 @@ const PlatformStats = ({ stats = {} }) => {
           </div>
         </div>
 
-        <div className="stat-card">
+        <div className="stat-card-platformstats">
           <div className="stat-icon-wrapper gold">
             <Award size={20} className="stat-icon" />
           </div>
           <div className="stat-info">
-            <h3 className="stat-value">
+            <h3 className="stat-value-platformstats">
               $<Counter end={stats.totalRewards || 385000} />
             </h3>
             <p className="stat-name">Rewards Paid</p>
@@ -86,12 +86,12 @@ const PlatformStats = ({ stats = {} }) => {
           </div>
         </div>
 
-        <div className="stat-card">
+        <div className="stat-card-platformstats">
           <div className="stat-icon-wrapper green">
             <Percent size={20} className="stat-icon" />
           </div>
           <div className="stat-info">
-            <h3 className="stat-value">
+            <h3 className="stat-value-platformstats">
               <Counter end={stats.avgReturn || 21.5} decimal={true} />%
             </h3>
             <p className="stat-name">Avg. Return Rate</p>

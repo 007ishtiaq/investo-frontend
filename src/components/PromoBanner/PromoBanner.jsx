@@ -1,7 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 import "./PromoBanner.css";
 
 const PromoBanner = () => {
+  const history = useHistory();
+  const [isNavigating, setIsNavigating] = useState(false);
+
+  const handleSignUp = () => {
+    setIsNavigating(true);
+    setTimeout(() => {
+      history.push("/register");
+      setIsNavigating(false);
+    }, 300);
+  };
+
+  const handleEarnings = () => {
+    setIsNavigating(true);
+    setTimeout(() => {
+      history.push("/plans");
+      setIsNavigating(false);
+    }, 300);
+  };
+
   return (
     <section className="promo-banner">
       <div className="promo-banner-container">
@@ -37,8 +57,20 @@ const PromoBanner = () => {
           </p>
 
           <div className="promo-buttons">
-            <button className="btn-get-started">SIGN UP</button>
-            <button className="btn-auction">EARNINGS</button>
+            <button
+              className="btn-get-started"
+              onClick={handleSignUp}
+              disabled={isNavigating}
+            >
+              {isNavigating ? "Loading..." : "SIGN UP"}
+            </button>
+            <button
+              className="btn-auction"
+              onClick={handleEarnings}
+              disabled={isNavigating}
+            >
+              {isNavigating ? "Loading..." : "EARNINGS"}
+            </button>
           </div>
         </div>
       </div>

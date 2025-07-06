@@ -217,22 +217,22 @@ const sampleTransactions = [
 const sampleMembers = [
   {
     name: "Emma Davis",
-    joinDate: "2 days ago",
+    joinDate: "1 days ago",
     initialInvestment: 250,
-    level: 1,
+    level: 2,
     color: "#7c3aed",
   },
   {
     name: "James Wilson",
-    joinDate: "3 days ago",
-    initialInvestment: 500,
-    level: 2,
+    joinDate: "2 days ago",
+    initialInvestment: 1000,
+    level: 4,
     color: "#3b82f6",
   },
   {
     name: "Sarah Johnson",
-    joinDate: "4 days ago",
-    initialInvestment: 1000,
+    joinDate: "2 days ago",
+    initialInvestment: 500,
     level: 3,
     color: "#f59e0b",
   },
@@ -313,22 +313,27 @@ function Home() {
       <HeroBanner theme="light" />
 
       <div className="container">
-        <ActiveMembersStats stats={sampleActiveStats} />
-        <Transactionsbanner transactions={sampleTransactions} />
-        <InvestmentPlansShowcase plans={samplePlans} />
-        <PlatformStats stats={sampleStats} />
-        <NewMembers members={sampleMembers} />
         <HeroSlider />
         <main className="marketplace-content">
           <div className="marketplace-sections">
             <FeaturedNFT nft={featuredNFT} />
             <NFTCollectionsGrid collections={cardcollections} />
           </div>
-          <NFTCollectionItems nfts={nfts1} />
+        </main>
+        <PlatformStats stats={sampleStats} />
+
+        <ActiveMembersStats stats={sampleActiveStats} />
+        {/* <Transactionsbanner transactions={sampleTransactions} /> */}
+        {/* <InvestmentPlansShowcase plans={samplePlans} /> */}
+        <NewMembers members={sampleMembers} />
+
+        <main className="marketplace-content">
+          {/* <NFTCollectionItems nfts={nfts1} /> */}
           <PromoBanner />
         </main>
-        <NFTMarketplace nfts={nfts} creators={creatorsById} />
-        <CTASection />
+
+        {/* <NFTMarketplace nfts={nfts} creators={creatorsById} /> */}
+        {/* <CTASection /> */}
       </div>
     </div>
   );

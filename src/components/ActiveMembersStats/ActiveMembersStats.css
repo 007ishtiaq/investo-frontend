@@ -1,5 +1,6 @@
 .active-members-container {
-  background: rgba(255, 255, 255, 0.7);
+  margin: 2rem 0;
+  background: linear-gradient(135deg, #c8d4ff 0%, #e8eeff 50%, #f7f8ff 100%);
   backdrop-filter: blur(10px);
   border-radius: 1rem;
   padding: 1.5rem;
