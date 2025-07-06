@@ -2,12 +2,15 @@ import React, { useState } from "react";
 import CryptoIcon from "../../assets/icons/CryptoIcon";
 import VerifiedIcon from "../../assets/icons/VerifiedIcon";
 import "./NFTCollectionsGrid.css";
+import { useHistory } from "react-router-dom";
 
 const NFTCollectionsGrid = ({ collections }) => {
-  const [isShowingMore, setIsShowingMore] = useState(false);
+  const [isShowingMore, setIsShowingMore] = useState(true);
 
-  const toggleShowMore = () => {
-    setIsShowingMore(!isShowingMore);
+  const history = useHistory();
+
+  const handleRedirect = () => {
+    history.push("/plans");
   };
 
   // Check if collections is undefined, null, or not an array
@@ -38,10 +41,9 @@ const NFTCollectionsGrid = ({ collections }) => {
   return (
     <section className="collections-grid-container">
       <div className="collections-header">
-        <h2 className="collections-title">TOP COLLECTIONS OVER</h2>
-        <div className="collections-timeframe">Last 24 Hours</div>
-        <button className="more-button" onClick={toggleShowMore}>
-          {isShowingMore ? "Less" : "More"}
+        <h2 className="collections-title">TOP RECENT COLLECTIONS</h2>
+        <button onClick={handleRedirect} className="more-button">
+          Invest
         </button>
       </div>
 
@@ -66,7 +68,7 @@ const NFTCollectionsGrid = ({ collections }) => {
             <div className="collection-details">
               <div className="collection-name">{collection.name}</div>
               <div className="collection-volume">
-                <CryptoIcon type="USDT" />
+                <CryptoIcon type="USD" />
                 <span>{collection.volume}</span>
               </div>
             </div>

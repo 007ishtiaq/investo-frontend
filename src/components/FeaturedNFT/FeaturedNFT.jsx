@@ -57,14 +57,14 @@ const FeaturedNFT = ({ nft }) => {
                   }}
                 />
               </div>
-              <span className="bid-label">Highest Bid</span>
+              <span className="bid-label">Highest Collection</span>
             </div>
           </div>
 
           <div className="price-tag">
             <div className="price-content">
-              <CryptoIcon type="USDT" />
-              <span className="price-amount">{nft.price} USDT</span>
+              <CryptoIcon type="USD" />
+              <span className="price-amount">{nft.price} USD</span>
             </div>
           </div>
         </div>

@@ -49,6 +49,19 @@ const ActiveMembersStats = ({
         <div className="member-avatars">
           {[...Array(8)].map((_, i) => (
             <div key={i} className={`member-avatar avatar-${i + 1}`}>
+              <img
+                src={`/images/random/${i + 11}.jpg`}
+                alt={`Member ${i + 1}`}
+                className="avatar-image"
+                onError={(e) => {
+                  // Fallback if image doesn't exist
+                  e.target.style.display = "none";
+                  e.target.nextSibling.style.display = "flex";
+                }}
+              />
+              <div className="avatar-fallback" style={{ display: "none" }}>
+                {String.fromCharCode(65 + i)}
+              </div>
               <span className="member-status-indicator"></span>
             </div>
           ))}

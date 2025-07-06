@@ -23,11 +23,26 @@ const NewMembers = ({ members = [] }) => {
         {members.length > 0 ? (
           members.map((member, index) => (
             <div key={index} className="member-item">
-              <div
-                className="member-avatar"
-                style={{ backgroundColor: member.color || "#7c3aed" }}
-              >
-                {member.name.charAt(0)}
+              <div className="member-avatar-newmember">
+                <img
+                  src={member.avatar || `/images/random/${(index % 8) + 1}.jpg`}
+                  alt={member.name}
+                  className="avatar-image"
+                  onError={(e) => {
+                    // Fallback if image doesn't exist
+                    e.target.style.display = "none";
+                    e.target.nextSibling.style.display = "flex";
+                  }}
+                />
+                <div
+                  className="avatar-fallback"
+                  style={{
+                    display: "none",
+                    backgroundColor: member.color || "#7c3aed",
+                  }}
+                >
+                  {member.name.charAt(0)}
+                </div>
               </div>
               <div className="member-info">
                 <div className="member-name">{member.name}</div>

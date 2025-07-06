@@ -92,11 +92,10 @@ const demoCollections = [
 
 const sampleNFTs = [
   {
-    name: "King Pepe #001",
+    name: "Zavier Stark",
     tokenId: "001",
-    price: 12.45,
-    imageUrl:
-      "https://prodimage-dan.treasurenft.xyz/Stake/Stake_04988_compre.png",
+    price: 1223.45,
+    imageUrl: "/images/random/10.jpg",
     collectionId: 1,
     creatorAvatar: "https://placehold.co/50x50/4CD6B0/FFFFFF.png?text=CREATOR",
     description: "The king of all Pepe frogs, ruling with a green fist.",
@@ -150,53 +149,50 @@ const sampleNFTs = [
 
 const sampleCollections = [
   {
-    name: "Pepe Frog Nobility",
-    avatarUrl:
-      "https://prodimage-dan.treasurenft.xyz/PEPE_Frog_Nobility/PEPE_Frog_Nobility7663_compre.png",
-    volume: "243.12",
+    name: "Lochlan Andrade",
+    avatarUrl: "/images/random/1.jpg",
+    volume: "543.12",
     change: "+12.45%",
     isVerified: true,
     rank: 1,
   },
   {
-    name: "King Pepe",
-    avatarUrl:
-      "https://prodimage-dan.treasurenft.xyz/PEPE_Frog_Nobility/PEPE_Frog_Nobility7663_compre.png",
-    volume: "187.34",
+    name: "Nadia Levy",
+    avatarUrl: "/images/random/5.jpg",
+    volume: "387.34",
     change: "+8.77%",
     isVerified: true,
     rank: 2,
   },
   {
-    name: "Duke Pepe",
-    avatarUrl:
-      "https://prodimage-dan.treasurenft.xyz/PEPE_Frog_Nobility/PEPE_Frog_Nobility7663_compre.png",
-    volume: "142.56",
+    name: "Destiny Herrera",
+    avatarUrl: "/images/random/8.jpg",
+    volume: "242.56",
     change: "+5.23%",
     isVerified: true,
     rank: 3,
   },
   {
-    name: "Baron Pepe",
-    avatarUrl: "https://placehold.co/100x100/4CD6B0/FFFFFF.png?text=BARON",
-    volume: "95.87",
-    change: "-2.14%",
-    isVerified: false,
+    name: "Kamryn Ryan",
+    avatarUrl: "/images/random/4.jpg",
+    volume: "195.87",
+    change: "+2.14%",
+    isVerified: true,
     rank: 4,
   },
   {
-    name: "Knight Pepe",
-    avatarUrl: "https://placehold.co/100x100/4CD6B0/FFFFFF.png?text=KNIGHT",
-    volume: "67.23",
+    name: "Johin Ravi",
+    avatarUrl: "/images/random/7.jpg",
+    volume: "167.23",
     change: "+3.67%",
     isVerified: true,
     rank: 5,
   },
   {
-    name: "Lord Pepe",
-    avatarUrl: "https://placehold.co/100x100/4CD6B0/FFFFFF.png?text=LORD",
-    volume: "45.19",
-    change: "-1.54%",
+    name: "Drove Jakob",
+    avatarUrl: "/images/random/6.jpg",
+    volume: "145.19",
+    change: "+1.54%",
     isVerified: true,
     rank: 6,
   },
@@ -221,6 +217,7 @@ const sampleMembers = [
     initialInvestment: 250,
     level: 2,
     color: "#7c3aed",
+    avatar: "/images/random/19.jpg", // Add avatar field
   },
   {
     name: "James Wilson",
@@ -228,6 +225,7 @@ const sampleMembers = [
     initialInvestment: 1000,
     level: 4,
     color: "#3b82f6",
+    avatar: "/images/random/20.jpg", // Add avatar field
   },
   {
     name: "Sarah Johnson",
@@ -235,6 +233,7 @@ const sampleMembers = [
     initialInvestment: 500,
     level: 3,
     color: "#f59e0b",
+    avatar: "/images/random/21.jpg", // Add avatar field
   },
 ];
 

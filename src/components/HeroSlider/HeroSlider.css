@@ -1,4 +1,5 @@
 .hero-slider-container {
+  margin: 2rem 0;
   position: relative;
   width: 100%;
   margin-bottom: 2rem;
@@ -66,7 +67,7 @@
 @media (min-width: 768px) {
   .slide-text {
     max-width: 75%;
-    margin: 0 0 0 2rem;
+    margin: 0 0 0 4rem;
   }
 }
 

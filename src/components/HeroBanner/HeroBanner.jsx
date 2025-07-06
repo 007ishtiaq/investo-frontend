@@ -54,10 +54,10 @@ const HeroBanner = ({ theme = "light" }) => {
             </p>
 
             <div className="hero-cta-container animate-fade-in">
-              <Link to="/invest" className="hero-cta-primary pulse-effect">
+              <Link to="/plans" className="hero-cta-primary pulse-effect">
                 Start Investing <ArrowRight size={18} />
               </Link>
-              <Link to="/affiliate" className="hero-cta-secondary hover-lift">
+              <Link to="/team" className="hero-cta-secondary hover-lift">
                 Join Affiliate Program
               </Link>
             </div>

@@ -267,7 +267,7 @@ const Plans = () => {
                 <div className="stat-item">
                   <div className="stats-value-plans">
                     <StatsCounter
-                      value={10000}
+                      value={12600}
                       suffix="+"
                       duration={2}
                       triggerAnimation={animationTriggered}
@@ -280,7 +280,7 @@ const Plans = () => {
                   <div className="stats-value-plans">
                     <span className="stat-prefix">$</span>
                     <StatsCounter
-                      value={25}
+                      value={2.5}
                       suffix="M+"
                       duration={2}
                       triggerAnimation={animationTriggered}

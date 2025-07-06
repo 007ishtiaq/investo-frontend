@@ -15,8 +15,7 @@ const HeroSlider = () => {
       title: "Discover Rare NFT Collections",
       description:
         "Explore unique digital assets from top creators around the world",
-      imageUrl:
-        "https://placehold.co/1200x400/4B0082/FFFFFF.png?text=RARE+NFT+COLLECTIONS",
+      imageUrl: "/images/benner1.png",
       ctaText: "Explore Collections",
     },
     {
@@ -24,8 +23,7 @@ const HeroSlider = () => {
       title: "New Pepe Frog Drops",
       description:
         "Limited edition Pepe Frog NFTs now available for early access",
-      imageUrl:
-        "https://placehold.co/1200x400/006400/FFFFFF.png?text=PEPE+FROG+DROPS",
+      imageUrl: "/images/benner3.png",
       ctaText: "Get Early Access",
     },
     {
@@ -33,24 +31,21 @@ const HeroSlider = () => {
       title: "NFT Trading Competition",
       description:
         "Join our weekly trading competition and win exclusive rewards",
-      imageUrl:
-        "https://placehold.co/1200x400/800000/FFFFFF.png?text=TRADING+COMPETITION",
+      imageUrl: "/images/benner2.png",
       ctaText: "Join Now",
     },
     {
       id: 4,
       title: "Create Your Own NFT",
       description: "Use our platform to mint and sell your digital artwork",
-      imageUrl:
-        "https://placehold.co/1200x400/000080/FFFFFF.png?text=CREATE+YOUR+NFT",
+      imageUrl: "/images/benner4.png",
       ctaText: "Start Creating",
     },
     {
       id: 5,
       title: "Trending Collections",
       description: "See what's hot in the NFT marketplace this week",
-      imageUrl:
-        "https://placehold.co/1200x400/2F4F4F/FFFFFF.png?text=TRENDING+COLLECTIONS",
+      imageUrl: "/images/benner5.png",
       ctaText: "View Trending",
     },
   ];
