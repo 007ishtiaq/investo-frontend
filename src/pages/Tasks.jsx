@@ -1202,11 +1202,13 @@ const Tasks = () => {
                       <p className="level-description">
                         {isLevelLocked
                           ? `Purchase Level ${level} plan to unlock these tasks`
-                          : `Complete all 5 tasks to earn $${totalReward.toFixed(
-                              3
-                            )} total (${
+                          : `(${
                               levelConfig[levelNum].rewardPercentage
-                            }% of your invested amount on the Plan)`}
+                            }% of your invested amount $${
+                              getUserInvestmentForLevel(
+                                levelNum
+                              )?.amount?.toFixed(2) || "0.00"
+                            } on the Plan)`}
                       </p>
                     </div>
                     {!isLevelLocked && (

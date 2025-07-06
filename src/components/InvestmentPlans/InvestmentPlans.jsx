@@ -146,6 +146,20 @@ const PlanItem = ({
     return "Upgrade Plan";
   };
 
+  const getInvestedAmountForPlan = () => {
+    if (!userInvestments || userInvestments.length === 0) return 0;
+
+    const investment = userInvestments.find(
+      (investment) =>
+        investment.plan._id === plan._id ||
+        investment.plan === plan._id ||
+        investment.plan?.minLevel === plan.minLevel
+    );
+
+    return investment ? investment.amount : 0;
+  };
+  const investedAmount = getInvestedAmountForPlan();
+
   return (
     <>
       <div
@@ -158,6 +172,14 @@ const PlanItem = ({
         <div className="plan-header-invest">
           <div>
             <h3 className="plan-title">{plan.name}</h3>
+            <div className="plan-investment-info">
+              <span className="investment-label">Your Investment: </span>
+              <span className="investment-value">
+                {investedAmount === 0
+                  ? "$0.00"
+                  : `$${investedAmount.toFixed(2)}`}
+              </span>
+            </div>
             <p className="plan-description">{plan.description}</p>
           </div>
           <span className={`plan-status ${planStatus.className}`}>
