@@ -160,7 +160,7 @@ function App() {
           {/* 404 Page */}
           <Route path="*" component={NotFound} />
         </Switch>
-        <Headerbottom />
+        {/* <Headerbottom /> */}
         <Footer />
       </Router>
     </Suspense>
