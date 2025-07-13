@@ -59,10 +59,10 @@ const Layout = ({ children, onTransactionUpdate }) => {
       {/* Mobile Navigation */}
       <div className="mobile-nav">
         <div className="mobile-nav-grid">
-          <Link to="/" className="mobile-nav-link">
+          <Link to="/Dashboard" className="mobile-nav-link">
             <div
               className={`mobile-nav-item ${
-                location.pathname === "/" ? "mobile-nav-active" : ""
+                location.pathname === "/Dashboard" ? "mobile-nav-active" : ""
               }`}
             >
               <LineChart className="mobile-nav-icon" />
@@ -90,10 +90,10 @@ const Layout = ({ children, onTransactionUpdate }) => {
               <span className="mobile-nav-label">Invest</span>
             </div>
           </Link>
-          <Link to="/" className="mobile-nav-link">
+          <Link to="/history" className="mobile-nav-link">
             <div
               className={`mobile-nav-item ${
-                location.pathname === "/" ? "mobile-nav-active" : ""
+                location.pathname === "/history" ? "mobile-nav-active" : ""
               }`}
             >
               <LineChart className="mobile-nav-icon" />

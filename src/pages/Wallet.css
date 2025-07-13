@@ -603,6 +603,15 @@
     padding: 0.625rem 1.25rem;
     font-size: 0.8rem;
   }
+  .wallet-page {
+    padding: 0px 0;
+  }
+  .main-page-content {
+    padding: 0;
+  }
+  .wallet-page .container {
+    padding: 0;
+  }
 }
 
 /* Dark mode support */

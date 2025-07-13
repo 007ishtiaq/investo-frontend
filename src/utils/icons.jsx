@@ -186,7 +186,7 @@ export const ChevronDownIcon = ({ size = 24, className = "" }) => {
 /**
  * Chart Icon component
  */
-export const DiscordIcon = ({ size = 24, className = "" }) => {
+export const TiktokIcon = ({ size = 24, className = "" }) => {
   return (
     <svg
       width={size}
@@ -197,7 +197,7 @@ export const DiscordIcon = ({ size = 24, className = "" }) => {
       className={className}
     >
       <path
-        d="M8 13V17M12 9V17M16 5V17M5 21H19C20.1046 21 21 20.1046 21 19V5C21 3.89543 20.1046 3 19 3H5C3.89543 3 3 3.89543 3 5V19C3 20.1046 3.89543 21 5 21Z"
+        d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"
         stroke="currentColor"
         strokeWidth="2"
         strokeLinecap="round"
@@ -221,7 +221,23 @@ export const InstagramIcon = ({ size = 24, className = "" }) => {
       className={className}
     >
       <path
-        d="M8 13V17M12 9V17M16 5V17M5 21H19C20.1046 21 21 20.1046 21 19V5C21 3.89543 20.1046 3 19 3H5C3.89543 3 3 3.89543 3 5V19C3 20.1046 3.89543 21 5 21Z"
+        d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle
+        cx="12"
+        cy="12"
+        r="3"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="m16.5 7.5.01 0"
         stroke="currentColor"
         strokeWidth="2"
         strokeLinecap="round"
@@ -234,7 +250,7 @@ export const InstagramIcon = ({ size = 24, className = "" }) => {
 /**
  * Chart Icon component
  */
-export const TwitterIcon = ({ size = 24, className = "" }) => {
+export const TelegramIcon = ({ size = 24, className = "" }) => {
   return (
     <svg
       width={size}
@@ -245,7 +261,12 @@ export const TwitterIcon = ({ size = 24, className = "" }) => {
       className={className}
     >
       <path
-        d="M8 13V17M12 9V17M16 5V17M5 21H19C20.1046 21 21 20.1046 21 19V5C21 3.89543 20.1046 3 19 3H5C3.89543 3 3 3.89543 3 5V19C3 20.1046 3.89543 21 5 21Z"
+        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
+      <path
+        d="m8 13 2.165 1.99a1 1 0 001.521-.126L16 10.5M8 13l7.5-6M8 13l-1-4 12.5-4.5L16 10.5"
         stroke="currentColor"
         strokeWidth="2"
         strokeLinecap="round"
@@ -269,12 +290,13 @@ export const YoutubeIcon = ({ size = 24, className = "" }) => {
       className={className}
     >
       <path
-        d="M8 13V17M12 9V17M16 5V17M5 21H19C20.1046 21 21 20.1046 21 19V5C21 3.89543 20.1046 3 19 3H5C3.89543 3 3 3.89543 3 5V19C3 20.1046 3.89543 21 5 21Z"
+        d="M22.54 6.42C22.37 5.73 21.87 5.18 21.23 5C19.73 4.57 12 4.57 12 4.57S4.27 4.57 2.77 5C2.13 5.18 1.63 5.73 1.46 6.42C1 8.05 1 11.43 1 11.43S1 14.81 1.46 16.44C1.63 17.13 2.13 17.68 2.77 17.86C4.27 18.29 12 18.29 12 18.29S19.73 18.29 21.23 17.86C21.87 17.68 22.37 17.13 22.54 16.44C23 14.81 23 11.43 23 11.43S23 8.05 22.54 6.42Z"
         stroke="currentColor"
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
+      <path d="M9.75 15.02L15.5 11.43L9.75 7.84V15.02Z" fill="currentColor" />
     </svg>
   );
 };

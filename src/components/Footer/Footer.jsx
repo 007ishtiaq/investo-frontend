@@ -1,10 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import {
-  TwitterIcon,
-  InstagramIcon,
-  DiscordIcon,
+  TelegramIcon,
+  TiktokIcon,
   YoutubeIcon,
+  InstagramIcon,
 } from "../../utils/icons";
 
 /**
@@ -33,7 +33,7 @@ const Footer = () => {
                   rel="noopener noreferrer"
                   className="social-link"
                 >
-                  <TwitterIcon size={20} />
+                  <TelegramIcon size={20} />
                 </a>
                 <a
                   href="https://instagram.com"
@@ -49,7 +49,7 @@ const Footer = () => {
                   rel="noopener noreferrer"
                   className="social-link"
                 >
-                  <DiscordIcon size={20} />
+                  <TiktokIcon size={20} />
                 </a>
                 <a
                   href="https://youtube.com"
@@ -82,7 +82,7 @@ const Footer = () => {
                 </ul>
               </div>
 
-              <div className="footer-links-column">
+              <div className="footer-links-column footer-to-hide">
                 <h4 className="footer-column-title">Navigation</h4>
                 <ul className="footer-links">
                   <li>
@@ -193,8 +193,8 @@ document.head.appendChild(document.createElement("style")).textContent = `
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: var(--color-background);
-  color: var(--color-text-primary);
+  background-color: #d9dfff;
+  color: #546bb1;
   transition: background-color var(--transition-fast), color var(--transition-fast);
 }
 
@@ -205,15 +205,22 @@ document.head.appendChild(document.createElement("style")).textContent = `
 
 .footer-links-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
 }
 
 @media (min-width: 768px) {
   .footer-links-grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 }
+  @media (max-width: 450px) {
+   .footer-links-grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+  .footer-to-hide{
+  display: none;}
+  }
 
 .footer-column-title {
   font-size: 1rem;

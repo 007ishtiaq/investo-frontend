@@ -79,8 +79,6 @@ const formatDate = (dateString) => {
     year: "numeric",
     month: "short",
     day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
   });
 };
 
@@ -295,12 +293,13 @@ const Wallet = ({ onTransactionUpdate }) => {
                   <div className="balance-label">Available Balance</div>
                   <div className="balance-amount-wallet">
                     <EthereumIcon size={24} />
-                    <span>${wallet.balance.toFixed(3)} USD</span>
+                    <span>{wallet.balance.toFixed(3)} USD</span>
                   </div>
                   <div className="wallet-info">
                     <div className="wallet-id">Wallet ID: {wallet._id}</div>
                     <div className="last-updated">
-                      Last updated: {formatDate(wallet.lastUpdated)}
+                      Last updated:
+                      <span> {formatDate(wallet.lastUpdated)}</span>
                     </div>
                   </div>
                 </div>
