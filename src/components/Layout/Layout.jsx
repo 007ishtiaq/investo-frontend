@@ -96,7 +96,7 @@ const Layout = ({ children, onTransactionUpdate }) => {
                 location.pathname === "/history" ? "mobile-nav-active" : ""
               }`}
             >
-              <LineChart className="mobile-nav-icon" />
+              <History className="mobile-nav-icon" />
               <span className="mobile-nav-label">History</span>
             </div>
           </Link>

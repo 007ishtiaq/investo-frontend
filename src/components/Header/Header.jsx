@@ -9,7 +9,7 @@ import {
   Users,
   LogOut,
   ClipboardList,
-  Settings,
+  Target,
   UserPlus,
   LogIn,
 } from "lucide-react";
@@ -157,7 +157,7 @@ const Header = () => {
                 Logout
               </button>
               <Link
-                to="/wallet"
+                to="/Dashboard"
                 className="user-balance connect-wallet-button gradient-bg wallet-button"
               >
                 <WalletIcon size={16} />
@@ -209,19 +209,19 @@ const Header = () => {
                       </div>
                     </Link>
                     <Link
-                      to="/wallet"
+                      to="/plans"
                       className="dropdown-link"
                       onClick={() => setShowMobileMenu(false)}
                     >
                       <div
                         className={`dropdown-item ${
-                          location.pathname === "/wallet"
+                          location.pathname === "/plans"
                             ? "dropdown-item-active"
                             : ""
                         }`}
                       >
-                        <Wallet2 className="dropdown-icon" />
-                        Wallet
+                        <Target className="dropdown-icon" />
+                        Investment Plans
                       </div>
                     </Link>
                     <Link
@@ -256,42 +256,59 @@ const Header = () => {
                         My Team
                       </div>
                     </Link>
-                    <Link
-                      to="/invest"
-                      className="dropdown-link"
-                      onClick={() => setShowMobileMenu(false)}
-                    >
-                      <div
-                        className={`dropdown-item ${
-                          location.pathname === "/invest"
-                            ? "dropdown-item-active"
-                            : ""
-                        }`}
-                      >
-                        <BarChart3 className="dropdown-icon" />
-                        Invest
-                      </div>
-                    </Link>
-                    <Link
-                      to="/history"
-                      className="dropdown-link"
-                      onClick={() => setShowMobileMenu(false)}
-                    >
-                      <div
-                        className={`dropdown-item ${
-                          location.pathname === "/history"
-                            ? "dropdown-item-active"
-                            : ""
-                        }`}
-                      >
-                        <History className="dropdown-icon" />
-                        History
-                      </div>
-                    </Link>
                   </div>
 
                   {user ? (
                     <div className="dropdown-section dropdown-section-border">
+                      <Link
+                        to="/wallet"
+                        className="dropdown-link"
+                        onClick={() => setShowMobileMenu(false)}
+                      >
+                        <div
+                          className={`dropdown-item ${
+                            location.pathname === "/wallet"
+                              ? "dropdown-item-active"
+                              : ""
+                          }`}
+                        >
+                          <Wallet2 className="dropdown-icon" />
+                          Wallet
+                        </div>
+                      </Link>
+
+                      <Link
+                        to="/invest"
+                        className="dropdown-link"
+                        onClick={() => setShowMobileMenu(false)}
+                      >
+                        <div
+                          className={`dropdown-item ${
+                            location.pathname === "/invest"
+                              ? "dropdown-item-active"
+                              : ""
+                          }`}
+                        >
+                          <BarChart3 className="dropdown-icon" />
+                          Invest
+                        </div>
+                      </Link>
+                      <Link
+                        to="/history"
+                        className="dropdown-link"
+                        onClick={() => setShowMobileMenu(false)}
+                      >
+                        <div
+                          className={`dropdown-item ${
+                            location.pathname === "/history"
+                              ? "dropdown-item-active"
+                              : ""
+                          }`}
+                        >
+                          <History className="dropdown-icon" />
+                          History
+                        </div>
+                      </Link>
                       <Link
                         to="/profile"
                         className="dropdown-link"
@@ -308,42 +325,18 @@ const Header = () => {
                           Profile
                         </div>
                       </Link>
-                      <Link
-                        to="/profile"
-                        className="dropdown-link"
-                        onClick={() => setShowMobileMenu(false)}
-                      >
-                        <div className="dropdown-item">
-                          <Settings className="dropdown-icon" />
-                          Settings
-                        </div>
-                      </Link>
-                      <button
-                        className="dropdown-button dropdown-button-danger"
-                        onClick={handleLogout}
-                      >
-                        <LogOut className="dropdown-icon" />
-                        Logout
-                      </button>
+                      <div className="dropdown-section dropdown-section-border">
+                        <button
+                          className="dropdown-button dropdown-button-danger dropdown-item"
+                          onClick={handleLogout}
+                        >
+                          <LogOut className="dropdown-icon" />
+                          Logout
+                        </button>
+                      </div>
                     </div>
                   ) : (
                     <div className="dropdown-section dropdown-section-border">
-                      <Link
-                        to="/login"
-                        className="dropdown-link"
-                        onClick={() => setShowMobileMenu(false)}
-                      >
-                        <div
-                          className={`dropdown-item ${
-                            location.pathname === "/login"
-                              ? "dropdown-item-active"
-                              : ""
-                          }`}
-                        >
-                          <LogIn className="dropdown-icon" />
-                          Login
-                        </div>
-                      </Link>
                       <Link
                         to="/register"
                         className="dropdown-link"
@@ -358,6 +351,22 @@ const Header = () => {
                         >
                           <UserPlus className="dropdown-icon" />
                           Sign Up
+                        </div>
+                      </Link>
+                      <Link
+                        to="/login"
+                        className="dropdown-link"
+                        onClick={() => setShowMobileMenu(false)}
+                      >
+                        <div
+                          className={`dropdown-item ${
+                            location.pathname === "/login"
+                              ? "dropdown-item-active"
+                              : ""
+                          }`}
+                        >
+                          <LogIn className="dropdown-icon" />
+                          Login
                         </div>
                       </Link>
                     </div>
