@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./HeroBanner.css";
+import "../mobileadj.css";
 import {
   ArrowRight,
   TrendingUp,
@@ -151,20 +152,20 @@ const HeroBanner = ({ theme = "light" }) => {
               </div>
 
               <div className="card-features">
-                <div className="feature-item hover-highlight">
-                  <TrendingUp size={18} className="feature-icon" />
+                <div className="feature-item-hero hover-highlight">
+                  <TrendingUp size={18} className="feature-icon-hero" />
                   <span>Daily returns</span>
                 </div>
-                <div className="feature-item hover-highlight">
-                  <Users size={18} className="feature-icon" />
+                <div className="feature-item-hero hover-highlight">
+                  <Users size={18} className="feature-icon-hero" />
                   <span>Affiliate rewards</span>
                 </div>
-                <div className="feature-item hover-highlight">
-                  <DollarSign size={18} className="feature-icon" />
+                <div className="feature-item-hero hover-highlight">
+                  <DollarSign size={18} className="feature-icon-hero" />
                   <span>Multiple tiers</span>
                 </div>
-                <div className="feature-item hover-highlight">
-                  <Shield size={18} className="feature-icon" />
+                <div className="feature-item-hero hover-highlight">
+                  <Shield size={18} className="feature-icon-hero" />
                   <span>Secure platform</span>
                 </div>
               </div>

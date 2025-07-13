@@ -210,16 +210,17 @@
   .mobile-nav {
     display: block;
     background-color: var(--card-bg, white);
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
     border-radius: 0.5rem;
-    margin: 1.5rem 1rem 1rem;
+    margin: 1rem 0rem;
     overflow: hidden;
+    padding: 0;
   }
 }
 
 .mobile-nav-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   border-right-width: 1px;
   border-right-color: var(--border-color, #e5e7eb);
 }
@@ -238,7 +239,7 @@
 }
 
 .mobile-nav-active {
-  color: var(--primary-color, #3b82f6);
+  color: var(--primary-color, #4852cd);
 }
 
 .mobile-nav-icon {

@@ -64,55 +64,38 @@ const Footer = () => {
 
             <div className="footer-links-grid">
               <div className="footer-links-column">
-                <h4 className="footer-column-title">Marketplace</h4>
-                <ul className="footer-links">
-                  <li>
-                    <Link to="/explore">Explore</Link>
-                  </li>
-                  <li>
-                    <Link to="/collections">Collections</Link>
-                  </li>
-                  <li>
-                    <Link to="/creators">Creators</Link>
-                  </li>
-                  <li>
-                    <Link to="/activity">Activity</Link>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="footer-links-column">
                 <h4 className="footer-column-title">My Account</h4>
                 <ul className="footer-links">
                   <li>
+                    <Link to="/wallet">Wallet</Link>
+                  </li>
+
+                  <li>
+                    <Link to="/invest">My Investments</Link>
+                  </li>
+                  <li>
+                    <Link to="/history">History</Link>
+                  </li>
+                  <li>
                     <Link to="/profile">Profile</Link>
-                  </li>
-                  <li>
-                    <Link to="/favorites">Favorites</Link>
-                  </li>
-                  <li>
-                    <Link to="/watchlist">Watchlist</Link>
-                  </li>
-                  <li>
-                    <Link to="/settings">Settings</Link>
                   </li>
                 </ul>
               </div>
 
               <div className="footer-links-column">
-                <h4 className="footer-column-title">Resources</h4>
+                <h4 className="footer-column-title">Navigation</h4>
                 <ul className="footer-links">
                   <li>
-                    <Link to="/help-center">Help Center</Link>
+                    <Link to="/">Home</Link>
                   </li>
                   <li>
-                    <Link to="/platform-status">Platform Status</Link>
+                    <Link to="/plans">Plans</Link>
                   </li>
                   <li>
-                    <Link to="/partners">Partners</Link>
+                    <Link to="/tasks">Tasks</Link>
                   </li>
                   <li>
-                    <Link to="/blog">Blog</Link>
+                    <Link to="/team">My Team</Link>
                   </li>
                 </ul>
               </div>
@@ -121,16 +104,16 @@ const Footer = () => {
                 <h4 className="footer-column-title">Company</h4>
                 <ul className="footer-links">
                   <li>
-                    <Link to="/about">About</Link>
+                    <Link to="/terms">Terms</Link>
                   </li>
                   <li>
-                    <Link to="/careers">Careers</Link>
+                    <Link to="/privacy">Privacy</Link>
+                  </li>
+                  <li>
+                    <Link to="/cookies">Cookies</Link>
                   </li>
                   <li>
                     <Link to="/contact">Contact</Link>
-                  </li>
-                  <li>
-                    <Link to="/press">Press</Link>
                   </li>
                 </ul>
               </div>

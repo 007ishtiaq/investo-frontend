@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./HeroSlider.css";
+import "../mobileadj.css";
 
 const HeroSlider = () => {
   const [currentSlide, setCurrentSlide] = useState(0);

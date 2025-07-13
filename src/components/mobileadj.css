@@ -1,0 +1,50 @@
+/* mobile adjustment */
+@media (max-width: 640px) {
+  .hero-cta-container,
+  .hero-content {
+    gap: 0;
+  }
+  .hero-cta-primary {
+    margin-bottom: 1.5rem;
+  }
+  .hero-text-section {
+    margin-bottom: 3.5rem;
+  }
+  .light-theme .feature-icon-hero {
+    width: 25px;
+    height: 25px;
+  }
+  .feature-item-hero {
+    gap: 0;
+  }
+  .feature-item-hero svg {
+    margin-right: 1rem;
+  }
+  .hero-slider-container {
+    margin-bottom: 1.5rem;
+  }
+  .slide-indicators {
+    gap: 0;
+  }
+  .slide-indicator {
+    margin-right: 0.4rem;
+  }
+  .marketplace-sections {
+    gap: 0;
+  }
+  .featured-card-nft {
+    margin-bottom: 1rem;
+  }
+  .promo-buttons {
+    justify-content: flex-start;
+    flex-direction: row;
+  }
+  .btn-get-started,
+  .btn-auction {
+    min-height: 30px;
+    min-width: 130px;
+  }
+  .btn-get-started {
+    margin-right: 0.5rem;
+  }
+}

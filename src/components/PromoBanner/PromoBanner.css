@@ -215,7 +215,7 @@
 @media (max-width: 480px) {
   .promo-buttons {
     gap: 0.75rem;
-    flex-direction: column;
+    /* flex-direction: column; */
     align-items: center;
   }
 }
@@ -231,7 +231,7 @@
   transition: all 0.3s ease;
   border: none;
   outline: none;
-  min-width: 120px;
+  /* min-width: 120px; */
 }
 
 /* Responsive button sizing */
@@ -240,7 +240,7 @@
   .btn-auction {
     padding: 0.7rem 1.4rem;
     font-size: 0.95rem;
-    min-width: 110px;
+    /* min-width: 110px; */
   }
 }
 
@@ -249,8 +249,8 @@
   .btn-auction {
     padding: 0.65rem 1.25rem;
     font-size: 0.9rem;
-    min-width: 140px;
-    width: 100%;
+    /* min-width: 140px; */
+    /* width: 100%; */
     max-width: 200px;
   }
 }
@@ -327,10 +327,10 @@
     margin-bottom: 1.25rem;
   }
 
-  .promo-buttons {
+  /* .promo-buttons {
     justify-content: flex-start;
     flex-direction: row;
-  }
+  } */
 }
 
 /* High DPI displays */

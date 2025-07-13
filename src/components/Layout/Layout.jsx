@@ -69,6 +69,7 @@ const Layout = ({ children, onTransactionUpdate }) => {
               <span className="mobile-nav-label">Dashboard</span>
             </div>
           </Link>
+
           <Link to="/wallet" className="mobile-nav-link">
             <div
               className={`mobile-nav-item ${
@@ -87,6 +88,16 @@ const Layout = ({ children, onTransactionUpdate }) => {
             >
               <BarChart3 className="mobile-nav-icon" />
               <span className="mobile-nav-label">Invest</span>
+            </div>
+          </Link>
+          <Link to="/" className="mobile-nav-link">
+            <div
+              className={`mobile-nav-item ${
+                location.pathname === "/" ? "mobile-nav-active" : ""
+              }`}
+            >
+              <LineChart className="mobile-nav-icon" />
+              <span className="mobile-nav-label">History</span>
             </div>
           </Link>
           <Link to="/profile" className="mobile-nav-link">

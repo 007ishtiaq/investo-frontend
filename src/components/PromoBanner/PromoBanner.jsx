@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import "./PromoBanner.css";
+import "../mobileadj.css";
 
 const PromoBanner = () => {
   const history = useHistory();
