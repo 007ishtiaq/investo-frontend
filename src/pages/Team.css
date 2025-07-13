@@ -2127,7 +2127,7 @@
 .member-info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 1.1rem;
 }
 
 .member-avatar {

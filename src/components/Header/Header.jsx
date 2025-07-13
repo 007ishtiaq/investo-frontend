@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom"; // Added useLocation
 import {
   LineChart,
   Wallet2,
@@ -25,6 +25,7 @@ const Header = () => {
   const isMobile = useIsMobile();
   const dispatch = useDispatch();
   const history = useHistory();
+  const location = useLocation(); // Added useLocation hook
   const { user } = useSelector((state) => ({ ...state }));
   const { walletBalance, walletCurrency, loading } = useWallet();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -76,25 +77,55 @@ const Header = () => {
         {!isMobile && (
           <nav className="main-nav">
             {user ? (
-              <Link to={dashboardPath} className="nav-link">
+              <Link
+                to={dashboardPath}
+                className={`nav-link ${
+                  location.pathname === dashboardPath ? "nav-link-active" : ""
+                }`}
+              >
                 Dashboard
               </Link>
             ) : (
-              <Link to="/" className="nav-link">
+              <Link
+                to="/"
+                className={`nav-link ${
+                  location.pathname === "/" ? "nav-link-active" : ""
+                }`}
+              >
                 Home
               </Link>
             )}
 
-            <Link to="/plans" className="nav-link">
+            <Link
+              to="/plans"
+              className={`nav-link ${
+                location.pathname === "/plans" ? "nav-link-active" : ""
+              }`}
+            >
               Plans
             </Link>
-            <Link to="/tasks" className="nav-link">
+            <Link
+              to="/tasks"
+              className={`nav-link ${
+                location.pathname === "/tasks" ? "nav-link-active" : ""
+              }`}
+            >
               Tasks
             </Link>
-            <Link to="/team" className="nav-link">
+            <Link
+              to="/team"
+              className={`nav-link ${
+                location.pathname === "/team" ? "nav-link-active" : ""
+              }`}
+            >
               My Team
             </Link>
-            <Link to="/contact" className="nav-link">
+            <Link
+              to="/contact"
+              className={`nav-link ${
+                location.pathname === "/contact" ? "nav-link-active" : ""
+              }`}
+            >
               Contact
             </Link>
           </nav>
@@ -166,7 +197,13 @@ const Header = () => {
                       className="dropdown-link"
                       onClick={() => setShowMobileMenu(false)}
                     >
-                      <div className="dropdown-item">
+                      <div
+                        className={`dropdown-item ${
+                          location.pathname === dashboardPath
+                            ? "dropdown-item-active"
+                            : ""
+                        }`}
+                      >
                         <LineChart className="dropdown-icon" />
                         Dashboard
                       </div>
@@ -176,7 +213,13 @@ const Header = () => {
                       className="dropdown-link"
                       onClick={() => setShowMobileMenu(false)}
                     >
-                      <div className="dropdown-item">
+                      <div
+                        className={`dropdown-item ${
+                          location.pathname === "/wallet"
+                            ? "dropdown-item-active"
+                            : ""
+                        }`}
+                      >
                         <Wallet2 className="dropdown-icon" />
                         Wallet
                       </div>
@@ -186,7 +229,13 @@ const Header = () => {
                       className="dropdown-link"
                       onClick={() => setShowMobileMenu(false)}
                     >
-                      <div className="dropdown-item">
+                      <div
+                        className={`dropdown-item ${
+                          location.pathname === "/tasks"
+                            ? "dropdown-item-active"
+                            : ""
+                        }`}
+                      >
                         <ClipboardList className="dropdown-icon" />
                         Tasks
                       </div>
@@ -196,7 +245,13 @@ const Header = () => {
                       className="dropdown-link"
                       onClick={() => setShowMobileMenu(false)}
                     >
-                      <div className="dropdown-item">
+                      <div
+                        className={`dropdown-item ${
+                          location.pathname === "/team"
+                            ? "dropdown-item-active"
+                            : ""
+                        }`}
+                      >
                         <Users className="dropdown-icon" />
                         My Team
                       </div>
@@ -206,7 +261,13 @@ const Header = () => {
                       className="dropdown-link"
                       onClick={() => setShowMobileMenu(false)}
                     >
-                      <div className="dropdown-item">
+                      <div
+                        className={`dropdown-item ${
+                          location.pathname === "/invest"
+                            ? "dropdown-item-active"
+                            : ""
+                        }`}
+                      >
                         <BarChart3 className="dropdown-icon" />
                         Invest
                       </div>
@@ -216,7 +277,13 @@ const Header = () => {
                       className="dropdown-link"
                       onClick={() => setShowMobileMenu(false)}
                     >
-                      <div className="dropdown-item">
+                      <div
+                        className={`dropdown-item ${
+                          location.pathname === "/history"
+                            ? "dropdown-item-active"
+                            : ""
+                        }`}
+                      >
                         <History className="dropdown-icon" />
                         History
                       </div>
@@ -230,7 +297,13 @@ const Header = () => {
                         className="dropdown-link"
                         onClick={() => setShowMobileMenu(false)}
                       >
-                        <div className="dropdown-item">
+                        <div
+                          className={`dropdown-item ${
+                            location.pathname === "/profile"
+                              ? "dropdown-item-active"
+                              : ""
+                          }`}
+                        >
                           <User className="dropdown-icon" />
                           Profile
                         </div>
@@ -260,7 +333,13 @@ const Header = () => {
                         className="dropdown-link"
                         onClick={() => setShowMobileMenu(false)}
                       >
-                        <div className="dropdown-item">
+                        <div
+                          className={`dropdown-item ${
+                            location.pathname === "/login"
+                              ? "dropdown-item-active"
+                              : ""
+                          }`}
+                        >
                           <LogIn className="dropdown-icon" />
                           Login
                         </div>
@@ -270,7 +349,13 @@ const Header = () => {
                         className="dropdown-link"
                         onClick={() => setShowMobileMenu(false)}
                       >
-                        <div className="dropdown-item">
+                        <div
+                          className={`dropdown-item ${
+                            location.pathname === "/register"
+                              ? "dropdown-item-active"
+                              : ""
+                          }`}
+                        >
                           <UserPlus className="dropdown-icon" />
                           Sign Up
                         </div>

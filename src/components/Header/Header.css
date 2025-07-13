@@ -485,6 +485,44 @@
   width: 1rem;
   color: var(--text-muted, #6b7280);
 }
+/* Active navigation styles for desktop */
+.nav-link-active {
+  color: var(--color-primary) !important;
+  font-weight: 600;
+  position: relative;
+}
+
+/* Active navigation styles for mobile dropdown */
+.dropdown-item-active {
+  color: var(--color-primary) !important;
+  background-color: var(--primary-light, rgba(79, 70, 229, 0.1)) !important;
+  font-weight: 600;
+}
+
+.dropdown-item-active .dropdown-icon {
+  color: var(--color-primary) !important;
+}
+
+/* Enhanced hover states */
+.nav-link {
+  position: relative;
+  transition: color var(--transition-fast);
+}
+
+.nav-link:hover:not(.nav-link-active) {
+  color: var(--color-primary);
+  opacity: 0.8;
+}
+
+.dropdown-item {
+  transition: all 0.2s ease;
+  border-radius: 0.25rem;
+  margin: 0.125rem 0.5rem;
+}
+
+.dropdown-item:hover:not(.dropdown-item-active) {
+  background-color: var(--hover-bg, #f3f4f6);
+}
 
 /* Ensure the dropdown doesn't overflow on small screens */
 @media (max-width: 640px) {
