@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { submitDeposit } from "../../functions/deposit";
 import toast from "react-hot-toast";
-import { X } from "lucide-react";
+import { X, Copy } from "lucide-react";
 import NoNetModal from "../../components/NoNetModal/NoNetModal";
 import "./DepositModal.css";
 import { InfoIcon } from "../../utils/icons";
@@ -59,6 +59,12 @@ const DepositModal = ({ isOpen, onClose, onSuccess }) => {
       setIsVisible(false);
     }
   }, [isOpen]);
+
+  // Add this copy function
+  const copyAddress = (address) => {
+    navigator.clipboard.writeText(address);
+    toast.success("Address copied to clipboard!");
+  };
 
   // Handle actual closing after animation completes
   const handleClose = () => {
@@ -271,19 +277,70 @@ const DepositModal = ({ isOpen, onClose, onSuccess }) => {
               {paymentMethod === "bitcoin" && (
                 <div className="payment-address">
                   <p>Bitcoin Address:</p>
-                  <code>bc1q98y7heu5glx5q7v93qjh0x9dsw29ruvjz35g7k</code>
+                  <div className="address-container">
+                    <code>
+                      {process.env.REACT_APP_BITCOIN_ADDRESS ||
+                        "bc1q98y7heu5glx5q7v93qjh0x9dsw29ruvjz35g7k"}
+                    </code>
+                    <button
+                      className="copy-button"
+                      onClick={() =>
+                        copyAddress(
+                          process.env.REACT_APP_BITCOIN_ADDRESS ||
+                            "not getting address from Env"
+                        )
+                      }
+                      type="button"
+                    >
+                      <Copy size={16} />
+                    </button>
+                  </div>
                 </div>
               )}
               {paymentMethod === "ethereum" && (
                 <div className="payment-address">
                   <p>Ethereum Address:</p>
-                  <code>0x4A9E7A088D32B12218e9E67F56beF3A22E5D9298</code>
+                  <div className="address-container">
+                    <code>
+                      {process.env.REACT_APP_ETHEREUM_ADDRESS ||
+                        "not getting address from Env"}
+                    </code>
+                    <button
+                      className="copy-button"
+                      onClick={() =>
+                        copyAddress(
+                          process.env.REACT_APP_ETHEREUM_ADDRESS ||
+                            "not getting address from Env"
+                        )
+                      }
+                      type="button"
+                    >
+                      <Copy size={16} />
+                    </button>
+                  </div>
                 </div>
               )}
               {paymentMethod === "litecoin" && (
                 <div className="payment-address">
                   <p>Litecoin Address:</p>
-                  <code>ltc1qz94vf5kj4eev3yn6xmc8c7pd2dtgr4uwxjq5sa</code>
+                  <div className="address-container">
+                    <code>
+                      {process.env.REACT_APP_LITECOIN_ADDRESS ||
+                        "not getting address from Env"}
+                    </code>
+                    <button
+                      className="copy-button"
+                      onClick={() =>
+                        copyAddress(
+                          process.env.REACT_APP_LITECOIN_ADDRESS ||
+                            "not getting address from Env"
+                        )
+                      }
+                      type="button"
+                    >
+                      <Copy size={16} />
+                    </button>
+                  </div>
                 </div>
               )}
               {paymentMethod === "bank_transfer" && (
