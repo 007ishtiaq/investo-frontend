@@ -34,7 +34,7 @@ import NoNetModal from "../components/NoNetModal/NoNetModal";
  * EmptyState component for displaying when no tasks match criteria
  */
 const EmptyState = ({ message, filterOption, onReset }) => (
-  <div className="empty-state">
+  <div className="empty-state empty-state-tasks">
     <EmptyBoxIcon size={64} />
     <h3>{message}</h3>
     {filterOption !== "all" && (

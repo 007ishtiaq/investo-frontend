@@ -1709,11 +1709,15 @@ button:disabled {
     align-items: center;
   }
 
-  .retry-btn,
-  .offline-mode-btn {
-    width: 100%;
-    max-width: 200px;
-    justify-content: center;
+  .investment-header {
+    flex-direction: column;
+    text-align: center;
+  }
+  .investment-grid {
+    gap: 2rem;
+  }
+  .investment-hero {
+    padding-top: 2rem;
   }
 }
 

@@ -614,7 +614,7 @@
   }
 }
 
-.empty-state {
+.empty-state-tasks {
   grid-column: 1 / -1;
   text-align: center;
   padding: 50px 20px;
@@ -622,13 +622,14 @@
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   gap: 1rem;
+  flex-direction: column;
 }
 
-.empty-state svg {
+.empty-state-tasks svg {
   color: #a0aec0;
 }
 
-.empty-state h3 {
+.empty-state-tasks h3 {
   color: #4a5568;
   font-size: 1.1rem;
 }
@@ -1504,7 +1505,6 @@
 
 .current-level {
   font-weight: 700;
-  margin: 0 8px;
   color: #4a6da7;
 }
 
@@ -1614,7 +1614,7 @@
 /* Add to your filter section */
 .filter-options {
   display: flex;
-  margin-bottom: 20px;
+  /* margin-bottom: 20px; */
   gap: 15px;
 }
 
@@ -2922,9 +2922,12 @@
   }
 
   .level-info-header {
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-start;
     gap: 8px;
+  }
+  .level-number {
+    margin-bottom: 0;
   }
 
   .level-status {
@@ -3350,12 +3353,17 @@
     flex-direction: column;
     align-items: center;
   }
-
-  .retry-btn,
-  .offline-mode-btn {
-    width: 100%;
-    max-width: 200px;
-    justify-content: center;
+  .filter-option {
+    padding: 6px;
+  }
+  .filter-options {
+    gap: 5px;
+  }
+  .tasks-filter-section {
+    gap: 0.3rem;
+  }
+  .level-tasks-info {
+    margin-bottom: 2rem;
   }
 }
 
@@ -3475,7 +3483,6 @@
 
   .filter-options {
     width: 100%;
-    justify-content: space-between;
   }
 
   .tasks-statistics {
