@@ -193,8 +193,8 @@ document.head.appendChild(document.createElement("style")).textContent = `
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #d9dfff;
-  color: #546bb1;
+  background-color: #f5f5f5;
+  color: #6865da;
   transition: background-color var(--transition-fast), color var(--transition-fast);
 }
 
