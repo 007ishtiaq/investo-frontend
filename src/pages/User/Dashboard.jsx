@@ -19,6 +19,7 @@ const Dashboard = ({ onTransactionUpdate }) => {
   const [noNetModal, setNoNetModal] = useState(false);
   const [showDepositModal, setShowDepositModal] = useState(false);
   const [transactionUpdateTrigger, setTransactionUpdateTrigger] = useState(0);
+  const [hasLoadedUserData, setHasLoadedUserData] = useState(false); // Add this flag
 
   // Ref to access RecentTransactions component methods
   const recentTransactionsRef = useRef(null);
@@ -55,11 +56,12 @@ const Dashboard = ({ onTransactionUpdate }) => {
     };
   }, []);
 
+  // Modified useEffect - only load once when component mounts if user exists
   useEffect(() => {
-    if (user && user.token) {
+    if (user && user.token && !hasLoadedUserData) {
       loadUserData();
     }
-  }, [user]);
+  }, [user?.token, hasLoadedUserData]); // Only depend on token, not entire user object
 
   // Watch for external transaction updates (from Layout modals)
   useEffect(() => {
@@ -71,7 +73,7 @@ const Dashboard = ({ onTransactionUpdate }) => {
 
         // Also refresh user data
         if (user && user.token) {
-          loadUserData();
+          refreshUserDataOnly(); // Use a separate function that doesn't update Redux
         }
       };
 
@@ -115,10 +117,11 @@ const Dashboard = ({ onTransactionUpdate }) => {
 
     // Also refresh user data to update wallet balance
     if (user && user.token) {
-      loadUserData();
+      refreshUserDataOnly(); // Use separate function that doesn't update Redux
     }
   };
 
+  // Main function for initial load - updates Redux/localStorage
   const loadUserData = async () => {
     // Check network status before making API call
     if (!navigator.onLine) {
@@ -132,6 +135,32 @@ const Dashboard = ({ onTransactionUpdate }) => {
       setLoading(true);
       const res = await getCurrentUser(user.token);
       setUserData(res.data);
+
+      // UPDATE REDUX STORE AND LOCAL STORAGE with fresh data from server
+      const updatedUser = {
+        ...user,
+        name: res.data.name,
+        email: res.data.email,
+        profileImage: res.data.profileImage || null,
+        contact: res.data.contact,
+        role: res.data.role || user.role,
+        _id: res.data._id || user._id,
+        balance: res.data.balance || user.balance,
+        token: user.token,
+      };
+
+      // Dispatch to Redux store
+      dispatch({
+        type: "LOGGED_IN_USER",
+        payload: updatedUser,
+      });
+
+      // Update localStorage
+      if (window !== undefined) {
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+      }
+
+      setHasLoadedUserData(true); // Set flag to prevent re-loading
       setLoading(false);
     } catch (err) {
       console.error("API Error:", err);
@@ -151,6 +180,38 @@ const Dashboard = ({ onTransactionUpdate }) => {
         }
       }
       setLoading(false);
+    }
+  };
+
+  // Separate function for refreshing data without updating Redux/localStorage
+  // Use this for transaction updates and other refreshes
+  const refreshUserDataOnly = async () => {
+    // Check network status before making API call
+    if (!navigator.onLine) {
+      setNoNetModal(true);
+      return;
+    }
+
+    try {
+      const res = await getCurrentUser(user.token);
+      setUserData(res.data);
+      // Don't update Redux/localStorage here - only update local component state
+    } catch (err) {
+      console.error("API Error:", err);
+
+      // Check if it's a network error
+      if (
+        (err.message && err.message.includes("network")) ||
+        err.code === "NETWORK_ERROR" ||
+        !navigator.onLine
+      ) {
+        setNoNetModal(true);
+      } else {
+        toast.error("Failed to refresh user information");
+        if (err.response && err.response.status === 401) {
+          handleLogout();
+        }
+      }
     }
   };
 
