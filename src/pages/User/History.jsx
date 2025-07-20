@@ -15,6 +15,10 @@ import {
   XCircle,
   AlertTriangle,
   Clock,
+  ChevronFirst,
+  ChevronLast,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import {
   Select,
@@ -550,7 +554,7 @@ const History = ({ refreshTrigger }) => {
           )}
 
           {/* Pagination */}
-          {totalPages > 1 && (
+          {/* {totalPages > 1 && (
             <div className="pagination pagination-history">
               <Button
                 variant="outline"
@@ -582,6 +586,49 @@ const History = ({ refreshTrigger }) => {
                 disabled={currentPage === totalPages}
               >
                 Last
+              </Button>
+            </div>
+          )} */}
+          {totalPages > 1 && (
+            <div className="pagination pagination-history">
+              <Button
+                variant="outline"
+                onClick={() => handlePageChange(1)}
+                disabled={currentPage === 1}
+                className="pagination-button"
+              >
+                <ChevronFirst className="pagination-icon" />
+                <span className="pagination-text">First</span>
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="pagination-button"
+              >
+                <ChevronLeft className="pagination-icon" />
+                <span className="pagination-text">Previous</span>
+              </Button>
+              <span className="pagination-info">
+                Page {currentPage} of {totalPages}
+              </span>
+              <Button
+                variant="outline"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="pagination-button"
+              >
+                <span className="pagination-text">Next</span>
+                <ChevronRight className="pagination-icon" />
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => handlePageChange(totalPages)}
+                disabled={currentPage === totalPages}
+                className="pagination-button"
+              >
+                <span className="pagination-text">Last</span>
+                <ChevronLast className="pagination-icon" />
               </Button>
             </div>
           )}

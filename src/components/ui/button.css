@@ -41,12 +41,12 @@
 
 /* Button variants */
 .button-default {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  background: linear-gradient(135deg, #8d52f3 0%, #2536eb 100%);
   color: var(--primary-foreground, white);
 }
 
 .button-default:hover {
-  background-color: var(--primary-hover, rgba(59, 130, 246, 0.9));
+  background-color: var(--primary-hover, rgba(141, 82, 243));
 }
 
 .button-destructive {

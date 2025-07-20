@@ -81,8 +81,8 @@
 
 .tab-active {
   background-color: var(--tab-active-bg, #ffffff);
-  border-color: var(--primary-color, #3b82f6);
-  color: var(--primary-color, #3b82f6);
+  border-color: var(--primary-color, #8d52f3);
+  color: var(--primary-color, #8d52f3);
   position: relative;
   z-index: 1;
 }
@@ -237,7 +237,7 @@
   width: 1rem;
   border-radius: 0.25rem;
   border: 1px solid var(--border-color, #e5e7eb);
-  accent-color: var(--primary-color, #3b82f6);
+  accent-color: var(--primary-color, #8d52f3);
 }
 .tab-head-title {
   display: flex;
