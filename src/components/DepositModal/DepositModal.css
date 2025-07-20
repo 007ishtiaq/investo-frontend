@@ -329,7 +329,7 @@ code {
   overflow-wrap: break-word;
   word-wrap: break-word;
   word-break: break-all;
-  margin-top: 8px;
+  /* margin-top: 8px; */
   color: var(--primary, #3182ce);
   font-weight: 500;
 }
@@ -439,8 +439,8 @@ code {
 /* Mobile responsiveness */
 @media (max-width: 640px) {
   .address-container {
-    flex-direction: column;
-    gap: 0.75rem;
+    flex-direction: row;
+    gap: 0.55rem;
   }
 
   .payment-address code {
