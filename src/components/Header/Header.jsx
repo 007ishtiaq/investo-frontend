@@ -57,6 +57,11 @@ const Header = () => {
     };
   }, []);
 
+  const handleProfileClick = () => {
+    setShowMobileMenu(false); // Close the mobile menu
+    history.push("/profile");
+  };
+
   // Determine dashboard path based on user role
   const dashboardPath = user && user.role === "admin" ? "/admin" : "/Dashboard";
 
@@ -183,11 +188,37 @@ const Header = () => {
               {showMobileMenu && (
                 <div className="profile-dropdown mobile-menu-dropdown">
                   {user && (
-                    <div className="profile-dropdown-header">
-                      <p className="dropdown-info-text">Hi,</p>
-                      <p className="dropdown-user-name">
-                        {user.name || "User"}
-                      </p>
+                    <div
+                      className="profile-dropdown-header clickable-profile-header"
+                      onClick={handleProfileClick}
+                    >
+                      <div className="header-profile-avatar-container">
+                        <div
+                          className="header-profile-avatar-fallback"
+                          style={{
+                            backgroundImage: user.profileImage
+                              ? `url(${user.profileImage})`
+                              : "",
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                            backgroundRepeat: "no-repeat",
+                          }}
+                        >
+                          {!user.profileImage && (
+                            <span className="header-avatar-initials">
+                              {user.name
+                                ? user.name.charAt(0).toUpperCase()
+                                : "U"}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="header-profile-info">
+                        <p className="dropdown-info-text">Hi,</p>
+                        <p className="dropdown-user-name">
+                          {user.name || "User"}
+                        </p>
+                      </div>
                     </div>
                   )}
 

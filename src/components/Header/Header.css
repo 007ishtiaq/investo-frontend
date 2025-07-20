@@ -524,6 +524,158 @@
   background-color: var(--hover-bg, #f3f4f6);
 }
 
+/* -----styling for profile at header---- */
+.profile-dropdown-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color, #f3f4f6);
+  background: linear-gradient(
+    135deg,
+    rgba(141, 82, 243, 0.05),
+    rgba(37, 54, 235, 0.05)
+  );
+}
+
+.header-profile-avatar-container {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.header-profile-avatar-fallback {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(135deg, #3b82f6, #7c3aed);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.9), 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  position: relative;
+}
+
+.header-avatar-initials {
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.header-profile-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.dropdown-info-text {
+  font-size: 0.75rem;
+  color: var(--text-muted, #6b7280);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.dropdown-user-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+  line-height: 1.2;
+  color: var(--text-primary, #111827);
+  background: linear-gradient(135deg, #8d52f3, #2536eb);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Cool hover effect */
+.header-profile-avatar-fallback {
+  transition: all 0.3s ease;
+}
+
+.profile-dropdown-header:hover .header-profile-avatar-fallback {
+  transform: scale(1.05);
+  box-shadow: 0 0 0 3px rgba(141, 82, 243, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.header-profile-avatar-fallback {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(135deg, #3b82f6, #7c3aed);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.9), 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  overflow: hidden; /* This is crucial for proper image cropping */
+  position: relative;
+}
+
+/* When image is present, ensure it covers the entire area */
+.header-profile-avatar-fallback[style*="background-image"] {
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  background-clip: padding-box; /* Ensures background doesn't extend beyond border */
+}
+
+/* Alternative approach - you can also use this instead */
+.header-profile-avatar-fallback.has-image {
+  background-size: 110% !important; /* Slightly larger to ensure full coverage */
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .profile-dropdown-header {
+    background: linear-gradient(
+      135deg,
+      rgba(141, 82, 243, 0.1),
+      rgba(37, 54, 235, 0.1)
+    );
+    border-bottom-color: var(--border-color-dark, #374151);
+  }
+
+  .dropdown-info-text {
+    color: var(--text-muted-dark, #9ca3af);
+  }
+
+  .dropdown-user-name {
+    color: var(--text-primary-dark, #f9fafb);
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 500px) {
+  .profile-dropdown-header {
+    padding: 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .header-profile-avatar-fallback {
+    width: 36px;
+    height: 36px;
+    font-size: 0.8rem;
+  }
+
+  .dropdown-info-text {
+    font-size: 0.7rem;
+  }
+
+  .dropdown-user-name {
+    font-size: 1rem;
+  }
+}
+
 /* Ensure the dropdown doesn't overflow on small screens */
 @media (max-width: 640px) {
   .mobile-menu-dropdown {

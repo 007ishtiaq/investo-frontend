@@ -11,7 +11,7 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { User, Mail, Key, Shield, Bell, Camera } from "lucide-react";
 import TwoFactorAuth from "../../components/TwoFactorAuth/TwoFactorAuth";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   getCurrentUser,
   updateUserProfile,
@@ -48,6 +48,7 @@ const Profile = () => {
   const { user } = useSelector((state) => ({ ...state }));
   const [loading, setLoading] = useState(true);
   const [profileData, setProfileData] = useState(null);
+  const [hasLoadedProfile, setHasLoadedProfile] = useState(false);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   // const [showTwoFactorAuth, setShowTwoFactorAuth] = useState(false);
@@ -63,6 +64,8 @@ const Profile = () => {
   const [notifEarnings, setNotifEarnings] = useState(true);
   const [notifPromotions, setNotifPromotions] = useState(false);
   const [notifSecurity, setNotifSecurity] = useState(true);
+
+  const dispatch = useDispatch(); // Add this line
 
   // Add network status monitoring
   useEffect(() => {
@@ -94,7 +97,7 @@ const Profile = () => {
     if (user && user.token) {
       loadUserProfile();
     }
-  }, [user]);
+  }, [user?.token, hasLoadedProfile]);
 
   const loadUserProfile = async () => {
     // Check network status before making API call
@@ -108,6 +111,7 @@ const Profile = () => {
       setLoading(true);
       const res = await getCurrentUser(user.token);
       setProfileData(res.data);
+
       setName(res.data.name);
       setPhone(res.data.contact || "");
       // Set notification preferences if available
@@ -117,6 +121,32 @@ const Profile = () => {
         setNotifPromotions(res.data.notifications.promotions === true);
         setNotifSecurity(res.data.notifications.security !== false);
       }
+
+      // UPDATE REDUX STORE AND LOCAL STORAGE with fresh data from server
+      const updatedUser = {
+        ...user,
+        name: res.data.name,
+        email: res.data.email,
+        profileImage: res.data.profileImage || null,
+        contact: res.data.contact,
+        // Add any other fields that might be in the response
+        role: res.data.role || user.role,
+        _id: res.data._id || user._id,
+        balance: res.data.balance || user.balance,
+        // Keep the token from current user state
+        token: user.token,
+      };
+      // Dispatch to Redux store
+      dispatch({
+        type: "LOGGED_IN_USER",
+        payload: updatedUser,
+      });
+      // Update localStorage
+      if (window !== undefined) {
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+      }
+      setHasLoadedProfile(true);
+
       setLoading(false);
     } catch (err) {
       console.error("Failed to load profile:", err);
@@ -190,6 +220,24 @@ const Profile = () => {
       const res = await updateUserProfile(user.token, userData);
       setProfileData(res.data);
       console.log(res.data);
+
+      // UPDATE REDUX STORE AND LOCAL STORAGE
+      const updatedUser = {
+        ...user,
+        name: res.data.name,
+        profileImage: res.data.profileImage || null,
+        // Add any other fields that might have been updated
+        contact: res.data.contact,
+      };
+      // Dispatch to Redux store
+      dispatch({
+        type: "LOGGED_IN_USER",
+        payload: updatedUser,
+      });
+      // Update localStorage
+      if (window !== undefined) {
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+      }
 
       toast.success("Profile updated successfully");
 

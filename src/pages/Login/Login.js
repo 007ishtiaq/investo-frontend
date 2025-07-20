@@ -137,6 +137,7 @@ const Login = () => {
                   role: res.data.role,
                   _id: res.data._id,
                   balance: res.data.balance || 0,
+                  profileImage: res.data.profileImage || null,
                 },
               });
 
@@ -151,6 +152,7 @@ const Login = () => {
                     role: res.data.role,
                     _id: res.data._id,
                     balance: res.data.balance || 0,
+                    profileImage: res.data.profileImage || null,
                   })
                 );
               }

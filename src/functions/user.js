@@ -1,7 +1,7 @@
 // client/src/functions/user.js
 
 import axios from "axios";
-import { uploadImage } from "./cloudinary";
+import { uploadImage, uploadProfileImage } from "./cloudinary";
 
 export const getUsers = async (authtoken, page = 1, limit = 10, email = "") => {
   try {
@@ -87,12 +87,8 @@ export const updateUserProfile = async (authtoken, userData) => {
   // Check if there's an image file to upload first
   if (userData.profileImage && userData.profileImage instanceof File) {
     try {
-      // Upload the image to Cloudinary
-      const imageUrl = await uploadImage(
-        userData.profileImage,
-        "contact_attachments"
-      );
-
+      // Use the specialized profile image upload function
+      const imageUrl = await uploadProfileImage(userData.profileImage);
       // Replace the File object with the URL string
       if (imageUrl) {
         userData.profileImage = imageUrl;
@@ -109,6 +105,7 @@ export const updateUserProfile = async (authtoken, userData) => {
     // If profileImage is null or empty string, don't send it
     delete userData.profileImage;
   }
+
   // Now send the update request with the image URL if available
   return await axios.put(
     `${process.env.REACT_APP_API}/user/profile`,

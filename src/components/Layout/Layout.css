@@ -140,7 +140,7 @@
 }
 
 .dropdown-user-name {
-  font-size: 0.875rem;
+  /* font-size: 0.875rem; */
   font-weight: 500;
   white-space: nowrap;
   overflow: hidden;

@@ -34,7 +34,6 @@
 .profile-header-info {
   display: flex;
   flex-direction: column;
-  text-align: center;
 }
 
 .profile-title {
@@ -431,6 +430,9 @@
   .profile-avatar-container {
     margin-right: 0;
     margin-bottom: 1rem;
+  }
+  .profile-header-info {
+    text-align: center;
   }
 }
 

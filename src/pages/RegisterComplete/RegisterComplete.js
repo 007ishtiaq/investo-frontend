@@ -160,6 +160,7 @@ const RegisterComplete = () => {
                       token: idTokenResult.token,
                       role: res.data.role,
                       _id: res.data._id,
+                      profileImage: res.data.profileImage || null,
                     },
                   });
 
