@@ -19,6 +19,7 @@ import {
   ChevronLast,
   ChevronLeft,
   ChevronRight,
+  X,
 } from "lucide-react";
 import {
   Select,
@@ -287,6 +288,23 @@ const History = ({ refreshTrigger }) => {
             <CardTitle>All Transactions</CardTitle>
             <div className="filter-controls">
               <div className="filter-type-container">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className={`filter-reset-button ${
+                    filter !== "all" || search !== ""
+                      ? "filter-reset-button-active"
+                      : ""
+                  }`}
+                  onClick={handleFilterReset}
+                  disabled={filter === "all" && search === ""}
+                >
+                  {filter !== "all" || search !== "" ? (
+                    <X className="filter-reset-icon" />
+                  ) : (
+                    <FilterX className="filter-reset-icon" />
+                  )}
+                </Button>
                 <Select value={filter} onValueChange={setFilter}>
                   <SelectTrigger className="filter-select">
                     <SelectValue placeholder="Filter by type" />
@@ -310,17 +328,8 @@ const History = ({ refreshTrigger }) => {
                     </SelectItem>
                   </SelectContent>
                 </Select>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="filter-reset-button"
-                  onClick={handleFilterReset}
-                  disabled={filter === "all" && search === ""}
-                >
-                  <FilterX className="filter-reset-icon" />
-                </Button>
               </div>
-              <div className="search-container">
+              {/* <div className="search-container">
                 <Search className="search-icon" />
                 <Input
                   type="text"
@@ -329,7 +338,17 @@ const History = ({ refreshTrigger }) => {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
-              </div>
+              </div> */}
+              {/* <div className="search-container">
+                <Search className="search-icon" />
+                <Input
+                  type="text"
+                  placeholder="Search transactions..."
+                  className="search-input"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </div> */}
             </div>
           </div>
         </CardHeader>

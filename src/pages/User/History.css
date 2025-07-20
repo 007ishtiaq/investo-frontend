@@ -617,6 +617,106 @@
   display: inline;
 }
 
+/* Updated filter styles */
+.filter-type-container {
+  display: flex;
+  align-items: center;
+  width: auto;
+  min-width: 180px;
+}
+
+.filter-reset-button {
+  margin-right: 0.5rem; /* Changed from margin-left to margin-right */
+  border: 1px solid var(--border-color, #e5e7eb);
+  background-color: var(--background-color, #ffffff);
+  color: var(--text-secondary, #6b7280);
+  transition: all 0.2s ease;
+  padding: 11px 16px;
+}
+
+.filter-reset-button:hover:not(:disabled) {
+  background-color: var(--hover-bg, #f3f4f6);
+  border-color: var(--border-hover, #d1d5db);
+}
+
+.filter-reset-button:disabled {
+  cursor: not-allowed;
+  background-color: var(--disabled-bg, #f9fafb);
+}
+
+/* Active state - red styling */
+.filter-reset-button-active {
+  background-color: #fef2f2; /* Light red background */
+  border-color: #fca5a5; /* Light red border */
+  color: #ef4444; /* Red text/icon */
+}
+
+.filter-reset-button-active:hover:not(:disabled) {
+  background-color: #fee2e2; /* Slightly darker red on hover */
+  border-color: #f87171; /* Darker red border on hover */
+  color: #dc2626; /* Darker red text/icon on hover */
+}
+
+.filter-reset-icon {
+  height: 1rem;
+  width: 1rem;
+  transition: color 0.2s ease;
+}
+
+.filter-select {
+  min-width: 180px;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  flex: 1; /* Take remaining space */
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .filter-reset-button {
+    background-color: var(--background-dark, #1f2937);
+    border-color: var(--border-dark, #374151);
+    color: var(--text-secondary-dark, #9ca3af);
+  }
+
+  .filter-reset-button:hover:not(:disabled) {
+    background-color: var(--hover-bg-dark, #374151);
+    border-color: var(--border-hover-dark, #4b5563);
+  }
+
+  .filter-reset-button:disabled {
+    background-color: var(--disabled-bg-dark, #111827);
+  }
+
+  .filter-reset-button-active {
+    background-color: rgba(239, 68, 68, 0.1); /* Dark mode red background */
+    border-color: rgba(239, 68, 68, 0.3); /* Dark mode red border */
+    color: #f87171; /* Lighter red for dark mode */
+  }
+
+  .filter-reset-button-active:hover:not(:disabled) {
+    background-color: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #fca5a5;
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 640px) {
+  .filter-type-container {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .filter-reset-button {
+    flex-shrink: 0;
+  }
+
+  .filter-select {
+    min-width: auto;
+  }
+}
+
 /* Hide text and show only icons below 500px */
 @media (max-width: 500px) {
   .pagination-text {
