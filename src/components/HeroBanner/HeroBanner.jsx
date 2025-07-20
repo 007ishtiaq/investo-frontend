@@ -133,7 +133,7 @@ const HeroBanner = ({ theme = "light" }) => {
 
           <div className="hero-visual-section animate-fade-in-up">
             <div className="hero-glass-card">
-              <div className="card-header">
+              <div className="herobanner-card-header">
                 <div className="card-title">Investment Performance</div>
                 <div className="card-badge pulse-subtle">Live Data</div>
               </div>

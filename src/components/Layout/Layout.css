@@ -424,12 +424,6 @@
   padding: 0 1rem;
 }
 
-@media (min-width: 768px) {
-  .main-page-content {
-    padding: 0;
-  }
-}
-
 /* Mobile Quick Actions */
 .mobile-actions {
   display: none;
@@ -545,5 +539,11 @@
   .withdraw-button:hover,
   .mobile-withdraw-button:hover {
     background-color: var(--primary-dark-10, rgba(59, 130, 246, 0.1));
+  }
+}
+
+@media (max-width: 550px) {
+  .main-page-content {
+    padding: 0 0.5rem;
   }
 }

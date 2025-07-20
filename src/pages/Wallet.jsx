@@ -346,7 +346,7 @@ const Wallet = ({ onTransactionUpdate }) => {
                   </div>
                 ) : (
                   <>
-                    <div className="transactions-container">
+                    <div className="transactions-container-wallet">
                       {/* Desktop view - Table */}
                       <div className="desktop-view">
                         <table className="transaction-table">

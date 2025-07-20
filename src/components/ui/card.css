@@ -1,10 +1,9 @@
 /* Card component styles */
 .card {
   border-radius: 0.5rem;
-  border: 1px solid var(--border-color, #e5e7eb);
   background-color: var(--card-bg, white);
   color: var(--card-foreground, #1f2937);
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .card-header {

@@ -284,7 +284,8 @@
 
 /* Transaction container */
 .transactions-container {
-  width: 100%;
+  padding: 1rem;
+  border: 0;
 }
 
 /* Desktop/Mobile view toggle */

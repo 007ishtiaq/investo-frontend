@@ -523,7 +523,7 @@
   z-index: 2;
 }
 
-.card-header {
+.herobanner-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;

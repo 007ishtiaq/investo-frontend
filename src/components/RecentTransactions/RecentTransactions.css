@@ -26,10 +26,6 @@
   margin-left: 0.25rem;
 }
 
-.transactions-content-padding-none {
-  padding: 0;
-}
-
 /* Transaction Items */
 .transaction-item {
   padding: 1rem;
@@ -373,4 +369,11 @@
   50% {
     opacity: 0.5;
   }
+}
+
+.transactions-content-padding-none {
+  padding: 0.8rem;
+}
+.transaction-item {
+  padding: 0.8rem;
 }
