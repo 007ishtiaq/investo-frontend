@@ -195,17 +195,93 @@ const Team = () => {
 
   const copyToClipboard = () => {
     const affiliateLink = `${window.location.origin}/register?ref=${affiliateCode}`;
-    navigator.clipboard
-      .writeText(affiliateLink)
-      .then(() => {
+
+    // Function to copy text using the modern clipboard API
+    const copyWithClipboardAPI = async (text) => {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch (err) {
+        console.error("Clipboard API failed:", err);
+        return false;
+      }
+    };
+
+    // Fallback function for older browsers or mobile devices
+    const copyWithFallback = (text) => {
+      try {
+        // Create a temporary textarea element
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+
+        // Make it invisible
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        textArea.style.opacity = "0";
+        textArea.style.pointerEvents = "none";
+
+        // Add to DOM
+        document.body.appendChild(textArea);
+
+        // Focus and select
+        textArea.focus();
+        textArea.select();
+        textArea.setSelectionRange(0, 99999); // For mobile devices
+
+        // Copy the text
+        const successful = document.execCommand("copy");
+
+        // Remove the textarea
+        document.body.removeChild(textArea);
+
+        return successful;
+      } catch (err) {
+        console.error("Fallback copy failed:", err);
+        return false;
+      }
+    };
+
+    // Main copy function
+    const performCopy = async () => {
+      let success = false;
+
+      // Try modern clipboard API first
+      if (navigator.clipboard && window.isSecureContext) {
+        success = await copyWithClipboardAPI(affiliateLink);
+      }
+
+      // If clipboard API failed, use fallback method
+      if (!success) {
+        success = copyWithFallback(affiliateLink);
+      }
+
+      // Show appropriate message and handle UI state
+      if (success) {
         setCopied(true);
         toast.success("Affiliate link copied to clipboard!");
         setTimeout(() => setCopied(false), 3000);
-      })
-      .catch((err) => {
-        console.error("Failed to copy:", err);
-        toast.error("Failed to copy link");
-      });
+      } else {
+        // If all methods fail, show the link in an alert as last resort
+        toast.error(
+          "Copy failed. Link: " + affiliateLink.substring(0, 50) + "..."
+        );
+
+        // Optional: Show a prompt with the link for manual copying
+        setTimeout(() => {
+          if (
+            window.confirm(
+              "Copy failed. Would you like to see the affiliate link to copy manually?"
+            )
+          ) {
+            prompt("Copy this affiliate link manually:", affiliateLink);
+          }
+        }, 1000);
+      }
+    };
+
+    // Execute the copy operation
+    performCopy();
   };
 
   const handleRetry = () => {

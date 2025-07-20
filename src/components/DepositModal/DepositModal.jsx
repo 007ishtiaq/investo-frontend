@@ -62,8 +62,88 @@ const DepositModal = ({ isOpen, onClose, onSuccess }) => {
 
   // Add this copy function
   const copyAddress = (address) => {
-    navigator.clipboard.writeText(address);
-    toast.success("Address copied to clipboard!");
+    // Function to copy text using the modern clipboard API
+    const copyWithClipboardAPI = async (text) => {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch (err) {
+        console.error("Clipboard API failed:", err);
+        return false;
+      }
+    };
+
+    // Fallback function for older browsers or mobile devices
+    const copyWithFallback = (text) => {
+      try {
+        // Create a temporary textarea element
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+
+        // Make it invisible
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        textArea.style.opacity = "0";
+        textArea.style.pointerEvents = "none";
+
+        // Add to DOM
+        document.body.appendChild(textArea);
+
+        // Focus and select
+        textArea.focus();
+        textArea.select();
+        textArea.setSelectionRange(0, 99999); // For mobile devices
+
+        // Copy the text
+        const successful = document.execCommand("copy");
+
+        // Remove the textarea
+        document.body.removeChild(textArea);
+
+        return successful;
+      } catch (err) {
+        console.error("Fallback copy failed:", err);
+        return false;
+      }
+    };
+
+    // Main copy function
+    const performCopy = async () => {
+      let success = false;
+
+      // Try modern clipboard API first
+      if (navigator.clipboard && window.isSecureContext) {
+        success = await copyWithClipboardAPI(address);
+      }
+
+      // If clipboard API failed, use fallback method
+      if (!success) {
+        success = copyWithFallback(address);
+      }
+
+      // Show appropriate message
+      if (success) {
+        toast.success("Address copied to clipboard!");
+      } else {
+        // If all methods fail, show the address in an alert as last resort
+        toast.error("Copy failed. Address: " + address);
+
+        // Optional: Show a prompt with the address for manual copying
+        setTimeout(() => {
+          if (
+            window.confirm(
+              "Copy failed. Would you like to see the address to copy manually?"
+            )
+          ) {
+            prompt("Copy this address manually:", address);
+          }
+        }, 1000);
+      }
+    };
+
+    // Execute the copy operation
+    performCopy();
   };
 
   // Handle actual closing after animation completes
