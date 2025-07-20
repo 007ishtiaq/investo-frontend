@@ -330,7 +330,7 @@ const OtpVerification = () => {
 
               <div className="platform-features">
                 <div className="feature-item">
-                  <div className="feature-icon">
+                  <div className="feature-icon-login">
                     <EthereumIcon size={24} />
                   </div>
                   <div className="feature-text">
@@ -340,7 +340,7 @@ const OtpVerification = () => {
                 </div>
 
                 <div className="feature-item">
-                  <div className="feature-icon">
+                  <div className="feature-icon-login">
                     <svg
                       width="24"
                       height="24"

@@ -668,7 +668,7 @@ const Profile = () => {
                     <TwoFactorAuth />
                   ) : (
                     <div className="feature-section">
-                      <Shield className="feature-icon" />
+                      <Shield className="feature-icon-profile" />
                       <div>
                         <p className="feature-description">
                           Two-factor authentication adds an extra layer of
@@ -710,7 +710,7 @@ const Profile = () => {
             <CardHeader>
               <CardTitle>
                 <div className="tab-head-title">
-                  <Bell className="feature-icon" />{" "}
+                  <Bell className="feature-icon-profile" />{" "}
                   <div> Notification Preferences </div>
                 </div>
               </CardTitle>

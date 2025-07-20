@@ -21,7 +21,7 @@
 .team-dashboard {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 2rem;
 }
 
 /* Stats Grid */
@@ -136,14 +136,14 @@
 
 .team-members-section h2 {
   font-size: 20px;
-  margin-bottom: 20px;
+  /* margin-bottom: 20px; */
   color: #333;
 }
 
 .loading,
 .no-members {
   text-align: center;
-  padding: 30px;
+  padding: 10px;
   color: #666;
 }
 
@@ -429,7 +429,7 @@
 .team-members-section h2 {
   font-size: 1.875rem;
   font-weight: 700;
-  margin-bottom: 1.5rem;
+  /* margin-bottom: 1.5rem; */
   text-align: center;
   color: var(#f8fafc);
 }
@@ -470,7 +470,7 @@
   gap: 0.75rem;
 }
 
-.member-avatar {
+.member-avatar-team {
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 50%;
@@ -1920,7 +1920,6 @@
 
 /* Rewards Information Section */
 .rewards-info-section {
-  margin: 3rem 0;
   padding: 0;
 }
 
@@ -2130,7 +2129,7 @@
   gap: 1.1rem;
 }
 
-.member-avatar {
+.member-avatar-team {
   width: 35px;
   height: 35px;
   border-radius: 50%;
@@ -2246,6 +2245,9 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+  .rewards-info-header {
+    align-items: center;
+  }
   .team-table th,
   .team-table td {
     padding: 10px 8px;
@@ -2253,7 +2255,7 @@
   }
 
   .member-info {
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-start;
     gap: 5px;
   }
@@ -2302,11 +2304,6 @@
 }
 
 @media (max-width: 480px) {
-  .rewards-info-section {
-    margin: 2rem 0;
-    padding: 0 0.5rem;
-  }
-
   .rewards-info-content {
     padding: 1rem;
   }
@@ -2662,6 +2659,24 @@
   color: #3b82f6;
 }
 
+.commission-note {
+  display: flex;
+  display: none;
+  grid-gap: 0.5rem;
+  gap: 0.5rem;
+  margin: 1rem 1rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary, #64748b);
+  padding: 12px 11px;
+  background-color: rgb(255 140 4 / 17%);
+  border-radius: 8px;
+  position: relative;
+  /* background-color: rgba(59, 130, 246, 0.1); */
+}
+.instructions-note strong {
+  color: var(--primary, #ce7231);
+}
+
 .tooltip {
   position: absolute;
   bottom: 100%;
@@ -2766,6 +2781,402 @@
   border-color: #cbd5e1;
   color: #475569;
   transform: translateY(-1px);
+}
+/* Team Members Responsive Styles */
+.team-table-container {
+  width: 100%;
+}
+
+.desktop-view {
+  display: block;
+}
+
+.mobile-view {
+  display: none;
+}
+
+.team-table-wrapper {
+  overflow-x: auto;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.team-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.team-table th {
+  text-align: left;
+  font-weight: 500;
+  padding: 0.75rem;
+  color: #6b7280;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.team-table td {
+  padding: 1rem 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+  vertical-align: middle;
+}
+
+.team-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.team-table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+/* Member Info Styles */
+.member-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.member-avatar-team {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.member-name {
+  font-weight: 500;
+  color: #1e293b;
+  font-size: 0.875rem;
+}
+
+.member-email {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+/* Level Badges */
+.level-badge-team,
+.level-badge-team2 {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: white;
+  white-space: nowrap;
+}
+
+.level-1-team,
+.main-user-level-1 {
+  background-color: #22c55e;
+}
+
+.level-2-team,
+.main-user-level-2 {
+  background-color: #3b82f6;
+}
+
+.level-3-team,
+.main-user-level-3 {
+  background-color: #a855f7;
+}
+
+.level-4-team,
+.main-user-level-4 {
+  background-color: #f59e0b;
+}
+
+/* Investment and Commission Styles */
+.investment-value,
+.earned-commission {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.no-investment,
+.no-commission {
+  color: #6b7280;
+  font-style: italic;
+}
+
+.join-date {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+/* Team Summary */
+.team-summary {
+  display: flex;
+  justify-content: space-around;
+  background-color: #f8fafc;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+  border: 1px solid #e2e8f0;
+}
+
+.summary-item {
+  text-align: center;
+}
+
+.summary-label {
+  display: block;
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-bottom: 0.25rem;
+}
+
+.summary-value {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.summary-value.earned-commission {
+  color: #10b981;
+}
+
+/* Mobile Card Styles */
+.team-member-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.team-member-card:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.team-member-card:last-child {
+  margin-bottom: 0;
+}
+
+.member-card-header {
+  padding: 1rem;
+  background-color: #f8fafc;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.member-card-header .member-info {
+  gap: 1rem;
+}
+
+.member-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.member-card-body {
+  padding: 1rem;
+}
+
+.member-card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.member-card-row:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.card-label {
+  font-weight: 500;
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+/* Mobile Responsiveness - 600px and below */
+@media (max-width: 600px) {
+  .commission-note {
+    display: flex;
+  }
+  .info-icon-container {
+    display: none;
+  }
+  .team-table-container {
+    padding: 0.5rem;
+  }
+
+  .team-members-section {
+    padding: 1rem;
+  }
+
+  .team-members-section h2 {
+    padding-top: 1rem;
+    font-size: 1.5rem;
+    /* margin-bottom: 1.5rem; */
+    text-align: center;
+  }
+
+  /* Switch to mobile view */
+  .desktop-view {
+    display: none;
+  }
+
+  .mobile-view {
+    display: block;
+  }
+
+  /* Mobile member avatar */
+  .mobile-view .member-avatar-team {
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: 0.875rem;
+  }
+
+  .mobile-view .member-name {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .mobile-view .member-email {
+    font-size: 0.8rem;
+  }
+
+  /* Mobile level badges */
+  .mobile-view .level-badge-team,
+  .mobile-view .level-badge-team2 {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.6rem;
+  }
+
+  /* Mobile summary */
+  .team-summary {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: left;
+  }
+
+  .summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: left;
+  }
+
+  .summary-label {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+  }
+
+  .summary-value {
+    font-size: 1rem;
+  }
+  .team-dashboard {
+    gap: 1rem;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  .team-members-section {
+    padding: 0.75rem;
+  }
+
+  .team-member-card {
+    margin-bottom: 0.75rem;
+  }
+
+  .member-card-header,
+  .member-card-body {
+    padding: 0.875rem;
+  }
+
+  .mobile-view .member-avatar-team {
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-right: 0;
+    font-size: 0.8rem;
+  }
+
+  .mobile-view .member-name {
+    font-size: 0.9rem;
+  }
+
+  .mobile-view .member-email {
+    font-size: 0.75rem;
+  }
+
+  .member-card-row {
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .card-label {
+    font-size: 0.8rem;
+  }
+
+  .mobile-view .level-badge-team,
+  .mobile-view .level-badge-team2 {
+    font-size: 0.65rem;
+    padding: 0.15rem 0.5rem;
+  }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .team-member-card {
+    background-color: #1e293b;
+    border-color: #374151;
+  }
+
+  .member-card-header {
+    background-color: #334155;
+    border-color: #475569;
+  }
+
+  .member-card-row {
+    border-color: #475569;
+  }
+
+  .card-label {
+    color: #94a3b8;
+  }
+
+  .member-name {
+    color: #f1f5f9;
+  }
+
+  .member-email {
+    color: #94a3b8;
+  }
+
+  .team-summary {
+    background-color: #334155;
+    border-color: #475569;
+  }
+
+  .summary-label {
+    color: #94a3b8;
+  }
+
+  .summary-value {
+    color: #f1f5f9;
+  }
 }
 
 /* Responsive Design */

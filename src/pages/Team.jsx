@@ -895,97 +895,188 @@ const Team = () => {
             {/* Team Members Section */}
             <div className="team-members-section">
               <h2>Your Team Members</h2>
-
+              {/* {teamMembers.length > 0 && ( */}
+              <div className="commission-note">
+                <strong>Important:</strong> You must purchase a plan to be
+                eligible for affiliate commissions.
+              </div>
+              {/* )} */}
               {teamMembers.length > 0 ? (
                 <div className="team-table-container">
-                  <div className="team-table-wrapper">
-                    <table className="team-table">
-                      <thead>
-                        <tr>
-                          <th>Member</th>
-                          <th>Email</th>
-                          <th>Your Account</th>
-                          <th>Member First Level</th>
-                          <th>First Investment</th>
-                          <th>Your Commission</th>
-                          <th>Joined Date</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {teamMembers.map((member, index) => (
-                          <tr key={index}>
-                            <td>
-                              <div className="member-info">
-                                <div className="member-avatar">
-                                  {member.name.charAt(0).toUpperCase()}
+                  {/* Desktop Table View */}
+                  <div className="desktop-view">
+                    <div className="team-table-wrapper">
+                      <table className="team-table">
+                        <thead>
+                          <tr>
+                            <th>Member</th>
+                            <th>Email</th>
+                            <th>Your Account</th>
+                            <th>Member First Level</th>
+                            <th>First Investment</th>
+                            <th>Your Commission</th>
+                            <th>Joined Date</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {teamMembers.map((member, index) => (
+                            <tr key={index}>
+                              <td>
+                                <div className="member-info">
+                                  <div className="member-avatar-team">
+                                    {member.name.charAt(0).toUpperCase()}
+                                  </div>
+                                  <span className="member-name">
+                                    {member.name}
+                                  </span>
                                 </div>
-                                <span className="member-name">
-                                  {member.name}
+                              </td>
+                              <td>
+                                <span className="member-email">
+                                  {member.email}
                                 </span>
-                              </div>
-                            </td>
-                            <td>
-                              <span className="member-email">
-                                {member.email}
-                              </span>
-                            </td>
-                            <td>
-                              <span
-                                className={`level-badge-team2 main-user-level-${member.mainUserLevelAtPurchase}`}
-                              >
-                                Level {member.mainUserLevelAtPurchase}
-                              </span>
-                            </td>
-                            <td>
-                              <span
-                                className={`level-badge-team level-${member.level}-team`}
-                              >
-                                Level {member.level}
-                              </span>
-                            </td>
-
-                            <td>
-                              <span className="investment-amount">
-                                {member.firstInvestmentAmount !== null ? (
-                                  <span className="investment-value">
-                                    {formatBalance(
-                                      member.firstInvestmentAmount
-                                    )}
-                                  </span>
-                                ) : (
-                                  <span className="no-investment">
-                                    No investment yet
-                                  </span>
-                                )}
-                              </span>
-                            </td>
-                            <td>
-                              <span className="commission-amount">
-                                {member.commissionEarned > 0 ? (
-                                  <span className="earned-commission">
-                                    {formatBalance(member.commissionEarned)}
-                                  </span>
-                                ) : (
-                                  <span className="no-commission">$0.00</span>
-                                )}
-                              </span>
-                            </td>
-                            <td>
-                              <span className="join-date">
-                                {new Date(member.createdAt).toLocaleDateString(
-                                  "en-US",
-                                  {
+                              </td>
+                              <td>
+                                <span
+                                  className={`level-badge-team2 main-user-level-${member.mainUserLevelAtPurchase}`}
+                                >
+                                  Level {member.mainUserLevelAtPurchase}
+                                </span>
+                              </td>
+                              <td>
+                                <span
+                                  className={`level-badge-team level-${member.level}-team`}
+                                >
+                                  Level {member.level}
+                                </span>
+                              </td>
+                              <td>
+                                <span className="investment-amount">
+                                  {member.firstInvestmentAmount !== null ? (
+                                    <span className="investment-value">
+                                      {formatBalance(
+                                        member.firstInvestmentAmount
+                                      )}
+                                    </span>
+                                  ) : (
+                                    <span className="no-investment">
+                                      No investment yet
+                                    </span>
+                                  )}
+                                </span>
+                              </td>
+                              <td>
+                                <span className="commission-amount">
+                                  {member.commissionEarned > 0 ? (
+                                    <span className="earned-commission">
+                                      {formatBalance(member.commissionEarned)}
+                                    </span>
+                                  ) : (
+                                    <span className="no-commission">$0.00</span>
+                                  )}
+                                </span>
+                              </td>
+                              <td>
+                                <span className="join-date">
+                                  {new Date(
+                                    member.createdAt
+                                  ).toLocaleDateString("en-US", {
                                     year: "numeric",
                                     month: "short",
                                     day: "numeric",
-                                  }
-                                )}
+                                  })}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {/* Mobile Card View */}
+                  <div className="mobile-view">
+                    {teamMembers.map((member, index) => (
+                      <div key={index} className="team-member-card">
+                        <div className="member-card-header">
+                          <div className="member-info">
+                            <div className="member-avatar-team">
+                              {member.name.charAt(0).toUpperCase()}
+                            </div>
+                            <div className="member-details">
+                              <span className="member-name">{member.name}</span>
+                              <span className="member-email">
+                                {member.email}
                               </span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="member-card-body">
+                          <div className="member-card-row">
+                            <span className="card-label">Your Account:</span>
+                            <span
+                              className={`level-badge-team2 main-user-level-${member.mainUserLevelAtPurchase}`}
+                            >
+                              Level {member.mainUserLevelAtPurchase}
+                            </span>
+                          </div>
+
+                          <div className="member-card-row">
+                            <span className="card-label">Member Level:</span>
+                            <span
+                              className={`level-badge-team level-${member.level}-team`}
+                            >
+                              Level {member.level}
+                            </span>
+                          </div>
+
+                          <div className="member-card-row">
+                            <span className="card-label">
+                              First Investment:
+                            </span>
+                            <span className="investment-amount">
+                              {member.firstInvestmentAmount !== null ? (
+                                <span className="investment-value">
+                                  {formatBalance(member.firstInvestmentAmount)}
+                                </span>
+                              ) : (
+                                <span className="no-investment">
+                                  No investment yet
+                                </span>
+                              )}
+                            </span>
+                          </div>
+
+                          <div className="member-card-row">
+                            <span className="card-label">Your Commission:</span>
+                            <span className="commission-amount">
+                              {member.commissionEarned > 0 ? (
+                                <span className="earned-commission">
+                                  {formatBalance(member.commissionEarned)}
+                                </span>
+                              ) : (
+                                <span className="no-commission">$0.00</span>
+                              )}
+                            </span>
+                          </div>
+
+                          <div className="member-card-row">
+                            <span className="card-label">Joined:</span>
+                            <span className="join-date">
+                              {new Date(member.createdAt).toLocaleDateString(
+                                "en-US",
+                                {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
+                                }
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
 
                   {/* Summary Section */}
