@@ -54,7 +54,7 @@ const PromoBanner = () => {
           <h2 className="promo-title">NO LIMITS, JUST DAILY EARNINGS</h2>
 
           <p className="promo-description">
-            Join the future of finance — earn daily, with or without investment.
+            Join the future of finance, earn daily, with or without investment.
           </p>
 
           <div className="promo-buttons">

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useHistory } from "react-router-dom";
 import "./HeroSlider.css";
 import "../mobileadj.css";
 
@@ -8,48 +9,63 @@ const HeroSlider = () => {
   const [touchEnd, setTouchEnd] = useState(null);
   const sliderRef = useRef(null);
   const autoPlayRef = useRef(null);
+  const history = useHistory();
 
-  // Sample slide data
+  // Updated slide data with navigation paths
   const slides = [
     {
       id: 1,
-      title: "Discover Rare NFT Collections",
+      title: "Minimal Effort, Maximum Returns",
       description:
-        "Explore unique digital assets from top creators around the world",
+        "Watch your investments grow every day with our tiered daily returns",
       imageUrl: "/images/benner1.png",
-      ctaText: "Explore Collections",
+      ctaText: "Explore Plans",
+      path: "/plans", // Add path for Plans/Investment page
     },
     {
       id: 2,
-      title: "New Pepe Frog Drops",
+      title: "Zero Withdrawal Charges!",
       description:
-        "Limited edition Pepe Frog NFTs now available for early access",
+        "Keep 100% of your profits, with zero withdrawal fees, no cuts, and complete control over your money!",
       imageUrl: "/images/benner3.png",
-      ctaText: "Get Early Access",
+      ctaText: "Withdrawal Now",
+      path: "/dashboard", // Add path for Withdrawal/Wallet page
     },
     {
       id: 3,
-      title: "NFT Trading Competition",
+      title: "Earn up to 4% Daily ROI!",
       description:
-        "Join our weekly trading competition and win exclusive rewards",
+        "Grow your investment with up to 4% daily returns, steady profits, daily payouts, and total earning potential unlocked!",
       imageUrl: "/images/benner2.png",
       ctaText: "Join Now",
+      path: "/register", // Add path for Registration page
     },
     {
       id: 4,
-      title: "Create Your Own NFT",
-      description: "Use our platform to mint and sell your digital artwork",
+      title: "Earn up to 40% from Affiliate & Team Rewards!",
+      description:
+        "Boost your income with up to 40% in affiliate and team commissions, build your network, and earn big with every connection!",
       imageUrl: "/images/benner4.png",
-      ctaText: "Start Creating",
+      ctaText: "Create Team",
+      path: "/team", // Add path for Team/Affiliate page
     },
     {
       id: 5,
-      title: "Trending Collections",
-      description: "See what's hot in the NFT marketplace this week",
+      title: " Security You Can Trust",
+      description:
+        "Your investments are safe with top-tier security, ensuring your funds and data stay safe at all times.",
       imageUrl: "/images/benner5.png",
-      ctaText: "View Trending",
+      ctaText: "Join Now",
+      path: "/register", // Add path for Registration page
     },
   ];
+
+  // Handle CTA button click
+  const handleCtaClick = (path) => {
+    if (path) {
+      history.push(path);
+    }
+  };
 
   // Handle navigation
   const goToSlide = (index) => {
@@ -131,7 +147,12 @@ const HeroSlider = () => {
                 <div className="slide-text">
                   <h2 className="slide-title">{slide.title}</h2>
                   <p className="slide-description">{slide.description}</p>
-                  <button className="slide-cta">{slide.ctaText}</button>
+                  <button
+                    className="slide-cta"
+                    onClick={() => handleCtaClick(slide.path)}
+                  >
+                    {slide.ctaText}
+                  </button>
                 </div>
               </div>
               <div className="slide-image">

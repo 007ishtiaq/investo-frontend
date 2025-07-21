@@ -240,10 +240,10 @@ const Contact = () => {
                   <Mail size={18} />
                   <span>support@yourplatform.com</span>
                 </div>
-                <div className="quick-info-item">
+                {/* <div className="quick-info-item">
                   <Phone size={18} />
                   <span>+1 (123) 456-7890</span>
-                </div>
+                </div> */}
               </div>
 
               <Formik

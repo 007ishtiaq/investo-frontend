@@ -2512,9 +2512,10 @@
   display: inline-block;
   background-color: white;
   color: var(--color-primary, #4f46e5);
-  padding: 0.875rem 1.5rem;
+  padding: 0.675rem 1rem;
   border-radius: 30px;
   font-weight: 600;
+  font-size: 0.9rem;
   text-decoration: none;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);

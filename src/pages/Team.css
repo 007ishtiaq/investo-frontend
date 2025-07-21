@@ -2068,30 +2068,25 @@
 
 .cta-content p {
   font-size: 0.9rem;
-  margin: 0;
   opacity: 0.9;
 }
 
 .cta-button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background: white;
-  color: #3b82f6;
-  border: none;
-  border-radius: 0.5rem;
+  display: inline-block;
+  background-color: white;
+  color: var(--color-primary, #4f46e5);
+  padding: 0.675rem 1rem;
+  border-radius: 30px;
   font-weight: 600;
   font-size: 0.9rem;
-  cursor: pointer;
+  text-decoration: none;
   transition: all 0.3s ease;
-  white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .cta-button:hover {
-  background: #f1f5f9;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
 /* Team Table Styles */

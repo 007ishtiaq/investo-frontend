@@ -338,8 +338,8 @@ const Team = () => {
                   <div className="stat-icon network-icon"></div>
                 </div>
                 <div className="stat-item">
-                  <div className="stat-value">Up to 3%</div>
-                  <div className="stat-label">Daily Commission</div>
+                  <div className="stat-value">Up to 40%</div>
+                  <div className="stat-label">Huge Commission</div>
                   <div className="stat-icon commission-icon"></div>
                 </div>
                 <div className="stat-item">
