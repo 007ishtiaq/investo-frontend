@@ -412,28 +412,42 @@ const Plans = () => {
             <div className="faq-item">
               <h3 className="faq-question">How do investment plans work?</h3>
               <p className="faq-answer">
-                Our investment plans allow you to stake your crypto assets for a
-                specified period and earn daily returns. The returns are
-                automatically credited to your wallet each day.
+                You purchase an investment plan and complete daily tasks. Based
+                on your plan and task percentage, you earn rewards that are
+                added to your in-app wallet.
               </p>
             </div>
 
             <div className="faq-item">
-              <h3 className="faq-question">When will I receive my profits?</h3>
+              <h3 className="faq-question">When will I receive my rewards?</h3>
               <p className="faq-answer">
-                Profits are distributed daily to your wallet. Fixed deposit
-                plans pay the full amount at the end of the investment period.
+                Rewards are credited daily to your in-app wallet after
+                completing assigned tasks.
               </p>
             </div>
 
             <div className="faq-item">
-              <h3 className="faq-question">
-                Can I withdraw early from an investment plan?
-              </h3>
+              <h3 className="faq-question">How can I withdraw my earnings?</h3>
               <p className="faq-answer">
-                Yes, most plans allow early withdrawal with a small fee. Fixed
-                deposit plans have higher early withdrawal fees due to their
-                guaranteed return structure.
+                Submit a withdrawal request from your wallet, and after admin
+                approval, your funds will be sent to the wallet address you
+                provide in the form.
+              </p>
+            </div>
+
+            <div className="faq-item">
+              <h3 className="faq-question">How can I deposit funds?</h3>
+              <p className="faq-answer">
+                To deposit, send USDT from your wallet to the address provided
+                in the deposit form in the app.
+              </p>
+            </div>
+
+            <div className="faq-item">
+              <h3 className="faq-question">Can I cancel or change my plan?</h3>
+              <p className="faq-answer">
+                Once a plan is purchased, it cannot be changed. However, you can
+                purchase additional plans at any time.
               </p>
             </div>
 
@@ -442,9 +456,36 @@ const Plans = () => {
                 Is there a maximum investment amount?
               </h3>
               <p className="faq-answer">
-                No, there is no maximum investment amount for our plans. You can
-                invest as much as you want based on your financial capacity and
-                risk tolerance.
+                No, there is no maximum limit. You can invest any amount
+                according to your budget and strategy.
+              </p>
+            </div>
+
+            <div className="faq-item">
+              <h3 className="faq-question">
+                Do I need to complete tasks daily?
+              </h3>
+              <p className="faq-answer">
+                Yes, completing daily tasks is required to earn daily rewards.
+                Missed tasks may result in no earnings for that day.
+              </p>
+            </div>
+
+            <div className="faq-item">
+              <h3 className="faq-question">Is my investment safe?</h3>
+              <p className="faq-answer">
+                We use secure systems and industry-standard practices to protect
+                your investment and wallet data.
+              </p>
+            </div>
+
+            <div className="faq-item">
+              <h3 className="faq-question">
+                How do affiliate commissions work?
+              </h3>
+              <p className="faq-answer">
+                You can earn up to 40% from affiliate and team referrals. Invite
+                others to join and grow your passive income.
               </p>
             </div>
           </div>

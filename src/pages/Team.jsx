@@ -752,8 +752,9 @@ const Team = () => {
                     How do I increase my account level?
                   </h3>
                   <p className="faq-answer">
-                    Your account level increases based on your activity on the
-                    platform, including completed tasks and investment amounts.
+                    Your account level increases when you purchase higher
+                    investment plans. Each plan corresponds to a specific level
+                    and unlocks greater commission potential.
                   </p>
                 </div>
                 <div className="faq-item">
@@ -770,6 +771,26 @@ const Team = () => {
                   <p className="faq-answer">
                     No, once someone joins using your affiliate link, they
                     remain in your team permanently.
+                  </p>
+                </div>
+                <div className="faq-item">
+                  <h3 className="faq-question">
+                    What benefits do higher account levels offer?
+                  </h3>
+                  <p className="faq-answer">
+                    Higher account levels allow you to earn increased affiliate
+                    commissions, access deeper team levels, and maximize your
+                    earning potential.
+                  </p>
+                </div>
+                <div className="faq-item">
+                  <h3 className="faq-question">
+                    Do I need to invest to earn affiliate commissions?
+                  </h3>
+                  <p className="faq-answer">
+                    Yes, to activate commission earning, you must purchase at
+                    least one investment plan. This ensures fair distribution
+                    and active participation.
                   </p>
                 </div>
               </div>
@@ -1416,8 +1437,9 @@ const Team = () => {
                     How do I increase my account level?
                   </h3>
                   <p className="faq-answer">
-                    Your account level increases based on your activity on the
-                    platform, including completed tasks and investment amounts.
+                    Your account level increases when you purchase higher
+                    investment plans. Each plan corresponds to a specific level
+                    and unlocks greater commission potential.
                   </p>
                 </div>
                 <div className="faq-item">
@@ -1434,6 +1456,26 @@ const Team = () => {
                   <p className="faq-answer">
                     No, once someone joins using your affiliate link, they
                     remain in your team permanently.
+                  </p>
+                </div>
+                <div className="faq-item">
+                  <h3 className="faq-question">
+                    What benefits do higher account levels offer?
+                  </h3>
+                  <p className="faq-answer">
+                    Higher account levels allow you to earn increased affiliate
+                    commissions, access deeper team levels, and maximize your
+                    earning potential.
+                  </p>
+                </div>
+                <div className="faq-item">
+                  <h3 className="faq-question">
+                    Do I need to invest to earn affiliate commissions?
+                  </h3>
+                  <p className="faq-answer">
+                    Yes, to activate commission earning, you must purchase at
+                    least one investment plan. This ensures fair distribution
+                    and active participation.
                   </p>
                 </div>
               </div>

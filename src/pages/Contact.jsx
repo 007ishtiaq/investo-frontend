@@ -81,31 +81,109 @@ const Contact = () => {
       id: 1,
       question: "How do I make a deposit?",
       answer:
-        "You can make a deposit by going to your wallet and selecting the 'Deposit' option. Follow the instructions to complete your deposit using your preferred payment method.",
+        "You can deposit any amount by sending USDT to the wallet address provided in the deposit form in the app. Make sure to follow the instructions carefully.",
     },
     {
       id: 2,
       question: "How long do withdrawals take to process?",
       answer:
-        "Withdrawal requests are typically processed within 24-48 hours. Once approved, the funds will be sent to your specified payment method, which may take additional time depending on your bank or payment provider.",
+        "Withdrawal requests are usually processed within 24 to 48 hours. After admin approval, funds are sent to the wallet address you provided in the withdrawal form.",
     },
     {
       id: 3,
       question: "How does the referral system work?",
       answer:
-        "Our referral system allows you to earn rewards by inviting others to join our platform. When someone signs up using your referral link and makes a deposit, you'll receive a commission based on your current level.",
+        "You earn commissions by inviting others to the platform. When someone joins through your referral link and purchases a plan, you receive a percentage of their investment based on your level.",
     },
     {
       id: 4,
       question: "What are the different investment plans?",
       answer:
-        "We offer various investment plans with different returns and durations. You can view all available plans in the 'Investment' section of your dashboard. Each plan has specific details about the potential returns and timeframe.",
+        "We offer a range of investment plans, each with different daily reward percentages. You can view and purchase them in the 'Invest' section of your dashboard or from Plans Page.",
     },
     {
       id: 5,
-      question: "How do I verify my account?",
+      question: "How do investment plans work?",
       answer:
-        "Account verification requires submitting your identification documents through the 'Verification' section in your profile. This helps us ensure security and comply with regulations.",
+        "You purchase a plan and complete daily tasks. Based on your plan and task percentage, you earn daily rewards which are credited to your in-app wallet.",
+    },
+    {
+      id: 6,
+      question: "When will I receive my rewards?",
+      answer:
+        "Rewards are credited daily to your in-app wallet after you complete the assigned tasks for the day.",
+    },
+    {
+      id: 7,
+      question: "Can I withdraw early from an investment plan?",
+      answer:
+        "Our plans are flexible, but early withdrawal may not return full rewards. It’s recommended to complete the plan cycle to receive full benefits.",
+    },
+    {
+      id: 8,
+      question: "Is there a maximum investment amount?",
+      answer:
+        "No, there’s no maximum limit. You can invest as much as you are comfortable with.",
+    },
+    {
+      id: 9,
+      question: "Do I need to complete tasks daily?",
+      answer:
+        "Yes, completing tasks daily is required to receive rewards. Missing a task may result in no reward for that day.",
+    },
+    {
+      id: 10,
+      question: "How do I join the affiliate program?",
+      answer:
+        "Every registered user automatically gets an affiliate link, which they can use to invite others and start earning commissions.",
+    },
+    {
+      id: 11,
+      question: "How are commissions calculated?",
+      answer:
+        "Commissions depend on your current level and your team's structure. Direct referrals earn a fixed daily amount, while deeper levels give percentage-based rewards. For a detailed breakdown, please refer to the example and commission table on the My Team page.",
+    },
+    {
+      id: 12,
+      question: "When do I receive my commission payments?",
+      answer:
+        "Commissions are added instantly to your in-app wallet whenever a team member purchases a plan through your referral. There's no waiting — earnings are credited in real-time.",
+    },
+    {
+      id: 13,
+      question: "How do I increase my account level?",
+      answer:
+        "Your account level increases when you purchase higher-value plans. Higher levels unlock greater affiliate commission rates.",
+    },
+    {
+      id: 14,
+      question: "Is there a limit to how many people I can refer?",
+      answer:
+        "No, you can refer unlimited users and build your team as large as you like.",
+    },
+    {
+      id: 15,
+      question: "Do my referrals expire?",
+      answer:
+        "No, once a user registers through your link, they stay permanently linked to your team.",
+    },
+    {
+      id: 16,
+      question: "Do I need to invest to earn affiliate commissions?",
+      answer:
+        "Yes, to activate affiliate earnings, you need to have at least one active investment plan.",
+    },
+    {
+      id: 17,
+      question: "Is my investment safe?",
+      answer:
+        "We use secure, industry-standard systems to protect your data and wallet. However, as with any investment, please assess your risk before participating.",
+    },
+    {
+      id: 19,
+      question: "Where can I see my earnings and transactions?",
+      answer:
+        "All rewards, deposits, and withdrawals are listed in the wallet section of your dashboard with full history and timestamps.",
     },
   ];
 
