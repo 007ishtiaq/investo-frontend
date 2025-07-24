@@ -13,6 +13,7 @@ import {
   UserPlus,
   LogIn,
 } from "lucide-react";
+import { ReactComponent as Logosign } from "../../images/logo.svg";
 import { WalletIcon, MenuIcon } from "../../utils/icons";
 import { useIsMobile } from "../../hooks/use-mobile";
 import { useSelector, useDispatch } from "react-redux";
@@ -71,10 +72,13 @@ const Header = () => {
         {/* Logo */}
         <div className="logo">
           <Link to="/" className="logo-link">
-            <div className="logo-icon gradient-bg">
+            {/* <div className="logo-icon gradient-bg">
               <span>T</span>
+            </div> */}
+            <div class="logo-svgsize">
+              <Logosign />
             </div>
-            <span className="logo-text">TreasureNFT</span>
+            <span className="logo-text">TrustyVest</span>
           </Link>
         </div>
 

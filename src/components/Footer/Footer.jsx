@@ -6,6 +6,7 @@ import {
   YoutubeIcon,
   InstagramIcon,
 } from "../../utils/icons";
+import { ReactComponent as Logosign } from "../../images/logo.svg";
 
 /**
  * Footer component for the application
@@ -19,8 +20,10 @@ const Footer = () => {
         <div className="footer-content">
           <div className="footer-main">
             <div className="footer-branding">
-              <Link to="/" className="footer-logo">
-                TreasureNFT
+              <Link to="/">
+                <div class="logo-svgsize logo-svgsize-footer">
+                  <Logosign /> <span className="logo-text">TrustyVest</span>
+                </div>
               </Link>
               <p className="footer-description">
                 Discover, collect, and sell extraordinary NFTs on the world's
@@ -146,7 +149,19 @@ document.head.appendChild(document.createElement("style")).textContent = `
   padding: 4rem 0 2rem;
   margin-top: 3rem;
 }
-
+.logo-text {
+      font-size: 1.5rem;
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-right: 2rem;
+}
+.logo-svgsize-footer{
+ display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 1rem;
+}
 .footer-content {
   display: flex;
   flex-direction: column;
