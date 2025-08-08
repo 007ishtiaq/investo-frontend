@@ -216,7 +216,7 @@ const Plans = () => {
     name: plan.name,
     level: plan.minLevel,
     dailyRoi: plan.dailyIncome,
-    duration: `${plan.durationInDays} Days`,
+    duration: `Life Time`,
     minAmount: plan.minAmount,
     maxAmount: plan.maxAmount,
     featured: plan.featured,

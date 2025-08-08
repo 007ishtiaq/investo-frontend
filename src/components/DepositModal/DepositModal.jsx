@@ -302,10 +302,9 @@ const DepositModal = ({ isOpen, onClose, onSuccess }) => {
                   required
                 >
                   <option value="">Select payment method</option>
-                  <option value="bitcoin">Bitcoin</option>
-                  <option value="ethereum">Ethereum</option>
-                  <option value="litecoin">Litecoin</option>
-                  <option value="bank_transfer">Bank Transfer</option>
+                  <option value="bitcoin">Tron (TRC 20)</option>
+                  <option value="ethereum">BNB Smart chain (BEP20) </option>
+                  <option value="litecoin">Ethereum (ERC20)</option>
                 </select>
               </div>
             </div>
@@ -356,17 +355,17 @@ const DepositModal = ({ isOpen, onClose, onSuccess }) => {
               <h3>Payment Details</h3>
               {paymentMethod === "bitcoin" && (
                 <div className="payment-address">
-                  <p>Bitcoin Address:</p>
+                  <p>Tron (TRC 20) Address:</p>
                   <div className="address-container">
                     <code>
-                      {process.env.REACT_APP_BITCOIN_ADDRESS ||
+                      {process.env.REACT_APP_TRON_ADDRESS ||
                         "bc1q98y7heu5glx5q7v93qjh0x9dsw29ruvjz35g7k"}
                     </code>
                     <button
                       className="copy-button"
                       onClick={() =>
                         copyAddress(
-                          process.env.REACT_APP_BITCOIN_ADDRESS ||
+                          process.env.REACT_APP_TRON_ADDRESS ||
                             "not getting address from Env"
                         )
                       }
@@ -379,7 +378,30 @@ const DepositModal = ({ isOpen, onClose, onSuccess }) => {
               )}
               {paymentMethod === "ethereum" && (
                 <div className="payment-address">
-                  <p>Ethereum Address:</p>
+                  <p>BNB Smart chain (BEP20) Address:</p>
+                  <div className="address-container">
+                    <code>
+                      {process.env.REACT_APP_BNB_ADDRESS ||
+                        "not getting address from Env"}
+                    </code>
+                    <button
+                      className="copy-button"
+                      onClick={() =>
+                        copyAddress(
+                          process.env.REACT_APP_BNB_ADDRESS ||
+                            "not getting address from Env"
+                        )
+                      }
+                      type="button"
+                    >
+                      <Copy size={16} />
+                    </button>
+                  </div>
+                </div>
+              )}
+              {paymentMethod === "litecoin" && (
+                <div className="payment-address">
+                  <p>Ethereum (ERC20) Address:</p>
                   <div className="address-container">
                     <code>
                       {process.env.REACT_APP_ETHEREUM_ADDRESS ||
@@ -398,41 +420,6 @@ const DepositModal = ({ isOpen, onClose, onSuccess }) => {
                       <Copy size={16} />
                     </button>
                   </div>
-                </div>
-              )}
-              {paymentMethod === "litecoin" && (
-                <div className="payment-address">
-                  <p>Litecoin Address:</p>
-                  <div className="address-container">
-                    <code>
-                      {process.env.REACT_APP_LITECOIN_ADDRESS ||
-                        "not getting address from Env"}
-                    </code>
-                    <button
-                      className="copy-button"
-                      onClick={() =>
-                        copyAddress(
-                          process.env.REACT_APP_LITECOIN_ADDRESS ||
-                            "not getting address from Env"
-                        )
-                      }
-                      type="button"
-                    >
-                      <Copy size={16} />
-                    </button>
-                  </div>
-                </div>
-              )}
-              {paymentMethod === "bank_transfer" && (
-                <div className="bank-details">
-                  <p>Bank: Global Investment Bank</p>
-                  <p>Account Name: Investment Platform Inc.</p>
-                  <p>Account Number: 1234567890</p>
-                  <p>SWIFT/BIC: GIBAUS123</p>
-                  <p>
-                    Reference: Please include your username in the transfer
-                    description.
-                  </p>
                 </div>
               )}
             </div>

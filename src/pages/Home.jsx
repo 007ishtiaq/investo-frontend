@@ -199,7 +199,7 @@ const sampleCollections = [
 ];
 
 const sampleActiveStats = {
-  active: 843,
+  active: 8536,
   total: 12574,
   growth: 15,
 };
