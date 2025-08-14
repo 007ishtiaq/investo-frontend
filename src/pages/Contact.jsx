@@ -316,7 +316,7 @@ const Contact = () => {
               <div className="contact-quick-info">
                 <div className="quick-info-item">
                   <Mail size={18} />
-                  <span>support@yourplatform.com</span>
+                  <span>support@trustyvest.com</span>
                 </div>
                 {/* <div className="quick-info-item">
                   <Phone size={18} />
