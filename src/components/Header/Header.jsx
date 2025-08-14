@@ -12,6 +12,7 @@ import {
   Target,
   UserPlus,
   LogIn,
+  Mail,
 } from "lucide-react";
 import { ReactComponent as Logosign } from "../../images/logo.svg";
 import { WalletIcon, MenuIcon } from "../../utils/icons";
@@ -289,6 +290,22 @@ const Header = () => {
                       >
                         <Users className="dropdown-icon" />
                         My Team
+                      </div>
+                    </Link>
+                    <Link
+                      to="/contact"
+                      className="dropdown-link"
+                      onClick={() => setShowMobileMenu(false)}
+                    >
+                      <div
+                        className={`dropdown-item ${
+                          location.pathname === "/contact"
+                            ? "dropdown-item-active"
+                            : ""
+                        }`}
+                      >
+                        <Mail className="dropdown-icon" />
+                        Contact
                       </div>
                     </Link>
                   </div>
