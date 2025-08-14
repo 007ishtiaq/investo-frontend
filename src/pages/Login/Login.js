@@ -171,24 +171,32 @@ const Login = () => {
           setLoading(false);
           console.error("Login error:", error);
 
-          if (
-            error.message ===
-            "A network error (such as timeout, interrupted connection or unreachable host) has occurred."
-          ) {
+          let friendlyMessage = "Login failed. Please try again.";
+
+          // Network error
+          if (error.message.includes("A network error")) {
             setNoNetModal(true);
-          } else if (
-            error.message ===
-            "The password is invalid or the user does not have a password."
-          ) {
-            toast.error("Invalid credentials. Please try again.");
-          } else if (
-            error.message ===
-            "There is no user record corresponding to this identifier. The user may have been deleted."
-          ) {
-            toast.error("Account not found. Please register first.");
-          } else {
-            toast.error(error.message || "Login failed. Please try again.");
+            return; // Stop further execution
           }
+
+          // Invalid password
+          if (error.message.includes("The password is invalid")) {
+            friendlyMessage =
+              "Invalid credentials. Please check your password.";
+          }
+
+          // Invalid credentials (Firebase custom error)
+          else if (error.message.includes("INVALID_LOGIN_CREDENTIALS")) {
+            friendlyMessage = "Invalid email or password.";
+          }
+
+          // User not found
+          else if (error.message.includes("no user record")) {
+            friendlyMessage = "Account not found. Please register first.";
+          }
+
+          // Show only the friendly message in toast
+          toast.error(friendlyMessage);
         }
       } else {
         setLoading(false);
