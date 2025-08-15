@@ -186,7 +186,28 @@ export const ChevronDownIcon = ({ size = 24, className = "" }) => {
 /**
  * Chart Icon component
  */
-export const TiktokIcon = ({ size = 24, className = "" }) => {
+// export const TiktokIcon = ({ size = 24, className = "" }) => {
+//   return (
+//     <svg
+//       width={size}
+//       height={size}
+//       viewBox="0 0 24 24"
+//       fill="none"
+//       xmlns="http://www.w3.org/2000/svg"
+//       className={className}
+//     >
+//       <path
+//         d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"
+//         stroke="currentColor"
+//         strokeWidth="2"
+//         strokeLinecap="round"
+//         strokeLinejoin="round"
+//       />
+//     </svg>
+//   );
+// };
+
+export const FacebookIcon = ({ size = 24, className = "" }) => {
   return (
     <svg
       width={size}
@@ -197,7 +218,7 @@ export const TiktokIcon = ({ size = 24, className = "" }) => {
       className={className}
     >
       <path
-        d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"
+        d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3V2z"
         stroke="currentColor"
         strokeWidth="2"
         strokeLinecap="round"
@@ -250,31 +271,31 @@ export const InstagramIcon = ({ size = 24, className = "" }) => {
 /**
  * Chart Icon component
  */
-export const TelegramIcon = ({ size = 24, className = "" }) => {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-    >
-      <path
-        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"
-        stroke="currentColor"
-        strokeWidth="2"
-      />
-      <path
-        d="m8 13 2.165 1.99a1 1 0 001.521-.126L16 10.5M8 13l7.5-6M8 13l-1-4 12.5-4.5L16 10.5"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-};
+// export const TelegramIcon = ({ size = 24, className = "" }) => {
+//   return (
+//     <svg
+//       width={size}
+//       height={size}
+//       viewBox="0 0 24 24"
+//       fill="none"
+//       xmlns="http://www.w3.org/2000/svg"
+//       className={className}
+//     >
+//       <path
+//         d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"
+//         stroke="currentColor"
+//         strokeWidth="2"
+//       />
+//       <path
+//         d="m8 13 2.165 1.99a1 1 0 001.521-.126L16 10.5M8 13l7.5-6M8 13l-1-4 12.5-4.5L16 10.5"
+//         stroke="currentColor"
+//         strokeWidth="2"
+//         strokeLinecap="round"
+//         strokeLinejoin="round"
+//       />
+//     </svg>
+//   );
+// };
 
 /**
  * Chart Icon component

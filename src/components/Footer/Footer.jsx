@@ -1,8 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import {
-  TelegramIcon,
-  TiktokIcon,
+  // TelegramIcon,
+  // TiktokIcon,
+  FacebookIcon,
   YoutubeIcon,
   InstagramIcon,
 } from "../../utils/icons";
@@ -30,32 +31,33 @@ const Footer = () => {
                 first and largest NFT marketplace.
               </p>
               <div className="social-links">
-                <a
+                {/* <a
                   href="https://twitter.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="social-link"
                 >
                   <TelegramIcon size={20} />
+                </a> */}
+                <a
+                  href="https://www.facebook.com/TrustyVest"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="social-link"
+                >
+                  <FacebookIcon size={20} />
                 </a>
                 <a
-                  href="https://instagram.com"
+                  href="https://www.instagram.com/trustyvest"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="social-link"
                 >
                   <InstagramIcon size={20} />
                 </a>
+
                 <a
-                  href="https://discord.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="social-link"
-                >
-                  <TiktokIcon size={20} />
-                </a>
-                <a
-                  href="https://youtube.com"
+                  href="https://www.youtube.com/@TrustyVest"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="social-link"
