@@ -46,7 +46,27 @@ const InvestmentCard = ({
       total: totalProfit.toFixed(2),
     };
   };
+
+  const calculateMaxProfit = () => {
+    let dailyProfit = 0;
+    // Use minAmount for calculation, handle special case where minAmount might be 0
+    if (maxAmount === 0) {
+      // For plans with minAmount 0, use a base amount for display calculation
+      const baseAmount = 100;
+      dailyProfit = baseAmount * (dailyRoi / 100);
+    } else {
+      dailyProfit = maxAmount * (dailyRoi / 100);
+    }
+    // Total profit calculation (365 days for annual profit)
+    const totalProfit = dailyProfit * 365;
+    return {
+      daily: dailyProfit.toFixed(2),
+      total: totalProfit.toFixed(2),
+    };
+  };
+
   const profit = calculateProfit();
+  const maxprofit = calculateMaxProfit();
   // Check if user is logged in using Redux state
   const isLoggedIn = user && user.token;
   // Check if user has purchased this plan before
@@ -96,8 +116,10 @@ const InvestmentCard = ({
   // Determine ROI label
   const roiLabel = isBasicPlan ? "Daily Reward" : "Daily ROI";
   // Determine profit labels - all plans show Annual Profit
-  const dailyProfitLabel = "Daily Profit";
-  const totalProfitLabel = "Annual Profit";
+  const dailyProfitLabel = "Daily Profit (Min)";
+  const dailyProfitMaxLabel = "Daily Profit (Max)";
+  const totalProfitLabel = "Annual Profit (Min)";
+  const totalProfitMaxLabel = "Annual Profit (Max)";
   return (
     <div
       className={`investment-card ${
@@ -157,10 +179,24 @@ const InvestmentCard = ({
           </div>
         </div>
         <div className="detail-item-plancard">
+          <div className="detail-label">{dailyProfitMaxLabel}</div>
+          <div className="detail-value">
+            <EthereumIcon size={14} />
+            <span>{maxprofit.daily} USD</span>
+          </div>
+        </div>
+        <div className="detail-item-plancard">
           <div className="detail-label">{totalProfitLabel}</div>
           <div className="detail-value">
             <EthereumIcon size={14} />
             <span>{profit.total} USD</span>
+          </div>
+        </div>
+        <div className="detail-item-plancard">
+          <div className="detail-label">{totalProfitMaxLabel}</div>
+          <div className="detail-value">
+            <EthereumIcon size={14} />
+            <span>{maxprofit.total} USD</span>
           </div>
         </div>
         {duration && (
@@ -407,6 +443,7 @@ document.head.appendChild(document.createElement("style")).textContent = `
 }
 
 .detail-value {
+  text-align: right;
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--color-text-primary);
@@ -415,6 +452,7 @@ document.head.appendChild(document.createElement("style")).textContent = `
 }
 
 .detail-value svg {
+  display: none;
   margin-right: 0.25rem;
   color: var(--color-primary);
 }
