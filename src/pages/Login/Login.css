@@ -498,7 +498,14 @@
   align-items: center;
   justify-content: center;
 }
-
+.auth-logosize svg {
+  padding: 0.4rem 0;
+  width: 3rem;
+  margin-right: 0.5rem;
+  height: auto;
+  display: block;
+  border-radius: 0.4rem;
+}
 /* RegisterComplete.css */
 /* .error-message {
   color: #ff3333;

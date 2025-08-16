@@ -8,6 +8,7 @@ import { EthereumIcon } from "../../utils/icons";
 import "../Login/Login.css";
 import { useDispatch, useSelector } from "react-redux";
 import NoNetModal from "../../components/NoNetModal/NoNetModal";
+import { ReactComponent as Logosign } from "../../images/logo.svg";
 
 // Spinner component for loading state
 const Spinner = () => (
@@ -15,6 +16,31 @@ const Spinner = () => (
     <div className="bounce1"></div>
     <div className="bounce2"></div>
     <div className="bounce3"></div>
+  </div>
+);
+
+const LogoSpinner = () => (
+  <div className="logo-spinner">
+    <div className="logo-spinner-container">
+      <div className="logo-spinner-ring ring-1"></div>
+      <div className="logo-spinner-ring ring-2"></div>
+      <div className="logo-spinner-ring ring-3"></div>
+      <div className="logo-spinner-center">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="logo-spinner-icon"
+        >
+          <path
+            d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z"
+            fill="currentColor"
+          />
+        </svg>
+      </div>
+    </div>
   </div>
 );
 
@@ -245,38 +271,14 @@ const OtpVerification = () => {
             <div className="login-header">
               <div className="logo-container">
                 {loading ? (
-                  <Spinner />
+                  <LogoSpinner />
                 ) : (
-                  <div className="app-logo">
-                    <svg
-                      width="40"
-                      height="40"
-                      viewBox="0 0 40 40"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <rect
-                        width="40"
-                        height="40"
-                        rx="8"
-                        fill="url(#paint0_linear)"
-                      />
-                      <path d="M20 10L28.6603 25H11.3397L20 10Z" fill="white" />
-                      <defs>
-                        <linearGradient
-                          id="paint0_linear"
-                          x1="0"
-                          y1="0"
-                          x2="40"
-                          y2="40"
-                          gradientUnits="userSpaceOnUse"
-                        >
-                          <stop stopColor="#4F46E5" />
-                          <stop offset="1" stopColor="#7A70FF" />
-                        </linearGradient>
-                      </defs>
-                    </svg>
-                  </div>
+                  <>
+                    <div class="auth-logosize">
+                      <Logosign />
+                    </div>
+                    {/* <LogoSpinner /> */}
+                  </>
                 )}
               </div>
               <h1 className="login-title">Verify Your Email</h1>

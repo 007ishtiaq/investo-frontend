@@ -9,6 +9,7 @@ import { createOrUpdateUser } from "../../functions/auth";
 import { EthereumIcon } from "../../utils/icons";
 import NoNetModal from "../../components/NoNetModal/NoNetModal";
 import "./Login.css";
+import { ReactComponent as Logosign } from "../../images/logo.svg";
 
 // Spinner component for loading state
 const Spinner = () => (
@@ -240,35 +241,8 @@ const Login = () => {
                 {loading ? (
                   <LogoSpinner />
                 ) : (
-                  <div className="app-logo">
-                    <svg
-                      width="40"
-                      height="40"
-                      viewBox="0 0 40 40"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <rect
-                        width="40"
-                        height="40"
-                        rx="8"
-                        fill="url(#paint0_linear)"
-                      />
-                      <path d="M20 10L28.6603 25H11.3397L20 10Z" fill="white" />
-                      <defs>
-                        <linearGradient
-                          id="paint0_linear"
-                          x1="0"
-                          y1="0"
-                          x2="40"
-                          y2="40"
-                          gradientUnits="userSpaceOnUse"
-                        >
-                          <stop stopColor="#4F46E5" />
-                          <stop offset="1" stopColor="#7A70FF" />
-                        </linearGradient>
-                      </defs>
-                    </svg>
+                  <div class="auth-logosize">
+                    <Logosign />
                   </div>
                 )}
               </div>
