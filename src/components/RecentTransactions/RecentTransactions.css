@@ -1,7 +1,7 @@
 /* Recent Transactions component styles */
 
 /* Card Header */
-.transactions-header {
+.transactions-header-recent {
   padding-bottom: 0.5rem;
 }
 
@@ -27,18 +27,18 @@
 }
 
 /* Transaction Items */
-.transaction-item {
+.transaction-item-recent {
   padding: 1rem;
   display: flex;
   align-items: center;
   border-bottom: 1px solid var(--border-color, #e5e7eb);
 }
 
-.transaction-item:last-child {
+.transaction-item-recent:last-child {
   border-bottom: none;
 }
 
-.transaction-icon {
+.transaction-icon-recent {
   flex-shrink: 0;
   height: 2.5rem;
   width: 2.5rem;
@@ -73,28 +73,28 @@
   width: 1.25rem;
 }
 
-.transaction-content {
+.transaction-content-recent {
   margin-left: 1rem;
   flex: 1;
 }
 
-.transaction-details {
+.transaction-details-recent {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.transaction-title {
+.transaction-title-recent {
   font-size: 0.875rem;
   font-weight: 500;
 }
 
-.transaction-description {
+.transaction-description-recent {
   font-size: 0.75rem;
   color: var(--text-secondary, #6b7280);
 }
 
-.transaction-description-text {
+.transaction-description-text-recent {
   display: block;
   white-space: nowrap;
   overflow: hidden;
@@ -102,7 +102,7 @@
   max-width: 180px;
 }
 
-.transaction-amount {
+.transaction-amount-recent {
   font-weight: 500;
 }
 
@@ -239,61 +239,61 @@
 }
 
 /* Updated amount styling */
-.transaction-amount.amount-rejected {
+.transaction-amount-recent.amount-rejected {
   color: #dc2626 !important;
   font-weight: 600;
 }
 
-.transaction-amount.amount-negative {
+.transaction-amount-recent.amount-negative {
   color: #dc2626;
 }
 
-.transaction-amount.amount-positive {
+.transaction-amount-recent.amount-positive {
   color: #16a34a;
 }
 
-.transaction-amount.amount-pending {
+.transaction-amount-recent.amount-pending {
   color: #d97706;
 }
 
 /* Icon styling for rejected transactions */
-.transaction-icon.rejected-deposit-icon {
+.transaction-icon-recent.rejected-deposit-icon {
   background-color: #fecaca;
   color: #dc2626;
 }
 
-.transaction-icon.rejected-withdrawal-icon {
+.transaction-icon-recent.rejected-withdrawal-icon {
   background-color: #fed7aa;
   color: #ea580c;
 }
 
-.transaction-icon.rejected-icon {
+.transaction-icon-recent.rejected-icon {
   background-color: #fecaca;
   color: #dc2626;
 }
 
 /* Existing styles remain the same */
-.transaction-icon.pending-icon {
+.transaction-icon-recent.pending-icon {
   background-color: #fef3c7;
   color: #d97706;
 }
 
-.transaction-icon.deposit-icon {
+.transaction-icon-recent.deposit-icon {
   background-color: #dcfce7;
   color: #16a34a;
 }
 
-.transaction-icon.withdraw-icon {
+.transaction-icon-recent.withdraw-icon {
   background-color: #fecaca;
   color: #dc2626;
 }
 
-.transaction-icon.referral-icon {
+.transaction-icon-recent.referral-icon {
   background-color: #e0e7ff;
   color: #4f46e5;
 }
 
-.transaction-icon.earning-icon {
+.transaction-icon-recent.earning-icon {
   background-color: #fef3c7;
   color: #d97706;
 }
@@ -313,7 +313,7 @@
 
 /* Dark mode adjustments */
 @media (prefers-color-scheme: dark) {
-  .transaction-item {
+  .transaction-item-recent {
     border-color: var(--border-color-dark, #374151);
   }
 
@@ -321,7 +321,7 @@
     border-color: var(--border-color-dark, #374151);
   }
 
-  .transaction-description {
+  .transaction-description-recent {
     color: var(--text-secondary-dark, #9ca3af);
   }
 
@@ -374,6 +374,6 @@
 .transactions-content-padding-none {
   padding: 0.8rem;
 }
-.transaction-item {
+.transaction-item-recent {
   padding: 0.8rem;
 }

@@ -49,3 +49,9 @@
     color: var(--muted-foreground-dark, #9ca3af);
   }
 }
+
+@media (max-width: 480px) {
+  .card-content {
+    padding: 1rem;
+  }
+}

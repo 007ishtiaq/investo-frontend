@@ -30,7 +30,7 @@ const TransactionIcon = ({ type, source, status }) => {
   // For pending transactions
   if (status === "pending") {
     return (
-      <div className="transaction-icon pending-icon">
+      <div className="transaction-icon-recent pending-icon">
         <Clock className="icon-inner" />
       </div>
     );
@@ -40,19 +40,19 @@ const TransactionIcon = ({ type, source, status }) => {
   if (status === "failed" || status === "rejected") {
     if (source === "deposit") {
       return (
-        <div className="transaction-icon rejected-deposit-icon">
+        <div className="transaction-icon-recent rejected-deposit-icon">
           <XCircle className="icon-inner" />
         </div>
       );
     } else if (source === "withdrawal") {
       return (
-        <div className="transaction-icon rejected-withdrawal-icon">
+        <div className="transaction-icon-recent rejected-withdrawal-icon">
           <AlertTriangle className="icon-inner" />
         </div>
       );
     } else {
       return (
-        <div className="transaction-icon rejected-icon">
+        <div className="transaction-icon-recent rejected-icon">
           <XCircle className="icon-inner" />
         </div>
       );
@@ -62,25 +62,25 @@ const TransactionIcon = ({ type, source, status }) => {
   // For normal transactions (existing logic)
   if (type === "credit" && source === "deposit") {
     return (
-      <div className="transaction-icon deposit-icon">
+      <div className="transaction-icon-recent deposit-icon">
         <ArrowDown className="icon-inner" />
       </div>
     );
   } else if (type === "debit") {
     return (
-      <div className="transaction-icon withdraw-icon">
+      <div className="transaction-icon-recent withdraw-icon">
         <ArrowUp className="icon-inner" />
       </div>
     );
   } else if (source === "referral") {
     return (
-      <div className="transaction-icon referral-icon">
+      <div className="transaction-icon-recent referral-icon">
         <Users className="icon-inner" />
       </div>
     );
   } else {
     return (
-      <div className="transaction-icon earning-icon">
+      <div className="transaction-icon-recent earning-icon">
         <DollarSign className="icon-inner" />
       </div>
     );
@@ -156,16 +156,16 @@ const TransactionItem = ({ transaction }) => {
   }
 
   return (
-    <div className="transaction-item">
+    <div className="transaction-item-recent">
       <TransactionIcon
         type={transaction.type}
         source={transaction.source}
         status={transaction.status}
       />
-      <div className="transaction-content">
-        <div className="transaction-details">
+      <div className="transaction-content-recent">
+        <div className="transaction-details-recent">
           <div>
-            <p className="transaction-title">
+            <p className="transaction-title-recent">
               {title}
               {isPending && (
                 <span className="transaction-status-badge pending">
@@ -173,10 +173,10 @@ const TransactionItem = ({ transaction }) => {
                 </span>
               )}
             </p>
-            <p className="transaction-description">
+            <p className="transaction-description-recent">
               {transaction.description ? (
                 <span
-                  className="transaction-description-text"
+                  className="transaction-description-text-recent"
                   title={transaction.description}
                 >
                   {transaction.description}
@@ -186,7 +186,7 @@ const TransactionItem = ({ transaction }) => {
             </p>
           </div>
           <span
-            className={`transaction-amount ${
+            className={`transaction-amount-recent ${
               isPositive ? "amount-positive" : "amount-negative"
             } ${isPending ? "amount-pending" : ""} ${
               isRejected ? "amount-rejected" : ""
@@ -246,7 +246,7 @@ const RecentTransactions = forwardRef(({ refreshTrigger }, ref) => {
   if (loading) {
     return (
       <Card>
-        <CardHeader className="transactions-header">
+        <CardHeader className="transactions-header-recent">
           <div className="transactions-header-content">
             <CardTitle>Recent Transactions</CardTitle>
             <div className="transactions-loading-view"></div>
@@ -278,7 +278,7 @@ const RecentTransactions = forwardRef(({ refreshTrigger }, ref) => {
 
   return (
     <Card>
-      <CardHeader className="transactions-header">
+      <CardHeader className="transactions-header-recent">
         <div className="transactions-header-content">
           <CardTitle>Recent Transactions</CardTitle>
           <Link to="/history">
