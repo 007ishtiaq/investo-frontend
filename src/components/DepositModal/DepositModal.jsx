@@ -310,7 +310,9 @@ const DepositModal = ({ isOpen, onClose, onSuccess }) => {
             </div>
             <div className="deposit-form-row">
               <div className="form-group">
-                <label htmlFor="transactionId">Transaction ID/Reference</label>
+                <label htmlFor="transactionId">
+                  Transaction ID/Reference (Fill from deposite slip)
+                </label>
                 <input
                   type="text"
                   id="transactionId"
