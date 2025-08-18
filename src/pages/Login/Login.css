@@ -66,6 +66,25 @@
   width: 60px;
   height: 60px;
 }
+.center-dot-auth {
+  width: 11px;
+  height: 11px;
+  background: linear-gradient(45deg, #4f46e5, #135bc5);
+  border-radius: 50%;
+  animation: suspense-pulse 1.5s ease-in-out infinite;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+}
+@keyframes suspense-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.7;
+  }
+}
 
 .logo-spinner-container {
   position: relative;
