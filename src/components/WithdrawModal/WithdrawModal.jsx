@@ -110,9 +110,9 @@ const WithdrawModal = ({ isOpen, onClose, onSuccess }) => {
     }
 
     // Validate bank details for bank transfer
-    if (paymentMethod === "bank_transfer" && !bankDetails) {
-      return toast.error("Please provide your bank account details");
-    }
+    // if (paymentMethod === "bank_transfer" && !bankDetails) {
+    //   return toast.error("Please provide your bank account details");
+    // }
 
     try {
       setLoading(true);
@@ -135,7 +135,7 @@ const WithdrawModal = ({ isOpen, onClose, onSuccess }) => {
       setAmount("");
       setPaymentMethod("");
       setWalletAddress("");
-      setBankDetails("");
+      // setBankDetails("");
 
       toast.success("Withdrawal request submitted successfully");
       setLoading(false);
@@ -249,7 +249,7 @@ const WithdrawModal = ({ isOpen, onClose, onSuccess }) => {
                   <option value="bitcoin">Bitcoin</option>
                   <option value="ethereum">Ethereum</option>
                   <option value="litecoin">Litecoin</option>
-                  <option value="bank_transfer">Bank Transfer</option>
+                  {/* <option value="bank_transfer">Bank Transfer</option> */}
                 </select>
               </div>
             </div>
@@ -273,7 +273,7 @@ const WithdrawModal = ({ isOpen, onClose, onSuccess }) => {
               </div>
             )}
 
-            {paymentMethod === "bank_transfer" && (
+            {/* {paymentMethod === "bank_transfer" && (
               <div className="form-group">
                 <label htmlFor="bankDetails">Bank Account Details*</label>
                 <textarea
@@ -285,7 +285,7 @@ const WithdrawModal = ({ isOpen, onClose, onSuccess }) => {
                   required
                 />
               </div>
-            )}
+            )} */}
 
             <div className="withdraw-notice">
               <p>
