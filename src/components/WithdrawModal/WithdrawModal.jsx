@@ -155,7 +155,15 @@ const WithdrawModal = ({ isOpen, onClose, onSuccess }) => {
       ) {
         setNoNetModal(true);
       } else {
-        toast.error(error.message || "Failed to submit withdrawal request");
+        if (
+          (error.message && error.message.includes("400")) ||
+          error.message === "Request failed with status code 400"
+        ) {
+          toast.error(
+            "Failed to submit withdrawal request, Please Reload Page & try again"
+          );
+        } else
+          toast.error(error.message || "Failed to submit withdrawal request");
       }
       setLoading(false);
     }
