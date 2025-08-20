@@ -204,11 +204,11 @@ const sampleActiveStats = {
   growth: 15,
 };
 
-const sampleTransactions = [
-  { type: "deposit", amount: 500.0, user: "Michael S.", time: "5 min ago" },
-  { type: "withdraw", amount: 150.25, user: "Jennifer K.", time: "15 min ago" },
-  { type: "deposit", amount: 1000.0, user: "Robert L.", time: "1 hour ago" },
-];
+// const sampleTransactions = [
+//   { type: "deposit", amount: 500.0, user: "Michael S.", time: "5 min ago" },
+//   { type: "withdraw", amount: 150.25, user: "Jennifer K.", time: "15 min ago" },
+//   { type: "deposit", amount: 1000.0, user: "Robert L.", time: "1 hour ago" },
+// ];
 
 const sampleMembers = [
   {

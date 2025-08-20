@@ -9,7 +9,6 @@ import {
   ArrowDown,
   ArrowUp,
   DollarSign,
-  Search,
   FilterX,
   Users,
   XCircle,

@@ -280,37 +280,6 @@ const Tasks = () => {
     return match && match[2].length === 11 ? match[2] : null;
   };
 
-  // Start tracking when video plays
-  const startVideoTracking = () => {
-    if (videoIntervalRef.current) clearInterval(videoIntervalRef.current);
-
-    videoIntervalRef.current = setInterval(() => {
-      setVideoWatchTime((prev) => {
-        const newTime = prev + 1;
-        // Check if watched enough time
-        if (
-          activeTask.autoVerify &&
-          activeTask.videoDuration &&
-          newTime >= parseInt(activeTask.videoDuration)
-        ) {
-          setVideoWatchComplete(true);
-          clearInterval(videoIntervalRef.current);
-
-          // Auto verify the task
-          verifyTask(activeTask._id);
-        }
-        return newTime;
-      });
-    }, 1000);
-  };
-
-  // Stop tracking when video pauses
-  const stopVideoTracking = () => {
-    if (videoIntervalRef.current) {
-      clearInterval(videoIntervalRef.current);
-    }
-  };
-
   useEffect(() => {
     // Only run this effect if activeTask is a YouTube watch task
     if (!activeTask || activeTask.type !== "youtube_watch") return;

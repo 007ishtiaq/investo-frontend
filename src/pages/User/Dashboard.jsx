@@ -307,21 +307,6 @@ const Dashboard = ({ onTransactionUpdate }) => {
     performCopy();
   };
 
-  const getLevelColor = (level) => {
-    switch (level) {
-      case 1:
-        return "level-1";
-      case 2:
-        return "level-2";
-      case 3:
-        return "level-3";
-      case 4:
-        return "level-4";
-      default:
-        return "level-1";
-    }
-  };
-
   const getUserInitials = (name) => {
     return name
       .split(" ")

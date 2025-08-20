@@ -4,7 +4,6 @@ import {
   getUserDeposits,
   submitDeposit,
   getStatusBadgeClass,
-  formatPaymentMethod,
 } from "../functions/deposit";
 import toast from "react-hot-toast";
 import "./Deposit.css";
