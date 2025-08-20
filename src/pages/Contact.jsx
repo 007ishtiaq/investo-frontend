@@ -338,7 +338,7 @@ const Contact = () => {
               >
                 {({ isSubmitting, setFieldValue }) => (
                   <Form className="contact-form">
-                    <div className="form-group">
+                    <div className="form-group-contact">
                       <label htmlFor="name">Your Name</label>
                       <Field
                         type="text"
@@ -354,7 +354,7 @@ const Contact = () => {
                       />
                     </div>
 
-                    <div className="form-group">
+                    <div className="form-group-contact">
                       <label htmlFor="email">Your Email</label>
                       <Field
                         type="email"
@@ -370,7 +370,7 @@ const Contact = () => {
                       />
                     </div>
 
-                    <div className="form-group">
+                    <div className="form-group-contact">
                       <label htmlFor="subject">Subject</label>
                       <Field
                         type="text"
@@ -386,7 +386,7 @@ const Contact = () => {
                       />
                     </div>
 
-                    <div className="form-group">
+                    <div className="form-group-contact">
                       <label htmlFor="message">Message</label>
                       <Field
                         as="textarea"
@@ -403,7 +403,7 @@ const Contact = () => {
                       />
                     </div>
 
-                    <div className="form-group">
+                    <div className="form-group-contact">
                       <label htmlFor="attachment" className="file-input-label">
                         <Paperclip size={16} />
                         <span>Attach File (Optional)</span>
