@@ -30,16 +30,32 @@ export const getTransactionHistory = async (
 };
 
 // Submit withdrawal request
+// export const submitWithdrawal = async (withdrawalData, authtoken) => {
+//   return await axios.post(
+//     `${process.env.REACT_APP_API}/wallet/withdraw`,
+//     withdrawalData,
+//     {
+//       headers: {
+//         authtoken,
+//       },
+//     }
+//   );
+// };
 export const submitWithdrawal = async (withdrawalData, authtoken) => {
-  return await axios.post(
-    `${process.env.REACT_APP_API}/wallet/withdraw`,
-    withdrawalData,
-    {
-      headers: {
-        authtoken,
-      },
-    }
-  );
+  try {
+    const { data } = await axios.post(
+      `${process.env.REACT_APP_API}/wallet/withdraw`,
+      withdrawalData,
+      { headers: { authtoken } }
+    );
+    return data;
+  } catch (err) {
+    console.error(
+      "Withdrawal request failed:",
+      err.response?.data || err.message
+    );
+    throw err;
+  }
 };
 
 // Format wallet balance for display

@@ -89,7 +89,12 @@ const WalletOverview = () => {
           setWeeklyGrowth(earningsResponse.data.weeklyGrowth || 0);
         } catch (error) {
           console.error("Error fetching user data:", error);
-          toast.error("Failed to load investment data");
+
+          if (error.message && error.message.includes(401)) {
+            toast.error("Session Expired, Please reload the page");
+          } else {
+            toast.error(error.message || "Failed to load investment data");
+          }
           setUserInvestments([]);
         } finally {
           setLoading(false);

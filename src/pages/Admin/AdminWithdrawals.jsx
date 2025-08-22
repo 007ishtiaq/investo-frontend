@@ -277,6 +277,12 @@ const AdminWithdrawals = () => {
               <div className="modal-content">
                 <div className="withdrawal-details">
                   <div className="detail-row">
+                    <span className="detail-label">Date:</span>
+                    <span className="detail-value">
+                      {formatDate(activeWithdrawal.createdAt)}
+                    </span>
+                  </div>
+                  <div className="detail-row">
                     <span className="detail-label">User:</span>
                     <span className="detail-value">
                       {activeWithdrawal.user.username ||
@@ -312,12 +318,20 @@ const AdminWithdrawals = () => {
                       {formatPaymentMethod(activeWithdrawal.paymentMethod)}
                     </span>
                   </div>
-                  <div className="detail-row">
-                    <span className="detail-label">Date:</span>
-                    <span className="detail-value">
-                      {formatDate(activeWithdrawal.createdAt)}
-                    </span>
-                  </div>
+                  {/* Display payment details based on payment method */}
+                  {[
+                    "USDT (TRC20 - Tron)",
+                    "USDT (BEP20 - BNB Smart Chain)",
+                    "USDT (ERC20 - Ethereum)",
+                  ].includes(activeWithdrawal.paymentMethod) && (
+                    <div className="detail-row">
+                      <span className="detail-label">Wallet Address:</span>
+                      <span className="detail-value wallet-address">
+                        {activeWithdrawal.walletAddress}
+                      </span>
+                    </div>
+                  )}
+
                   <div className="detail-row">
                     <span className="detail-label">Status:</span>
                     <span
@@ -327,18 +341,6 @@ const AdminWithdrawals = () => {
                         activeWithdrawal.status.slice(1)}
                     </span>
                   </div>
-
-                  {/* Display payment details based on payment method */}
-                  {["bitcoin", "ethereum", "litecoin"].includes(
-                    activeWithdrawal.paymentMethod
-                  ) && (
-                    <div className="detail-row">
-                      <span className="detail-label">Wallet Address:</span>
-                      <span className="detail-value wallet-address">
-                        {activeWithdrawal.walletAddress}
-                      </span>
-                    </div>
-                  )}
 
                   {activeWithdrawal.paymentMethod === "bank_transfer" && (
                     <div className="detail-row">

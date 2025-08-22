@@ -263,11 +263,21 @@ const DepositModal = ({ isOpen, onClose, onSuccess }) => {
             <div className="instructions-card">
               <h3>How to deposit funds</h3>
               <ol>
-                <li>Enter the amount you wish to deposit</li>
-                <li>Select your preferred payment method</li>
-                <li>Make the payment to the provided address</li>
-                <li>Upload a screenshot of your payment confirmation</li>
-                <li>Submit your deposit request for approval</li>
+                <li>Enter the amount you wish to deposit in the app</li>
+                <li>
+                  Select your preferred payment method (e.g., TRC20, BEP20,
+                  ERC20)
+                </li>
+                <li>Copy the wallet address shown for your selected network</li>
+                <li>
+                  Send the payment using your Binance / Trust Wallet / Exchange
+                </li>
+                <li>
+                  After sending, enter your Transaction ID / Reference ID in the
+                  given field
+                </li>
+                <li>Upload a screenshot of the payment confirmation</li>
+                <li>Submit your deposit request for admin verification</li>
               </ol>
               <div className="instructions-note">
                 <strong>Note:</strong> Your deposit will be processed within 24
@@ -302,9 +312,11 @@ const DepositModal = ({ isOpen, onClose, onSuccess }) => {
                   required
                 >
                   <option value="">Select payment method</option>
-                  <option value="bitcoin">Tron (TRC 20)</option>
-                  <option value="ethereum">BNB Smart chain (BEP20) </option>
-                  <option value="litecoin">Ethereum (ERC20)</option>
+                  <option value="bitcoin">USDT-TRC20 (Tron Network)</option>
+                  <option value="ethereum">USDT-BEP20 (BNB Smart Chain)</option>
+                  <option value="litecoin">
+                    USDT-ERC20 (Ethereum Network)
+                  </option>
                 </select>
               </div>
             </div>

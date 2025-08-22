@@ -174,9 +174,11 @@ const Dashboard = ({ onTransactionUpdate }) => {
         console.log("Network error detected, showing modal");
         setNoNetModal(true);
       } else {
-        toast.error("Failed to load user information");
         if (err.response && err.response.status === 401) {
+          toast.error("Session Expired, Please reload the page");
           handleLogout();
+        } else {
+          toast.error("Failed to load user information");
         }
       }
       setLoading(false);

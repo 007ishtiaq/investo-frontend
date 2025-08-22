@@ -68,9 +68,16 @@ const InvestmentDetail = ({ selectedUser, onClose }) => {
         );
       }
     } catch (error) {
-      console.error("Error loading investment data:", error);
+      console.error(
+        "Error loading investment data (investment details):",
+        error
+      );
       setError(error.message || "Failed to load investment data");
-      toast.error(error.message || "Failed to load investment data");
+      if (error.message && error.message.includes(401)) {
+        toast.error("Session Expired, Please reload the page");
+      } else {
+        toast.error(error.message || "Failed to load investment data");
+      }
     } finally {
       setLoading(false);
     }
