@@ -10,6 +10,7 @@ import "../Login/Login.css";
 import { useLocation } from "react-router-dom";
 import NoNetModal from "../../components/NoNetModal/NoNetModal";
 import { ReactComponent as Logosign } from "../../images/logo.svg";
+import LoginDemo from "../../components/LoginDemo/LoginDemo";
 
 const LogoSpinner = () => (
   <div className="logo-spinner">
@@ -209,6 +210,9 @@ const Register = () => {
                   Already have an account? <Link to="/login">Log in</Link>
                 </p>
               </div>
+              <div className="note_title">
+                For demonstration, the login credentials are provided below:
+              </div>
             </form>
           </div>
 
@@ -295,6 +299,7 @@ const Register = () => {
             </div>
           </div>
         </div>
+        <LoginDemo />
       </div>
 
       <NoNetModal

@@ -565,3 +565,21 @@ label {
 .form-group {
   margin-bottom: 1.25rem;
 } */
+
+.note_title {
+  margin: 2rem auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  max-width: 300px;
+  padding: 7px 11px;
+
+  /* Blue → Purple subtle gradient */
+  background: linear-gradient(135deg, #2e2e2e 0%, #c90000 100%);
+  color: #fff;
+
+  border-radius: 16px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+  animation: demoNoticeFadeIn 0.5s ease-out;
+}

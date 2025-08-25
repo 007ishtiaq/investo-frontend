@@ -10,6 +10,7 @@ import { EthereumIcon } from "../../utils/icons";
 import NoNetModal from "../../components/NoNetModal/NoNetModal";
 import "./Login.css";
 import { ReactComponent as Logosign } from "../../images/logo.svg";
+import LoginDemo from "../../components/LoginDemo/LoginDemo";
 
 // Spinner component for loading state
 const Spinner = () => (
@@ -300,6 +301,9 @@ const Login = () => {
                   <Link to="/forgot/password">Forgot your password?</Link>
                 </p>
               </div>
+              <div className="note_title">
+                For demonstration, the login credentials are provided below:
+              </div>
             </form>
           </div>
 
@@ -387,6 +391,7 @@ const Login = () => {
             </div>
           </div>
         </div>
+        <LoginDemo />
       </div>
 
       <NoNetModal

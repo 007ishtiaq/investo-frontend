@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setupTokenRefresh } from "./functions/tokenRefresh";
 import { useTokenRefresh } from "./hooks/useTokenRefresh";
 import SuspenseLoading from "./hooks/SuspenseLoading";
+import DemoNotice from "./components/DemoNotice/DemoNotice";
 
 // Lazy loaded components
 const UserRoute = lazy(() => import("./components/routes/UserRoute"));
@@ -87,6 +88,9 @@ function App() {
           }}
         />
         <Header />
+        {/* 🔹 Global floating demo notice */}
+        <DemoNotice />
+
         <Switch>
           {/* Public Routes (Unprotected) */}
           <Route exact path="/" component={Home} />
