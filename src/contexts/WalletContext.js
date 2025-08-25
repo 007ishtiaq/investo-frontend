@@ -11,7 +11,7 @@ export const WalletProvider = ({ children }) => {
   const { user } = useSelector((state) => ({ ...state }));
   const dispatch = useDispatch();
   const [walletBalance, setWalletBalance] = useState(0);
-  const [walletCurrency, setWalletCurrency] = useState("USD");
+  const [walletCurrency, setWalletCurrency] = useState("Rs.");
   const [loading, setLoading] = useState(false);
 
   const handleLogout = () => {
