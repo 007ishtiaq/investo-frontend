@@ -210,9 +210,9 @@ const Register = () => {
                   Already have an account? <Link to="/login">Log in</Link>
                 </p>
               </div>
-              <div className="note_title">
+              {/* <div className="note_title">
                 For demonstration, the login credentials are provided below:
-              </div>
+              </div> */}
             </form>
           </div>
 
@@ -299,7 +299,7 @@ const Register = () => {
             </div>
           </div>
         </div>
-        <LoginDemo />
+        {/* <LoginDemo /> */}
       </div>
 
       <NoNetModal

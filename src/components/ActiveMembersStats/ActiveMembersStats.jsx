@@ -50,7 +50,7 @@ const ActiveMembersStats = ({
           {[...Array(8)].map((_, i) => (
             <div key={i} className={`member-avatar avatar-${i + 1}`}>
               <img
-                src={`/images/random/${i + 11}.jpg`}
+                src={`/images/random/${i + 11}.png`}
                 alt={`Member ${i + 1}`}
                 className="avatar-image"
                 onError={(e) => {

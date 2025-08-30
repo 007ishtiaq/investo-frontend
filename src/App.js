@@ -89,7 +89,7 @@ function App() {
         />
         <Header />
         {/* 🔹 Global floating demo notice */}
-        <DemoNotice />
+        {/* <DemoNotice /> */}
 
         <Switch>
           {/* Public Routes (Unprotected) */}

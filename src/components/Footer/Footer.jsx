@@ -30,15 +30,15 @@ const Footer = () => {
                 Discover, collect, and sell extraordinary NFTs on the world's
                 first and largest NFT marketplace.
               </p>
-              <div className="social-links">
-                {/* <a
+              {/* <div className="social-links">
+                <a
                   href="https://twitter.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="social-link"
                 >
                   <TelegramIcon size={20} />
-                </a> */}
+                </a>
                 <a
                   href="https://www.facebook.com/TrustyVest"
                   target="_blank"
@@ -64,7 +64,7 @@ const Footer = () => {
                 >
                   <YoutubeIcon size={20} />
                 </a>
-              </div>
+              </div> */}
             </div>
 
             <div className="footer-links-grid">
@@ -127,7 +127,7 @@ const Footer = () => {
 
           <div className="footer-bottom">
             <p className="copyright">
-              &copy; {currentYear} TreasureNFT. All rights reserved.
+              &copy; {currentYear} TrustyVest. All rights reserved.
             </p>
             <div className="legal-links">
               <Link to="/terms">Terms</Link>

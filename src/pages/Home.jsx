@@ -92,10 +92,10 @@ const demoCollections = [
 
 const sampleNFTs = [
   {
-    name: "Zavier Stark",
+    name: "Nabeel Ali Shah",
     tokenId: "001",
     price: 1223.45,
-    imageUrl: "/images/random/10.jpg",
+    imageUrl: "/images/random/10.png",
     collectionId: 1,
     creatorAvatar: "https://placehold.co/50x50/4CD6B0/FFFFFF.png?text=CREATOR",
     description: "The king of all Pepe frogs, ruling with a green fist.",
@@ -149,48 +149,48 @@ const sampleNFTs = [
 
 const sampleCollections = [
   {
-    name: "Lochlan Andrade",
-    avatarUrl: "/images/random/1.jpg",
+    name: "Saleem Ali Khan",
+    avatarUrl: "/images/random/1.png",
     volume: "543.12",
     change: "+12.45%",
     isVerified: true,
     rank: 1,
   },
   {
-    name: "Nadia Levy",
-    avatarUrl: "/images/random/5.jpg",
+    name: "Ahmad Yar",
+    avatarUrl: "/images/random/5.png",
     volume: "387.34",
     change: "+8.77%",
     isVerified: true,
     rank: 2,
   },
   {
-    name: "Destiny Herrera",
-    avatarUrl: "/images/random/8.jpg",
+    name: "Rohail khan",
+    avatarUrl: "/images/random/8.png",
     volume: "242.56",
     change: "+5.23%",
     isVerified: true,
     rank: 3,
   },
   {
-    name: "Kamryn Ryan",
-    avatarUrl: "/images/random/4.jpg",
+    name: "Kamran kami",
+    avatarUrl: "/images/random/4.png",
     volume: "195.87",
     change: "+2.14%",
     isVerified: true,
     rank: 4,
   },
   {
-    name: "Johin Ravi",
-    avatarUrl: "/images/random/7.jpg",
+    name: "Rajjub shah",
+    avatarUrl: "/images/random/7.png",
     volume: "167.23",
     change: "+3.67%",
     isVerified: true,
     rank: 5,
   },
   {
-    name: "Drove Jakob",
-    avatarUrl: "/images/random/6.jpg",
+    name: "Jahanger khan",
+    avatarUrl: "/images/random/6.png",
     volume: "145.19",
     change: "+1.54%",
     isVerified: true,
@@ -212,28 +212,28 @@ const sampleActiveStats = {
 
 const sampleMembers = [
   {
-    name: "Emma Davis",
+    name: "Adnan ali",
     joinDate: "1 days ago",
     initialInvestment: 250,
     level: 2,
     color: "#7c3aed",
-    avatar: "/images/random/19.jpg", // Add avatar field
+    avatar: "/images/random/19.png", // Add avatar field
   },
   {
-    name: "James Wilson",
+    name: "Bushra Shahid",
     joinDate: "2 days ago",
     initialInvestment: 1000,
     level: 4,
     color: "#3b82f6",
-    avatar: "/images/random/20.jpg", // Add avatar field
+    avatar: "/images/random/20.png", // Add avatar field
   },
   {
-    name: "Sarah Johnson",
+    name: "Azeem khan",
     joinDate: "2 days ago",
     initialInvestment: 500,
     level: 3,
     color: "#f59e0b",
-    avatar: "/images/random/21.jpg", // Add avatar field
+    avatar: "/images/random/21.png", // Add avatar field
   },
 ];
 
@@ -326,10 +326,10 @@ function Home() {
         {/* <InvestmentPlansShowcase plans={samplePlans} /> */}
         <NewMembers members={sampleMembers} />
 
-        <main className="marketplace-content">
-          {/* <NFTCollectionItems nfts={nfts1} /> */}
-          <PromoBanner />
-        </main>
+        {/* <main className="marketplace-content"> */}
+        {/* <NFTCollectionItems nfts={nfts1} /> */}
+        {/* <PromoBanner />
+        </main> */}
 
         {/* <NFTMarketplace nfts={nfts} creators={creatorsById} /> */}
         {/* <CTASection /> */}
